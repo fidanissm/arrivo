@@ -1,0 +1,13 @@
+{
+  "name": "Arrivo — transfer paneli",
+  "short_name": "Arrivo",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f1f2f6",
+  "theme_color": "#ff5a36",
+  "lang": "az",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
