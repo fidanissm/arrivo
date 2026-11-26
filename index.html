@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arrivo — transfer paneli</title>
+<meta name="theme-color" content="#ff5a36">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Baloo+2:wght@800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: warm, lively, quick — an app the team enjoys opening, not an enterprise console
+   IDEA: the arrivals hall at sunset: every transfer is a person with a face, a time and a car
+   PICTURE: a sunset hero with the day's timeline of guest avatars and a "now" line, then cards led by faces
+   COLOUR and TYPE: sunset coral-to-orange hero, soft grey ground, white rounded cards; Plus Jakarta Sans, tabular figures
+   LAYOUT: top bar, hero with timeline, grouped card grid; drawer from the right, bottom sheet and bottom nav on phones */
+:root{color-scheme:light dark;
+--bg:light-dark(#f1f2f6,#0d0e12);--card:light-dark(#fff,#17191f);--card2:light-dark(#f5f6f9,#1e2128);
+--ink:light-dark(#15161b,#f0f1f4);--mut:light-dark(#646b76,#9aa2ad);--line:light-dark(#e6e8ec,#272b33);
+--acc:#ff5a36;--acc2:#ff8f3d;--sun:linear-gradient(135deg,#ff4f3a 0%,#ff7a35 55%,#ffa53d 100%);
+--blue:light-dark(#0a6fe0,#66aeff);--green:light-dark(#12925c,#4cc98b);--amber:light-dark(#a35f00,#ffb52e);--red:light-dark(#d1293d,#ff6d7a);--grey:light-dark(#7a828e,#8b94a0);
+--sh:0 1px 2px #0000000d,0 8px 24px -12px #0000002e}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Plus Jakarta Sans",system-ui,sans-serif;font-variant-numeric:tabular-nums;overflow-x:clip}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.bar1{max-width:1180px;margin:0 auto;padding:10px max(4vw,14px);display:flex;align-items:center;gap:12px;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:21px;letter-spacing:-.02em}
+.wm{font-family:"Baloo 2","Plus Jakarta Sans",system-ui,sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1;display:inline-flex;align-items:baseline}
+.wi{position:relative;display:inline-block}
+.wi:before{content:"";position:absolute;left:50%;bottom:.6em;width:.36em;height:.45em;transform:translateX(-50%);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 30'%3E%3Cpath fill='%23ff5a36' d='M12 29C6 22 2 17 2 11.5a10 10 0 0 1 20 0C22 17 18 22 12 29z'/%3E%3Ccircle cx='12' cy='11.5' r='4' fill='white'/%3E%3C/svg%3E") center/contain no-repeat}
+.wm.inv .wi:before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 30'%3E%3Cpath fill='white' d='M12 29C6 22 2 17 2 11.5a10 10 0 0 1 20 0C22 17 18 22 12 29z'/%3E%3Ccircle cx='12' cy='11.5' r='4' fill='%23ff5a36'/%3E%3C/svg%3E")}
+.brand .wm{font-size:27px;color:var(--ink)}
+.brand i{width:34px;height:34px;border-radius:11px;background:var(--sun);display:grid;place-items:center;box-shadow:0 6px 14px -6px #ff5a36aa}
+.brand i svg{width:20px;height:20px}
+.tabs{display:flex;gap:4px;background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:4px}
+.tab{min-height:40px;padding:0 14px;border:0;border-radius:10px;background:none;color:var(--mut);font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;font-size:14px}
+.tab svg{width:18px;height:18px}
+.tab[aria-selected=true]{background:var(--card);color:var(--ink);box-shadow:var(--sh)}
+.datep{display:flex;align-items:center;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:3px}
+.datep button{width:36px;height:36px;border:0;border-radius:10px;background:none;cursor:pointer;font-size:18px;font-weight:700}
+.datep label{position:relative;font-weight:700;font-size:14px;padding:0 8px;cursor:pointer;white-space:nowrap}
+.datep input{position:absolute;inset:0;opacity:0;width:100%;cursor:pointer}
+.wrap{max-width:1180px;margin:0 auto;padding:18px max(4vw,14px) 96px}
+.note{font-size:13px;color:var(--mut);margin:0 0 12px}.note b{color:var(--ink)}
+.hero{background:var(--sun);color:#fff;border-radius:26px;padding:22px 22px 14px;position:relative;overflow:hidden;box-shadow:0 20px 40px -24px #ff5a36cc}
+.hero:after{content:"";position:absolute;right:-60px;top:-80px;width:260px;height:260px;border-radius:50%;background:#ffffff1f}
+.hi{margin:0;font-weight:600;opacity:.9}
+.hero h1{margin:4px 0 14px;font-size:clamp(24px,3.6vw,36px);line-height:1.1;letter-spacing:-.02em;text-wrap:balance;max-width:720px;position:relative;z-index:1}
+.stats{display:flex;flex-wrap:wrap;gap:8px;position:relative;z-index:1}
+.stats span{background:#ffffff2b;border-radius:999px;padding:6px 12px;font-size:14px;font-weight:600;white-space:nowrap}
+.stats b{font-size:16px;margin-right:3px}
+.stats .bad{background:#fff;color:var(--red)}.stats .warn{background:#fff;color:#a35f00}
+.tl{margin-top:18px;background:#00000024;border-radius:18px;padding:10px 14px 8px;position:relative;z-index:1;overflow-x:auto}
+.tl-in{position:relative;min-width:560px;margin:0 16px;height:calc(36px + var(--lanes) * 38px)}
+.tk{position:absolute;top:0;font-size:11.5px;font-weight:700;opacity:.8;transform:translateX(-50%)}
+.tk:after{content:"";position:absolute;left:50%;top:18px;height:calc(var(--lanes) * 38px + 8px);border-left:1px dashed #ffffff55}
+.now{position:absolute;top:14px;bottom:0;border-left:2px solid #fff;z-index:2}
+.now em{position:absolute;bottom:-2px;left:4px;font-style:normal;font-size:11px;font-weight:800;background:#fff;color:var(--acc);padding:0 6px;border-radius:6px}
+.pin{position:absolute;transform:translateX(-50%);border:0;padding:0;background:none;cursor:pointer;z-index:3;border-radius:50%}
+.pin .av{border:2px solid #fff;box-shadow:0 4px 10px -4px #0008}
+.pin.s-done .av,.pin.s-noshow .av{opacity:.5}
+.pin.s-enroute .av,.pin.s-arrived .av,.pin.s-pickedup .av{outline:3px solid #fff;outline-offset:2px}
+.av{--c:#888;width:32px;height:32px;border-radius:50%;background:var(--c);color:#fff;display:inline-grid;place-items:center;font-size:12px;font-weight:800;flex:none;letter-spacing:.02em}
+.av.lg{width:46px;height:46px;font-size:16px}.av.sm{width:24px;height:24px;font-size:10px}.av.xl{width:64px;height:64px;font-size:22px}
+.alerts{margin-top:16px;display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.alerts button{flex:none;display:flex;gap:8px;align-items:center;border:1px solid color-mix(in srgb,var(--red) 30%,var(--line));background:var(--card);border-radius:14px;padding:8px 12px;cursor:pointer;font-size:13.5px;max-width:320px;text-align:left}
+.alerts button i{width:8px;height:8px;border-radius:50%;background:var(--red);flex:none}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0 6px}
+.tools input[type=search]{flex:1 1 220px;min-height:46px;font-size:16px;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:0 14px}
+.chip{min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:14px;font-weight:700}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.btn{min-height:46px;padding:0 18px;border-radius:14px;border:0;background:var(--sun);color:#fff;font-weight:800;cursor:pointer;box-shadow:0 8px 18px -10px #ff5a36}
+.btn.sec{background:var(--card2);color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn.ghost{background:none;color:var(--red);border:1px solid var(--line);box-shadow:none}
+.btn:disabled{opacity:.5;cursor:default}
+.grp h2{font-size:17px;margin:22px 0 10px;display:flex;align-items:center;gap:8px}
+.grp h2 span{font-size:12px;background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:1px 9px;color:var(--mut)}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,350px),1fr));gap:12px}
+.card{display:flex;flex-direction:column;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;cursor:pointer;text-align:left;width:100%;box-shadow:var(--sh);transition:transform .15s}
+.card:hover{transform:translateY(-2px)}
+.card.bad{border-color:color-mix(in srgb,var(--red) 45%,var(--line))}
+.card.off{opacity:.6}
+.c-top{display:flex;gap:12px;align-items:center}
+.c-who{flex:1}.c-who b{display:block;font-size:17px;font-weight:800;line-height:1.2}
+.c-who span{font-size:13px;color:var(--mut)}
+.c-time{text-align:right}.c-time b{display:block;font-size:22px;font-weight:800;line-height:1.1}
+.c-time span{font-size:12px;color:var(--mut);white-space:nowrap}
+.route{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;background:var(--card2);border-radius:14px;padding:8px 12px}
+.ap{font-weight:800;font-size:13px;white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis}
+.ln{position:relative;height:18px}
+.ln:before{content:"";position:absolute;left:0;right:0;top:9px;border-top:2px dotted color-mix(in srgb,var(--ink) 30%,transparent)}
+.ln svg{position:absolute;left:50%;top:0;width:18px;height:18px;transform:translateX(-50%) rotate(90deg);fill:var(--acc);background:var(--card2)}
+.fl{grid-column:1/-1;font-size:12.5px;color:var(--mut);font-weight:600}
+.fl s{color:var(--mut)}.fl em{font-style:normal;color:var(--amber);font-weight:800}
+.c-bot{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.drv{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:13.5px}
+.nov{color:var(--red);font-weight:700;font-size:13.5px;font-style:normal}
+.plate{display:inline-flex;align-items:stretch;border:1.5px solid #1b1d22;border-radius:5px;background:#fff;color:#111;font-weight:800;font-size:12.5px;letter-spacing:.04em;overflow:hidden;white-space:nowrap;line-height:1}
+.plate i{background:#0b3fa8;color:#fff;font-style:normal;font-size:9px;padding:0 4px;display:grid;place-items:center}
+.plate{padding-right:6px}.plate i{margin-right:5px}.plate{height:22px;align-items:center}
+.plate i{height:100%}
+.st{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:800;white-space:nowrap}
+.dots{display:inline-flex;gap:3px}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.dots i.d{background:var(--green)}.dots i.n{background:currentColor;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 25%,transparent)}
+.s-new{color:var(--grey)}.s-enroute{color:var(--blue)}.s-arrived{color:var(--amber)}.s-pickedup{color:var(--blue)}.s-done{color:var(--green)}.s-noshow{color:var(--red)}.s-cancelled{color:var(--red)}
+.flags{display:flex;flex-wrap:wrap;gap:5px}
+.flag{font-size:12px;font-weight:700;color:var(--red);background:color-mix(in srgb,var(--red) 10%,transparent);padding:3px 9px;border-radius:8px;white-space:nowrap}
+.flag.a{color:var(--amber);background:color-mix(in srgb,var(--amber) 12%,transparent)}
+.addr{font-size:13px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty{background:var(--card);border:1.5px dashed var(--line);border-radius:20px;padding:36px 18px;text-align:center;color:var(--mut)}
+.ov{position:fixed;inset:0;background:#0009;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}.ov.on{opacity:1;pointer-events:auto}
+.dr{position:fixed;top:0;right:0;height:100%;width:min(480px,100%);background:var(--card);z-index:21;transform:translateX(100%);visibility:hidden;transition:transform .25s,visibility .25s;overflow:auto;padding:0 0 24px}
+.dr.on{transform:none;visibility:visible;box-shadow:-20px 0 40px -20px #0007}
+.dh{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--line);padding:14px 18px;display:flex;gap:12px;align-items:center;z-index:1}
+.dh h2{margin:0;font-size:19px;flex:1}
+.x{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card2);cursor:pointer;font-size:22px}
+form{padding:14px 18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700;color:var(--mut)}
+label.full{grid-column:1/-1}
+input,select,textarea{min-height:46px;font-size:16px;border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:8px 12px;color:var(--ink)}
+textarea{min-height:70px;resize:vertical}
+.chk{flex-direction:row;align-items:center;gap:8px;font-size:15px;color:var(--ink)}
+.chk input{min-height:0;width:20px;height:20px}
+.acts{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.hint{grid-column:1/-1;font-size:13px;color:var(--mut);margin:-4px 0 0;background:var(--card2);border-radius:12px;padding:8px 12px}
+.sect{padding:6px 18px 0}.sect h3{font-size:14px;margin:12px 0 8px;color:var(--mut)}
+.hist{list-style:none;margin:0;padding:0;font-size:13.5px}
+.hist li{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)}
+.fleet{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--sh)}
+.box h3{margin:0;padding:16px;font-size:17px;display:flex;justify-content:space-between;align-items:center}
+.box details{border-top:1px solid var(--line)}
+.box summary{padding:12px 16px;font-weight:800;color:var(--acc);cursor:pointer;list-style:none}
+.box summary::-webkit-details-marker{display:none}
+.box form{padding:0 16px 14px}
+.it{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--line)}
+.it>div{flex:1}.it b{display:block}.it>div>span{font-size:13px;color:var(--mut)}
+.load{font-size:12px;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--card2);white-space:nowrap}
+.load.busy{background:color-mix(in srgb,var(--acc) 14%,transparent);color:var(--acc)}
+.del{min-height:36px;padding:0 10px;border-radius:10px;border:1px solid var(--line);background:none;color:var(--red);cursor:pointer;font-size:13px;font-weight:700}
+.seat{font-size:13px;color:var(--mut);font-weight:600}
+.dsel{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px}
+.dsel button{flex:none;display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 14px 5px 5px;font-weight:700;cursor:pointer}
+.dsel button[aria-pressed=true]{border-color:var(--acc);box-shadow:0 0 0 2px color-mix(in srgb,var(--acc) 30%,transparent)}
+.job{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px;box-shadow:var(--sh);margin-bottom:12px}
+.job.hero{background:#16171c;color:#fff;border:0}
+.job.hero .mut{color:#a9b0ba}
+.job .tag{font-size:12px;font-weight:800;color:var(--acc);text-transform:none}
+.job h3{margin:2px 0 0;font-size:26px;line-height:1.15;letter-spacing:-.01em}
+.cd{display:flex;align-items:baseline;gap:8px;margin:10px 0 2px}
+.cd b{font-size:34px;font-weight:800;line-height:1}
+.cd span{font-size:14px}
+.mut{color:var(--mut)}
+.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px;margin:12px 0;font-size:14px}
+.meta span{display:block;font-size:12px}.meta b{font-size:15px}
+.meta a{color:inherit}
+.big{width:100%;min-height:60px;font-size:18px;border-radius:18px}
+.dbtns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+.job.hero .btn.sec{background:#ffffff14;border-color:#ffffff26;color:#fff}
+.job.small{display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px 14px}
+.job.small>div{flex:1}
+.sign{position:fixed;inset:0;background:#fff;color:#111;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.sign.on{display:flex}
+.sign b{font-size:clamp(40px,11vw,120px);line-height:1.05;font-weight:800;text-transform:uppercase;word-break:break-word}
+.sign span{margin-top:18px;font-size:20px;color:#666}
+.sign em{position:absolute;top:18px;left:22px;font-style:normal;font-weight:800;color:var(--acc);font-size:22px}
+.sign button{position:absolute;top:14px;right:14px;min-height:48px;padding:0 18px;border-radius:12px;border:1px solid #ddd;background:#f4f4f4;font-weight:700;cursor:pointer;color:#111}
+.phone{max-width:390px;margin:0 auto;background:var(--card);border:10px solid #16171c;border-radius:44px;overflow:hidden;box-shadow:0 30px 60px -30px #0008}
+.ph-top{background:var(--sun);color:#fff;padding:26px 22px 60px;position:relative}
+.ph-top h2{margin:6px 0 2px;font-size:26px;letter-spacing:-.01em}
+.ph-top p{margin:0;opacity:.92;font-size:14px}
+.ph-card{margin:-44px 16px 0;background:var(--card);border-radius:22px;box-shadow:var(--sh);padding:16px;position:relative;border:1px solid var(--line)}
+.ph-drv{display:flex;align-items:center;gap:12px}
+.ph-drv b{display:block;font-size:17px}
+.ph-car{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:14px}
+.steps{list-style:none;margin:16px;padding:0}
+.steps li{display:flex;gap:12px;align-items:flex-start;padding-bottom:16px;position:relative;font-size:14.5px}
+.steps li:before{content:"";position:absolute;left:10px;top:22px;bottom:2px;width:2px;background:var(--line)}
+.steps li:last-child:before{display:none}
+.steps i{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);flex:none;background:var(--card);position:relative;z-index:1}
+.steps li.d i{background:var(--green);border-color:var(--green)}.steps li.d{color:var(--mut)}
+.steps li.n i{border-color:var(--acc);box-shadow:0 0 0 5px color-mix(in srgb,var(--acc) 22%,transparent)}
+.steps li.n{font-weight:800}
+.ph-foot{padding:0 16px 18px}
+.toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,20px);background:var(--ink);color:var(--card);padding:10px 16px;border-radius:12px;opacity:0;transition:.2s;z-index:50;pointer-events:none;max-width:90vw;font-weight:600}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.out{min-height:40px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-weight:700;cursor:pointer;font-size:13px}
+.login{max-width:420px;margin:8vh auto 0;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:28px 24px;box-shadow:var(--sh);text-align:center}
+.login .brand{justify-content:center;margin-bottom:14px}
+.login h1{margin:0 0 6px;font-size:24px}.login p{color:var(--mut);margin:0 0 16px}
+.login form{display:grid;gap:10px;padding:0;grid-template-columns:minmax(0,1fr)}
+body.track .top{display:none}body.track .wrap{padding-top:20px}
+body.is-driver .tabs,body.gate .tabs,body.gate .datep{display:none}
+.callb{display:block;text-align:center;text-decoration:none;line-height:46px;margin-bottom:8px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:900px){.tab span{display:none}}
+@media(max-width:760px){
+ .top{backdrop-filter:none;background:var(--bg)}
+ .bar1{flex-wrap:wrap}
+ .tabs{position:fixed;left:10px;right:10px;bottom:10px;z-index:15;justify-content:space-around;border-radius:20px;box-shadow:0 10px 30px -10px #0006;padding:6px}
+ .tab{flex:1;flex-direction:column;gap:2px;min-height:52px;font-size:11px;padding:0 4px}
+ .tab span{display:block}
+ .hero{border-radius:22px;padding:18px 16px 12px}
+ .fleet{grid-template-columns:minmax(0,1fr)}
+ .dr{top:auto;bottom:0;height:auto;max-height:92vh;width:100%;border-radius:22px 22px 0 0;transform:translateY(100%)}
+ form{grid-template-columns:minmax(0,1fr)}
+ .phone{border-width:0;border-radius:24px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+ <div class="bar1">
+  <div class="brand"><i><svg viewBox="0 0 100 100" width="24" height="24" aria-hidden="true"><g transform="translate(58 4) scale(1.55) rotate(135 12 12)"><path fill="#fff" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></g><path fill="#fff" d="M18 64l6-18c1.5-4.5 4.5-7 9-7h34c4.5 0 7.5 2.5 9 7l6 18v18c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5v-4H33v4c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5z"/><path fill="#ff6a37" d="M29 62l4.5-13c.8-2.2 2.2-3.5 4.5-3.5h24c2.3 0 3.7 1.3 4.5 3.5L71 62z"/><circle cx="29" cy="71" r="4.5" fill="#ff6a37"/><circle cx="71" cy="71" r="4.5" fill="#ff6a37"/><rect x="41" y="68.5" width="18" height="5" rx="2.5" fill="#ff6a37"/></svg></i><span class="wm">arr<span class="wi">ı</span>vo</span></div>
+  <nav class="tabs" role="tablist">
+   <button class="tab" role="tab" data-r="coord"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg><span>Panel</span></button>
+   <button class="tab" role="tab" data-r="driver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 14.5V21M9.6 11.2 3.5 9.5M14.4 11.2l6.1-1.7"/></svg><span>Sürücü</span></button>
+   <button class="tab" role="tab" data-r="fleet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 17h14M3 13l2-6h14l2 6v4H3z"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/></svg><span>Park</span></button>
+   <button class="tab" role="tab" data-r="cust"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg><span>Müştəri</span></button>
+  </nav>
+  <div class="datep"><button id="prev" aria-label="Əvvəlki gün">‹</button><label><span id="dateL">Bu gün</span><input type="date" id="date" aria-label="Tarix"></label><button id="next" aria-label="Növbəti gün">›</button></div>
+  <button class="out" id="logout" hidden>Çıxış</button>
+ </div>
+</header>
+<main class="wrap" id="main"><p class="note">Yüklənir…</p></main>
+<div class="ov" id="ov"></div>
+<aside class="dr" id="dr" role="dialog" aria-modal="true" aria-labelledby="drT"></aside>
+<div class="sign" id="sign" role="dialog" aria-label="Ad lövhəsi"><em><span class="wm" style="font-size:30px;color:#15161b">arr<span class="wi">ı</span>vo</span></em><button id="signX">Bağla</button><b id="signN"></b><span id="signS"></span></div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+{
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad=n=>String(n).padStart(2,"0");
+const bk=()=>new Date(Date.now()+4*3600e3);
+const todayStr=()=>{const d=bk();return d.getUTCFullYear()+"-"+pad(d.getUTCMonth()+1)+"-"+pad(d.getUTCDate())};
+const nowMin=()=>{const d=bk();return d.getUTCHours()*60+d.getUTCMinutes()};
+const toMin=s=>{if(!s||!/^\d{1,2}:\d{2}$/.test(s))return null;const [h,m]=s.split(":").map(Number);return h*60+m};
+const hm=m=>m==null?"—":pad(Math.floor(((m%1440)+1440)%1440/60))+":"+pad(((m%60)+60)%60);
+const shiftDate=(s,n)=>{const d=new Date(s+"T00:00:00Z");d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)};
+const MON=["yanvar","fevral","mart","aprel","may","iyun","iyul","avqust","sentyabr","oktyabr","noyabr","dekabr"];
+const nice=s=>{const [y,m,d]=s.split("-").map(Number);return d+" "+MON[m-1]};
+const ST={new:"Gözlənilir",enroute:"Sürücü yoldadır",arrived:"Sürücü çatdı",pickedup:"Müştəri maşında",done:"Tamamlandı",noshow:"Gəlmədi",cancelled:"Ləğv edildi"};
+const FLOW=["new","enroute","arrived","pickedup","done"];
+const NEXT={new:["enroute","Yola çıxdım"],enroute:["arrived","Çatdım"],arrived:["pickedup","Qarşıladım"],pickedup:["done","Çatdırdım"]};
+const uid=()=>Math.random().toString(36).slice(2,10);
+
+/* ===== AYARLAR: Supabase → Project Settings → API ===== */
+const CONFIG={
+ SUPABASE_URL:"https://yrpkfstjbngsxklenpkd.supabase.co",       // məs. "https://abcdxyz.supabase.co"
+ SUPABASE_ANON_KEY:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlycGtmc3RqYm5nc3hrbGVucGtkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU3MTMzMTYsImV4cCI6MjExMTI4OTMxNn0.puDgf0HJPgialQASKRrk3FDPbpSQiGVDaAujnKViR50"   // "anon public" açarı (gizli deyil, saytda ola bilər)
+};
+const FST={Expected:"planlaşdırılıb",Unknown:"",CheckIn:"qeydiyyat",Boarding:"minik",GateClosed:"qapı bağlı",Departed:"qalxdı",EnRoute:"havada",Approaching:"enişə gəlir",Arrived:"endi",Delayed:"gecikir",Canceled:"ləğv",CanceledUncertain:"ləğv ola bilər",Diverted:"yönləndirildi"};
+const sb=CONFIG.SUPABASE_URL&&window.supabase?window.supabase.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_ANON_KEY):null;
+let me=null;
+
+let S={role:"coord",date:todayStr(),q:"",f:"all",driverId:"",custId:"",transfers:[],drivers:[],vehicles:[],mode:"loading",stale:false,staff:[],email:""};
+let sel=null;
+
+/* ===== Saxlama: Supabase; ayar yoxdursa bu brauzerdə müvəqqəti ===== */
+const live=()=>sb&&S.mode==="db";
+const clean=o=>{if(!o.id)delete o.id;return o};
+function fromRow(col,r){
+ if(col==="transfers")return {id:r.id,type:r.type,date:r.date,name:r.name,phone:r.phone,pax:r.pax,bags:r.bags,flight:r.flight,city:r.city,sched:r.sched,est:r.est,address:r.address,note:r.note,driverId:r.driver_id||"",vehicleId:r.vehicle_id||"",status:r.status,flightCancelled:r.flight_cancelled,flightStatus:r.flight_status||"",code:r.code,history:r.history||[]};
+ if(col==="drivers")return {id:r.id,name:r.name,phone:r.phone,vehicleId:r.vehicle_id||""};
+ if(col==="staff")return {id:r.email,email:r.email,role:r.role,name:r.name,driverId:r.driver_id||""};
+ return {...r};
+}
+function toRow(col,o){
+ if(col==="transfers")return clean({id:o.id,type:o.type,date:o.date,name:o.name,phone:o.phone||"",pax:+o.pax||1,bags:+o.bags||0,flight:o.flight||"",city:o.city||"",sched:o.sched,est:o.est||"",address:o.address||"",note:o.note||"",driver_id:o.driverId||null,vehicle_id:o.vehicleId||null,status:o.status||"new",flight_cancelled:!!o.flightCancelled,history:o.history||[]});
+ if(col==="drivers")return clean({id:o.id,name:o.name,phone:o.phone||"",vehicle_id:o.vehicleId||null});
+ if(col==="vehicles")return clean({id:o.id,model:o.model,plate:o.plate,seats:+o.seats||4,color:o.color||""});
+ if(col==="staff")return {email:String(o.email).trim().toLowerCase(),role:o.role,name:o.name||"",driver_id:o.driverId||null};
+}
+async function load(col){
+ let q=sb.from(col).select("*");
+ if(col==="transfers")q=q.gte("date",shiftDate(todayStr(),-30)).order("date").limit(3000);
+ const {data,error}=await q;
+ if(error){toast("Məlumat yüklənmədi: "+col);return}
+ S[col]=(data||[]).map(r=>fromRow(col,r));
+}
+const store={
+ async put(col,obj){
+  if(live()){const {error}=await sb.from(col).upsert(toRow(col,obj));if(error)throw error;await load(col);render();return obj}
+  if(!obj.id)obj.id=uid();if(col==="transfers"&&!obj.code)obj.code=uid();
+  const a=S[col],i=a.findIndex(x=>x.id===obj.id);i>=0?a.splice(i,1,obj):a.push(obj);render();return obj;
+ },
+ async del(col,id){
+  if(live()){const {error}=await sb.from(col).delete().eq(col==="staff"?"email":"id",id);if(error)throw error;await load(col);render();return}
+  S[col]=S[col].filter(x=>x.id!==id);render();
+ }
+};
+async function save(col,obj,msg){
+ try{await store.put(col,obj);if(msg)toast(msg);return true}
+ catch(e){toast(e&&e.code==="42501"?"Bu dəyişiklik üçün icazəniz yoxdur.":"Yadda saxlanmadı: "+(e&&e.message||"xəta"));return false}
+}
+
+/* ===== Hesablamalar ===== */
+function calc(t){
+ const arr=t.type==="arr",sched=toMin(t.sched);let est=toMin(t.est);
+ if(est!=null&&sched!=null){if(est-sched<-720)est+=1440;else if(est-sched>720)est-=1440}
+ const land=arr?(est??sched):null;
+ const delay=arr&&est!=null&&sched!=null?est-sched:0;
+ const pick=arr?land:(sched!=null?sched-210:null); // yola salmada otel: uçuşdan 3,5 saat əvvəl
+ const leave=arr?(land!=null?land-50:null):(pick!=null?pick-40:null);
+ return {arr,sched,est,land,delay,pick,leave,sort:pick??0};
+}
+function flags(t,list){
+ const c=calc(t),out=[];if(["done","cancelled","noshow"].includes(t.status))return out;
+ const v=S.vehicles.find(x=>x.id===t.vehicleId),d=S.drivers.find(x=>x.id===t.driverId);
+ const soon=t.date===todayStr()&&c.leave!=null&&c.leave-nowMin()<=180;
+ if(t.flightCancelled)out.push(["Reys ləğv edilib",""]);
+ if(!d||!v){const w=!d&&!v?"maşın və sürücü":!d?"sürücü":"maşın";out.push([(soon?"Təcili: "+w:w[0].toUpperCase()+w.slice(1))+" təyin olunmayıb",soon?"":"a"])}
+ if(v&&(+t.pax||1)>(+v.seats||0))out.push(["Yer çatmır: "+(+t.pax||1)+" nəfər, "+v.seats+" yer",""]);
+ if(c.delay>=30)out.push(["Gecikmə +"+c.delay+" dəq","a"]);
+ if(d){const clash=list.find(o=>o.id!==t.id&&o.driverId===t.driverId&&o.date===t.date&&!["done","cancelled","noshow"].includes(o.status)&&Math.abs(calc(o).sort-c.sort)<90);
+  if(clash)out.push(["Sürücü məşğuldur: "+clash.name,""])}
+ if(t.date===todayStr()&&t.status==="new"&&c.leave!=null&&nowMin()>c.leave+10&&d)out.push(["Sürücü hələ yola çıxmayıb",""]);
+ return out;
+}
+const dayList=()=>S.transfers.filter(t=>t.date===S.date).sort((a,b)=>calc(a).sort-calc(b).sort);
+const dName=id=>{const d=S.drivers.find(x=>x.id===id);return d?d.name:""};
+const vName=id=>{const v=S.vehicles.find(x=>x.id===id);return v?v.model+" · "+v.plate:""};
+
+/* ===== Görünüş köməkçiləri ===== */
+const PAL=["#ff5a36","#0a84ff","#14a06f","#d63384","#e8930c","#0aa5b5","#5b6ef0","#64748b"];
+const avColor=s=>{let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return PAL[h%PAL.length]};
+const ini=s=>String(s||"?").trim().split(/\s+/).slice(0,2).map(w=>w[0]||"").join("").toUpperCase();
+const av=(name,cls="")=>`<span class="av ${cls}" style="--c:${avColor(name)}">${esc(ini(name))}</span>`;
+const plate=p=>p?`<span class="plate"><i>AZ</i>${esc(p)}</span>`:"";
+const until=m=>{if(m==null)return "";const d=m-nowMin();if(Math.abs(d)<3)return "indi";const a=Math.abs(d),h=Math.floor(a/60),mm=a%60,tx=((h?h+" saat ":"")+(mm?mm+" dəq":"")).trim();return d>0?tx+" sonra":tx+" əvvəl"};
+const greet=()=>{const h=bk().getUTCHours();return h<5?"Gecəniz xeyrə":h<12?"Sabahınız xeyir":h<18?"Günortanız xeyir":"Axşamınız xeyir"};
+const dots=t=>{const i=FLOW.indexOf(t.status);return `<span class="dots">${FLOW.map((s,k)=>`<i class="${t.status==="done"||i>k?"d":i===k?"n":""}"></i>`).join("")}</span>`};
+const PLANE='<svg viewBox="0 0 24 24"><path d="M21.5 15.5v-2l-8-5V3.2c0-.9-.7-1.7-1.5-1.7s-1.5.8-1.5 1.7v5.3l-8 5v2l8-2.5v5.2l-2 1.5v1.8l3.5-1 3.5 1v-1.8l-2-1.5V13z"/></svg>';
+const dayLabel=s=>s===todayStr()?"Bu gün":s===shiftDate(todayStr(),1)?"Sabah":s===shiftDate(todayStr(),-1)?"Dünən":nice(s);
+
+/* ===== Görünüşlər ===== */
+function render(){
+ document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.r===S.role));
+ $("#date").value=S.date;$("#dateL").textContent=dayLabel(S.date)+(S.date===todayStr()?" · "+nice(S.date):"");
+ const m=$("#main");
+ document.body.classList.toggle("gate",S.mode==="login"||S.mode==="noaccess");
+ if(S.mode==="loading"){m.innerHTML=`<p class="note">${S.stale?"Baza hələ cavab vermir, internet bağlantısını yoxlayın.":"Yüklənir…"}</p>`;return}
+ if(S.mode==="login"){m.innerHTML=loginView();return}
+ if(S.mode==="noaccess"){m.innerHTML=`<div class="login"><h1>Giriş icazəsi yoxdur</h1><p>${esc(S.email)} ünvanı komandaya əlavə olunmayıb. Koordinatordan "Park → Komanda" bölməsində sizi əlavə etməsini xahiş edin.</p><button class="btn sec" id="logout2">Başqa e-poçtla gir</button></div>`;return}
+ const hadQ=document.activeElement&&document.activeElement.id==="q",qPos=hadQ?document.activeElement.selectionStart:0;
+ const banner=S.mode==="local"?`<p class="note"><b>Sınaq rejimi:</b> Supabase ayarları doldurulmayıb, dəyişikliklər yalnız bu səhifədə qalır və yeniləyəndə silinir.</p>`:S.stale?`<p class="note">Məlumat köhnə ola bilər, bağlantı bərpa olunur…</p>`:"";
+ m.innerHTML=banner+({coord,driver,fleet,cust}[S.role])();
+ if(hadQ){const q=$("#q");if(q){q.focus();q.setSelectionRange(qPos,qPos)}}
+ const tl=m.querySelector(".tl");if(tl&&S.date===todayStr()&&tl.scrollWidth>tl.clientWidth)tl.scrollLeft=nowMin()/1440*tl.scrollWidth-tl.clientWidth/2;
+}
+function timeline(list,isToday){
+ const items=list.map(t=>({t,m:(((calc(t).sort??0)%1440)+1440)%1440})).sort((a,b)=>a.m-b.m);
+ const lanes=[];items.forEach(x=>{let l=lanes.findIndex(e=>x.m-e>=50);if(l<0){l=lanes.length;lanes.push(0)}lanes[l]=x.m;x.l=l});
+ const n=Math.max(1,Math.min(lanes.length,4));
+ return `<div class="tl" aria-label="Günün vaxt xətti"><div class="tl-in" style="--lanes:${n}">${[0,3,6,9,12,15,18,21].map(h=>`<span class="tk" style="left:${h/24*100}%">${pad(h)}:00</span>`).join("")}
+  ${isToday?`<span class="now" style="left:${nowMin()/1440*100}%"><em>indi</em></span>`:""}
+  ${items.map(x=>`<button class="pin s-${esc(x.t.status)}" data-id="${esc(x.t.id)}" style="left:${Math.min(98,Math.max(2,x.m/1440*100))}%;top:${24+Math.min(x.l,n-1)*38}px" aria-label="${esc(x.t.name)}, ${hm(x.m)}" title="${esc(x.t.name)} · ${hm(x.m)}">${av(x.t.name)}</button>`).join("")}</div></div>`;
+}
+function card(t,list){
+ const c=calc(t),fl=flags(t,list),off=["done","cancelled","noshow"].includes(t.status),isToday=t.date===todayStr();
+ const d=S.drivers.find(x=>x.id===t.driverId),v=S.vehicles.find(x=>x.id===t.vehicleId);
+ const from=c.arr?(t.city||"?"):"Bakı",to=c.arr?"Bakı":(t.city||"?");
+ return `<button class="card ${fl.some(f=>!f[1])?"bad":""} ${off?"off":""}" data-id="${esc(t.id)}">
+  <div class="c-top">${av(t.name,"lg")}<div class="c-who"><b>${esc(t.name)}</b><span>${c.arr?"Qarşılama":"Yola salma"} · ${esc(t.pax||1)} nəfər${t.bags?" · "+esc(t.bags)+" baqaj":""}</span></div>
+   <div class="c-time"><b>${hm(c.pick)}</b><span>${c.arr?"eniş":"otel"}${isToday&&!off?" · "+until(c.pick):""}</span></div></div>
+  <div class="route"><span class="ap">${esc(from)}</span><span class="ln">${PLANE}</span><span class="ap">${esc(to)}</span>
+   <span class="fl">${esc(t.flight||"reys yoxdur")}${c.arr&&c.delay>=5?` · <s>${hm(c.sched)}</s> <em>+${c.delay} dəq</em>`:""}${!c.arr?" · uçuş "+hm(c.sched):""}${t.flightCancelled?" · <em>ləğv</em>":t.flightStatus&&FST[t.flightStatus]?" · "+esc(FST[t.flightStatus]):""}</span></div>
+  <div class="c-bot">${d?`<span class="drv">${av(d.name,"sm")}${esc(d.name.split(" ")[0])}</span>`:`<span class="nov">sürücü yoxdur</span>`}${v?plate(v.plate):`<span class="nov">maşın yoxdur</span>`}
+   <span class="st s-${esc(t.status)}">${dots(t)}${ST[t.status]||esc(t.status)}</span></div>
+  ${fl.length?`<div class="flags">${fl.map(f=>`<span class="flag ${f[1]}">${esc(f[0])}</span>`).join("")}</div>`:""}
+  <div class="addr">${c.arr?"Aparılır: ":"Götürülür: "}${esc(t.address||"ünvan yoxdur")}</div></button>`;
+}
+function coord(){
+ const list=dayList(),act=list.filter(t=>t.status!=="cancelled"),isToday=S.date===todayStr();
+ const live=t=>!["done","noshow","cancelled"].includes(t.status);
+ const moving=act.filter(t=>["enroute","arrived","pickedup"].includes(t.status)),upcoming=act.filter(t=>t.status==="new"),finished=list.filter(t=>!live(t));
+ const unassigned=act.filter(t=>live(t)&&(!t.driverId||!t.vehicleId)).length,delayed=act.filter(t=>live(t)&&calc(t).delay>=15).length;
+ const arr=act.filter(t=>t.type==="arr").length,dep=act.length-arr;
+ const alerts=list.flatMap(t=>flags(t,list).filter(f=>!f[1]).map(f=>[t,f[0]]));
+ const q=S.q.trim().toLocaleLowerCase();
+ const match=t=>(S.f==="all"||(S.f==="arr"&&t.type==="arr")||(S.f==="dep"&&t.type==="dep")||(S.f==="todo"&&(!t.driverId||!t.vehicleId)&&live(t)))&&
+  (!q||[t.name,t.phone,t.flight,t.address,t.city,dName(t.driverId)].join(" ").toLocaleLowerCase().includes(q));
+ const sec=(title,arr)=>{const a=arr.filter(match);return a.length?`<section class="grp"><h2>${title}<span>${a.length}</span></h2><div class="list">${a.map(t=>card(t,list)).join("")}</div></section>`:""};
+ const body=sec("İndi hərəkətdə",moving)+sec("Növbəti",upcoming)+sec("Bitənlər",finished);
+ const title=act.length?`${dayLabel(S.date)} ${arr} qonaq gəlir, ${dep} qonaq yola düşür`:`${dayLabel(S.date)} hələ transfer yoxdur`;
+ return `<section class="hero"><p class="hi">${greet()}!</p><h1>${esc(title)}</h1>
+  <div class="stats"><span><b>${moving.length}</b>hərəkətdə</span><span class="${unassigned?"bad":""}"><b>${unassigned}</b>maşınsız</span><span class="${delayed?"warn":""}"><b>${delayed}</b>gecikən reys</span><span><b>${finished.filter(t=>t.status==="done").length}</b>tamamlanıb</span></div>
+  ${act.length?timeline(act,isToday):""}</section>
+ ${alerts.length?`<div class="alerts">${alerts.map(([t,a])=>`<button data-id="${esc(t.id)}"><i></i>${av(t.name,"sm")}<span><b>${esc(t.name.split(" ")[0])}:</b> ${esc(a)}</span></button>`).join("")}</div>`:""}
+ <div class="tools"><input type="search" id="q" placeholder="Ad, telefon, reys, sürücü…" value="${esc(S.q)}" aria-label="Axtarış">
+  ${[["all","Hamısı"],["arr","Qarşılama"],["dep","Yola salma"],["todo","Maşınsız"]].map(([k,l])=>`<button class="chip" data-f="${k}" aria-pressed="${S.f===k}">${l}</button>`).join("")}
+  <button class="btn" id="add">+ Yeni transfer</button></div>
+ ${body||`<div class="empty" style="margin-top:14px">${list.length?"Axtarışa uyğun transfer yoxdur.":"Bu gün üçün transfer yoxdur. \"+ Yeni transfer\" ilə ilk qonağı əlavə edin."}</div>`}`;
+}
+function driver(){
+ const isMe=me&&me.role==="driver";
+ if(isMe&&!S.drivers.some(d=>d.id===S.driverId))return `<div class="empty">Hesabınız hələ sürücü profilinə bağlanmayıb. Koordinatora deyin.</div>`;
+ if(!S.drivers.length)return `<div class="empty">Hələ sürücü yoxdur. "Park" bölməsindən əlavə edin.</div>`;
+ if(!S.drivers.some(d=>d.id===S.driverId))S.driverId=S.drivers[0].id;
+ const d=S.drivers.find(x=>x.id===S.driverId),v=S.vehicles.find(x=>x.id===d.vehicleId);
+ const list=dayList().filter(t=>t.driverId===S.driverId&&t.status!=="cancelled");
+ const next=list.find(t=>!["done","noshow"].includes(t.status)),rest=list.filter(t=>t!==next);
+ const job=t=>{const c=calc(t),nx=NEXT[t.status];
+  return `<div class="job hero"><span class="tag">${c.arr?"Qarşılama":"Yola salma"} · növbəti iş</span><h3>${esc(t.name)}</h3>
+   <div class="cd"><b>${hm(c.leave)}</b><span class="mut">yola çıx${S.date===todayStr()?" · "+until(c.leave):""}</span></div>
+   <div class="meta"><div><span class="mut">${c.arr?"Eniş":"Otelə çatma"}</span><b>${hm(c.pick)}${c.arr&&c.delay>=5?" (+"+c.delay+" dəq)":""}</b></div><div><span class="mut">Reys</span><b>${esc(t.flight||"—")} · ${esc(t.city||"")}</b></div>
+    <div><span class="mut">Nəfər / baqaj</span><b>${esc(t.pax||1)} / ${esc(t.bags||0)}</b></div><div><span class="mut">Telefon</span><b>${t.phone?`<a href="tel:${esc(t.phone.replace(/[^\d+]/g,""))}">${esc(t.phone)}</a>`:"—"}</b></div>
+    <div style="grid-column:1/-1"><span class="mut">${c.arr?"Aparılacaq ünvan":"Götürüləcək ünvan"}</span><b>${esc(t.address||"—")}</b></div>
+    ${t.note?`<div style="grid-column:1/-1"><span class="mut">Qeyd</span><b>${esc(t.note)}</b></div>`:""}</div>
+   ${nx?`<button class="btn big" data-adv="${esc(t.id)}">${nx[1]}</button>`:""}
+   <div class="dbtns"><button class="btn sec" data-sign="${esc(t.id)}">Ad lövhəsi</button>${t.status==="arrived"?`<button class="btn sec" data-noshow="${esc(t.id)}">Gəlmədi</button>`:`<button class="btn sec" data-cust="${esc(t.id)}">Müştəri linki</button>`}</div></div>`};
+ const small=t=>{const c=calc(t);return `<div class="job small" data-pick="${esc(t.id)}">${av(t.name)}<div><b>${esc(t.name)}</b><br><span class="mut" style="font-size:13px">${c.arr?"Eniş":"Otel"} ${hm(c.pick)} · ${esc(t.flight||"")}</span></div><span class="st s-${esc(t.status)}">${dots(t)}</span></div>`};
+ return `${isMe?"":`<p class="note">Koordinator kimi istənilən sürücünün ekranına baxa bilərsiniz:</p>
+ <div class="dsel">${S.drivers.map(x=>`<button data-drv="${esc(x.id)}" aria-pressed="${x.id===S.driverId}">${av(x.name,"sm")}${esc(x.name.split(" ")[0])}</button>`).join("")}</div>`}
+ <h2 style="margin:4px 0 4px;font-size:22px">Salam, ${esc(d.name.split(" ")[0])}!</h2>
+ <p class="note">${esc(dayLabel(S.date))}: ${list.length} transfer${v?" · "+esc(v.model)+" ":""}${v?plate(v.plate):""}</p>
+ ${next?job(next):`<div class="empty">${list.length?"Bütün işlər tamamlanıb. Əla!":"Bu gün sizə transfer təyin olunmayıb."}</div>`}
+ ${rest.map(small).join("")}`;
+}
+function fleet(){
+ const busy=id=>dayList().filter(t=>(t.driverId===id||t.vehicleId===id)&&!["done","cancelled","noshow"].includes(t.status)).length;
+ const ld=n=>`<span class="load ${n?"busy":""}">${n?n+" iş":"boş"}</span>`;
+ return `<div class="fleet"><section class="box"><h3>Sürücülər <span class="load">${S.drivers.length}</span></h3>
+  ${S.drivers.map(d=>`<div class="it">${av(d.name,"lg")}<div><b>${esc(d.name)}</b><span>${esc(d.phone||"telefon yoxdur")}</span><div style="margin-top:4px">${plate((S.vehicles.find(v=>v.id===d.vehicleId)||{}).plate)||'<span class="seat">maşın yoxdur</span>'}</div></div>${ld(busy(d.id))}<button class="del" data-deld="${esc(d.id)}" aria-label="Sil">Sil</button></div>`).join("")||`<div class="it"><span>Hələ sürücü yoxdur.</span></div>`}
+  <details><summary>+ Sürücü əlavə et</summary><form id="fDrv"><label>Ad, soyad<input name="name" required maxlength="60"></label><label>Telefon<input name="phone" type="tel" maxlength="20" placeholder="+994…"></label>
+  <label class="full">Əsas maşın<select name="vehicleId"><option value="">—</option>${S.vehicles.map(v=>`<option value="${esc(v.id)}">${esc(v.model)} · ${esc(v.plate)}</option>`).join("")}</select></label>
+  <div class="acts"><button class="btn">Əlavə et</button></div></form></details></section>
+ <section class="box"><h3>Maşınlar <span class="load">${S.vehicles.length}</span></h3>
+  ${S.vehicles.map(v=>`<div class="it"><div><b>${esc(v.model)}</b><div style="margin:4px 0">${plate(v.plate)}</div><span class="seat">${esc(v.seats)} yer${v.color?" · "+esc(v.color):""}</span></div>${ld(busy(v.id))}<button class="del" data-delv="${esc(v.id)}" aria-label="Sil">Sil</button></div>`).join("")||`<div class="it"><span>Hələ maşın yoxdur.</span></div>`}
+  <details><summary>+ Maşın əlavə et</summary><form id="fVeh"><label>Marka, model<input name="model" required maxlength="40" placeholder="Mercedes V-Class"></label><label>Nömrə<input name="plate" required maxlength="15" placeholder="10-AB-123"></label>
+  <label>Yer sayı<input name="seats" type="number" min="1" max="60" value="4" required></label><label>Rəng<input name="color" maxlength="20"></label>
+  <div class="acts"><button class="btn">Əlavə et</button></div></form></details></section>
+ ${live()&&me?.role==="coordinator"?team():""}</div>`;
+}
+function team(){
+ const RL={coordinator:"Koordinator",driver:"Sürücü"};
+ return `<section class="box" style="grid-column:1/-1"><h3>Komanda <span class="load">${S.staff.length}</span></h3>
+  <p class="note" style="padding:0 16px">Sistemə yalnız burada olan e-poçtlar girə bilər. Sürücünü siyahıdakı sürücü ilə bağlayın ki, yalnız öz işlərini görsün.</p>
+  ${S.staff.map(p=>`<div class="it">${av(p.name||p.email)}<div><b>${esc(p.name||p.email)}</b><span>${esc(p.email)} · ${RL[p.role]||esc(p.role)}${p.role==="driver"?" · "+esc(dName(p.driverId)||"sürücüyə bağlanmayıb"):""}</span></div>${p.email===me.email?'<span class="load">siz</span>':`<button class="del" data-dels="${esc(p.email)}">Sil</button>`}</div>`).join("")}
+  <details><summary>+ Komandaya əlavə et</summary><form id="fStaff"><label>E-poçt<input name="email" type="email" required maxlength="120"></label><label>Ad<input name="name" maxlength="60"></label>
+  <label>Rol<select name="role"><option value="driver">Sürücü</option><option value="coordinator">Koordinator</option></select></label>
+  <label>Hansı sürücüdür<select name="driverId"><option value="">—</option>${S.drivers.map(d=>`<option value="${esc(d.id)}">${esc(d.name)}</option>`).join("")}</select></label>
+  <div class="acts"><button class="btn">Əlavə et</button></div></form></details></section>`;
+}
+function phoneView(d,preview){
+ const c=calc({type:d.type,sched:d.sched,est:d.est}),idx=FLOW.indexOf(d.status);
+ const steps=c.arr?["Transfer təsdiqləndi","Sürücü hava limanına yoldadır","Sürücü sizi gəliş zalında gözləyir","Yoldasınız: "+(d.address||""),"Çatdınız, xoş istirahətlər!"]
+  :["Transfer təsdiqləndi","Sürücü sizə tərəf yoldadır","Sürücü ünvandadır, sizi gözləyir","Hava limanına yoldasınız","Çatdınız, uğurlu uçuş!"];
+ const tel=String(d.driver_phone||"").replace(/[^\d+]/g,"");
+ return `<div class="phone"><div class="ph-top"><span class="wm inv" style="font-size:24px;color:#fff">arr<span class="wi">ı</span>vo</span><h2>Salam, ${esc(d.first_name||"")}!</h2>
+  <p>${d.flight_cancelled?"Reysiniz ləğv edilib, sizinlə əlaqə saxlayacağıq.":c.arr?`${esc(d.flight||"")} reysi · eniş ${hm(c.land)}${c.delay>=5?", gecikmə nəzərə alınıb":""}`:`Sizi ${hm(c.pick)}-da götürəcəyik · uçuş ${hm(c.sched)}`}</p></div>
+  <div class="ph-card">${d.driver&&d.plate?`<div class="ph-drv">${av(d.driver,"xl")}<div><span class="mut" style="font-size:13px">Sürücünüz</span><b>${esc(d.driver)}</b><span class="mut" style="font-size:13px">${esc(d.driver_phone||"")}</span></div></div>
+   <div class="ph-car"><span>${esc(d.car||"")}${d.color?", "+esc(d.color):""}</span>${plate(d.plate)}</div>`:`<p style="margin:0">Sürücü məlumatı tezliklə burada görünəcək.</p>`}</div>
+  ${d.status==="cancelled"?`<p class="empty" style="margin:16px">Bu transfer ləğv edilib.</p>`:`<ol class="steps">${steps.map((s,i)=>`<li class="${d.status==="done"||i<idx?"d":i===idx?"n":""}"><i></i><span>${esc(s)}</span></li>`).join("")}</ol>`}
+  <div class="ph-foot">${c.arr?`<p class="note">Gəliş zalından çıxanda sürücü adınız yazılmış lövhə ilə sizi gözləyəcək.</p>`:""}
+   ${!preview&&tel?`<a class="btn callb" href="tel:${esc(tel)}">Sürücüyə zəng et</a>`:""}${preview||""}</div></div>`;
+}
+function cust(){
+ const list=dayList();
+ if(!list.length)return `<div class="empty">${esc(dayLabel(S.date))} transfer yoxdur.</div>`;
+ if(!list.some(t=>t.id===S.custId))S.custId=list[0].id;
+ const t=list.find(x=>x.id===S.custId),d=S.drivers.find(x=>x.id===t.driverId),v=S.vehicles.find(x=>x.id===t.vehicleId);
+ const data={type:t.type,first_name:t.name.split(" ")[0],flight:t.flight,city:t.city,sched:t.sched,est:t.est,address:t.address,status:t.status,flight_cancelled:t.flightCancelled,driver:d?.name,driver_phone:d?.phone,car:v?.model,color:v?.color,plate:v?.plate};
+ const btns=`<button class="btn" data-wa="${esc(t.id)}" style="width:100%">${live()&&String(t.phone||"").replace(/\D/g,"").length>=9?"WhatsApp-da göndər":"WhatsApp mesajını kopyala"}</button>${live()&&t.code?`<button class="btn sec" data-open="${esc(t.id)}" style="width:100%;margin-top:8px">Müştəri linkini aç</button>`:""}`;
+ return `<p class="note">Müştəri WhatsApp ilə gələn linkdə bunu görəcək. Qonağı seçin:</p>
+ <div class="dsel">${list.map(x=>`<button data-cs="${esc(x.id)}" aria-pressed="${x.id===t.id}">${av(x.name,"sm")}${esc(x.name.split(" ")[0])}</button>`).join("")}</div>
+ ${phoneView(data,btns)}`;
+}
+/* ===== Detal / forma ===== */
+function openDrawer(t,keep){
+ sel=t;const isNew=!t.id,c=calc(t),list=dayList();
+ const opts=(arr,cur,lab)=>`<option value="">—</option>`+arr.map(x=>`<option value="${esc(x.id)}" ${x.id===cur?"selected":""}>${esc(lab(x))}</option>`).join("");
+ const fl=isNew?[]:flags(t,list);
+ $("#dr").innerHTML=`<div class="dh"><h2 id="drT">${isNew?"Yeni transfer":esc(t.name)}</h2><button class="x" id="dx" aria-label="Bağla">×</button></div>
+ ${fl.length?`<div class="sect"><div class="flags" style="justify-content:flex-start">${fl.map(f=>`<span class="flag ${f[1]}">${esc(f[0])}</span>`).join("")}</div></div>`:""}
+ <form id="fT">
+  <label>Növ<select name="type"><option value="arr" ${t.type!=="dep"?"selected":""}>Qarşılama (hava limanı → ünvan)</option><option value="dep" ${t.type==="dep"?"selected":""}>Yola salma (ünvan → hava limanı)</option></select></label>
+  <label>Tarix<input type="date" name="date" value="${esc(t.date||S.date)}" required></label>
+  <label class="full">Müştərinin adı, soyadı<input name="name" value="${esc(t.name||"")}" required maxlength="80" placeholder="Rəşad Əliyev"></label>
+  <label>Telefon / WhatsApp<input name="phone" type="tel" value="${esc(t.phone||"")}" maxlength="25" placeholder="+994…"></label>
+  <label>Nəfər / baqaj<span style="display:flex;gap:6px"><input name="pax" type="number" min="1" max="60" value="${esc(t.pax||1)}" style="flex:1"><input name="bags" type="number" min="0" max="60" value="${esc(t.bags??1)}" style="flex:1"></span></label>
+  <label>Reys nömrəsi<input name="flight" value="${esc(t.flight||"")}" maxlength="10" placeholder="J2 61"></label>
+  <label>${t.type==="dep"?"Haraya uçur":"Haradan gəlir"}<input name="city" value="${esc(t.city||"")}" maxlength="40" placeholder="İstanbul"></label>
+  <label>${t.type==="dep"?"Uçuş vaxtı":"Planlaşdırılmış eniş"}<input type="time" name="sched" value="${esc(t.sched||"")}" required></label>
+  ${t.type==="dep"?"":`<label>Gözlənilən eniş<input type="time" name="est" value="${esc(t.est||"")}"></label>`}
+  <p class="hint">Reys izləyici qoşulubsa, gözlənilən vaxt, gecikmə və ləğv hər 15 dəqiqədə özü yenilənir. Lazım olsa əl ilə dəyişə bilərsiniz.</p>
+  <label class="full">${t.type==="dep"?"Götürüləcək ünvan / otel":"Aparılacaq ünvan / otel"}<input name="address" value="${esc(t.address||"")}" maxlength="120" placeholder="Hilton Baku"></label>
+  <label>Sürücü<select name="driverId">${opts(S.drivers,t.driverId,x=>x.name)}</select></label>
+  <label>Maşın<select name="vehicleId">${opts(S.vehicles,t.vehicleId,x=>x.model+" · "+x.plate+" · "+x.seats+" yer")}</select></label>
+  <label>Status<select name="status">${Object.entries(ST).map(([k,l])=>`<option value="${k}" ${(t.status||"new")===k?"selected":""}>${l}</option>`).join("")}</select></label>
+  <label class="chk" style="align-self:end"><input type="checkbox" name="flightCancelled" ${t.flightCancelled?"checked":""}>Reys ləğv edilib</label>
+  <label class="full">Qeyd<textarea name="note" maxlength="300" placeholder="Uşaq oturacağı, VIP, lövhədə başqa ad…">${esc(t.note||"")}</textarea></label>
+  ${isNew?"":`<p class="hint">${c.arr?`Sürücü ${hm(c.leave)}-da yola çıxmalı, eniş ${hm(c.land)}.`:`Sürücü ${hm(c.leave)}-da yola çıxmalı, otelə ${hm(c.pick)}-da çatmalı.`}</p>`}
+  <div class="acts"><button class="btn" type="submit">Yadda saxla</button>${isNew?"":`<button class="btn sec" type="button" id="dSign">Ad lövhəsi</button><button class="btn sec" type="button" id="dWa">WhatsApp mesajı</button><button class="btn ghost" type="button" id="dDel">Sil</button>`}</div>
+ </form>
+ ${isNew||!(t.history||[]).length?"":`<div class="sect"><h3>Tarixçə</h3><ul class="hist">${t.history.slice().reverse().map(h=>`<li><span>${esc(ST[h.s]||h.s)}</span><span>${esc(h.at)}</span></li>`).join("")}</ul></div>`}`;
+ if(!keep){$("#dr").classList.add("on");$("#ov").classList.add("on");$("#dr").setAttribute("aria-hidden","false");$("#dx").focus()}
+ $("#dx").onclick=closeDrawer;
+ const f=$("#fT");
+ f.type.onchange=()=>{const draft=read(f);openDrawer({...t,...draft},true)};
+ f.driverId.onchange=()=>{const d=S.drivers.find(x=>x.id===f.driverId.value);if(d&&d.vehicleId&&!f.vehicleId.value)f.vehicleId.value=d.vehicleId};
+ f.onsubmit=async e=>{e.preventDefault();const draft=read(f);
+  const obj={...t,...draft,status:draft.status||"new",code:t.code||uid().slice(0,6),history:t.history||[]};
+  if(!t.id)obj.history=[{s:"new",at:stamp()}];
+  else if(t.status!==obj.status)obj.history=[...obj.history,{s:obj.status,at:stamp()}];
+  await save("transfers",obj,isNew?"Transfer əlavə olundu":"Yadda saxlanıldı");closeDrawer()};
+ if(!isNew){$("#dDel").onclick=async()=>{if($("#dDel").dataset.sure){await store.del("transfers",t.id).catch(()=>toast("Silinmədi"));closeDrawer();toast("Silindi")}else{$("#dDel").dataset.sure=1;$("#dDel").textContent="Əminsiniz? Yenə basın"}};
+  $("#dSign").onclick=()=>sign(t);$("#dWa").onclick=()=>wa(t)}
+}
+const read=f=>{const o=Object.fromEntries(new FormData(f));o.flightCancelled=f.flightCancelled.checked;o.pax=+o.pax||1;o.bags=+o.bags||0;o.name=(o.name||"").trim();o.flight=(o.flight||"").toUpperCase().trim();if(o.type==="dep")o.est="";return o};
+const stamp=()=>{const d=bk();return nice(todayStr())+", "+pad(d.getUTCHours())+":"+pad(d.getUTCMinutes())};
+function closeDrawer(){sel=null;$("#dr").classList.remove("on");$("#ov").classList.remove("on");$("#dr").setAttribute("aria-hidden","true")}
+function sign(t){$("#signN").textContent=t.name;$("#signS").textContent=(t.flight?t.flight+" · ":"")+(t.city||"");$("#sign").classList.add("on");$("#signX").focus()}
+const trackLink=t=>t.code?location.origin+location.pathname+"#t="+t.code:"";
+async function wa(t){
+ const c=calc(t),d=S.drivers.find(x=>x.id===t.driverId),v=S.vehicles.find(x=>x.id===t.vehicleId);
+ const who=d&&v?` Sürücü: ${d.name}${d.phone?", "+d.phone:""}. Maşın: ${v.model}${v.color?", "+v.color:""}, ${v.plate}.`:"";
+ let txt=c.arr?`Salam, ${t.name}! ${nice(t.date)} tarixində ${t.flight||""} reysi ilə gəlişinizdə (${hm(c.land)}) sizi gəliş zalında adınız yazılmış lövhə ilə qarşılayacağıq.`+who
+  :`Salam, ${t.name}! ${nice(t.date)} tarixində sizi ${hm(c.pick)}-da ${t.address||"ünvandan"} götürüb hava limanına aparacağıq (uçuş ${hm(c.sched)}).`+who;
+ const link=live()?trackLink(t):"";if(link)txt+=`\nTransferinizi canlı izləyin: ${link}`;
+ txt+="\nArrivo";
+ const num=String(t.phone||"").replace(/\D/g,"");
+ if(live()&&num.length>=9){window.open("https://wa.me/"+num+"?text="+encodeURIComponent(txt),"_blank","noopener");return}
+ try{await navigator.clipboard.writeText(txt);toast("Mesaj kopyalandı, WhatsApp-a yapışdırın")}catch(e){toast(txt)}
+}
+async function advance(id,to){
+ const t=S.transfers.find(x=>x.id===id);if(!t)return;
+ if(live()){const {error}=await sb.rpc("set_status",{p_id:id,p_status:to});if(error){toast("Status dəyişmədi: "+error.message);render();return}await load("transfers");render();toast(ST[to]);return}
+ await save("transfers",{...t,status:to,history:[...(t.history||[]),{s:to,at:stamp()}]},ST[to]);
+}
+let tt;function toast(m){const el=$("#toast");el.textContent=m;el.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>el.classList.remove("on"),2600)}
+
+/* ===== Hadisələr ===== */
+document.querySelector(".tabs").addEventListener("click",e=>{const b=e.target.closest(".tab");if(b){S.role=b.dataset.r;closeDrawer();render()}});
+$("#date").addEventListener("change",e=>{if(e.target.value){S.date=e.target.value;render()}});
+$("#prev").onclick=()=>{S.date=shiftDate(S.date,-1);render()};
+$("#next").onclick=()=>{S.date=shiftDate(S.date,1);render()};
+$("#ov").onclick=closeDrawer;
+$("#logout").onclick=async()=>{if(sb)await sb.auth.signOut();location.reload()};
+$("#signX").onclick=()=>$("#sign").classList.remove("on");
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("#sign").classList.remove("on");closeDrawer()}});
+$("#main").addEventListener("input",e=>{if(e.target.id==="q"){S.q=e.target.value;const pos=e.target.selectionStart;render();const q=$("#q");if(q){q.focus();q.setSelectionRange(pos,pos)}}});
+
+$("#main").addEventListener("click",async e=>{
+ const g=s=>e.target.closest(s);let b;
+ if(b=g("[data-f]")){S.f=b.dataset.f;render();return}
+ if(b=g("[data-drv]")){S.driverId=b.dataset.drv;render();return}
+ if(b=g("[data-cs]")){S.custId=b.dataset.cs;render();return}
+ if(b=g("[data-pick]")){const t=S.transfers.find(x=>x.id===b.dataset.pick);if(t&&!(me&&me.role==="driver"))openDrawer(t);return}
+ if(g("#add")){openDrawer({type:"arr",date:S.date,status:"new",pax:1,bags:1});return}
+ if(b=g("[data-adv]")){const t=S.transfers.find(x=>x.id===b.dataset.adv);if(t&&NEXT[t.status]){b.disabled=true;await advance(t.id,NEXT[t.status][0])}return}
+ if(b=g("[data-noshow]")){await advance(b.dataset.noshow,"noshow");return}
+ if(b=g("[data-sign]")){const t=S.transfers.find(x=>x.id===b.dataset.sign);if(t)sign(t);return}
+ if(b=g("[data-cust]")){const t=S.transfers.find(x=>x.id===b.dataset.cust);if(me&&me.role==="driver"){if(t&&t.code)window.open(trackLink(t),"_blank","noopener");return}S.custId=b.dataset.cust;S.role="cust";render();return}
+ if(b=g("[data-wa]")){const t=S.transfers.find(x=>x.id===b.dataset.wa);if(t)wa(t);return}
+ if(b=g("[data-deld]")){if(b.dataset.sure){await store.del("drivers",b.dataset.deld).catch(()=>toast("Silinmədi"))}else{b.dataset.sure=1;b.textContent="Əminsiniz?"}return}
+ if(b=g("[data-dels]")){if(b.dataset.sure){await store.del("staff",b.dataset.dels).catch(()=>toast("Silinmədi"))}else{b.dataset.sure=1;b.textContent="Əminsiniz?"}return}
+ if(b=g("[data-open]")){const t=S.transfers.find(x=>x.id===b.dataset.open);if(t&&t.code)window.open(trackLink(t),"_blank","noopener");return}
+ if(g("#logout2")){await sb.auth.signOut();return}
+ if(b=g("[data-delv]")){if(b.dataset.sure){await store.del("vehicles",b.dataset.delv).catch(()=>toast("Silinmədi"))}else{b.dataset.sure=1;b.textContent="Əminsiniz?"}return}
+ if(b=g("[data-id]")){const t=S.transfers.find(x=>x.id===b.dataset.id);if(t)openDrawer(t);return}
+});
+$("#main").addEventListener("submit",async e=>{
+ e.preventDefault();const f=e.target,o=Object.fromEntries(new FormData(f));
+ if(f.id==="fDrv"){await save("drivers",{name:o.name.trim(),phone:o.phone.trim(),vehicleId:o.vehicleId},"Sürücü əlavə olundu")}
+ if(f.id==="fStaff"){if(await save("staff",{email:o.email,role:o.role,name:o.name.trim(),driverId:o.role==="driver"?o.driverId:""},"Komandaya əlavə olundu"))f.reset()}
+ if(f.id==="fLogin"){const act=e.submitter&&e.submitter.value==="up"?"up":"in";f.querySelectorAll("button").forEach(x=>x.disabled=true);
+  const cred={email:o.email.trim().toLowerCase(),password:o.password};
+  const {data,error}=act==="up"?await sb.auth.signUp(cred):await sb.auth.signInWithPassword(cred);
+  f.querySelectorAll("button").forEach(x=>x.disabled=false);
+  if(error){$("#lmsg").textContent=/Invalid login/i.test(error.message)?"E-poçt və ya parol səhvdir. İlk dəfədirsə, \"Hesab yarat\" düyməsinə basın.":/registered/i.test(error.message)?"Bu e-poçtla hesab artıq var, \"Daxil ol\" düyməsinə basın.":"Xəta: "+error.message;return}
+  if(!data.session){$("#lmsg").textContent="Hesab yaradıldı, amma e-poçt təsdiqi tələb olunur. Təlimatdakı \"Confirm email\" ayarını söndürün.";return}
+  boot();return}
+ if(f.id==="fVeh"){await save("vehicles",{model:o.model.trim(),plate:o.plate.trim().toUpperCase(),seats:+o.seats||4,color:o.color.trim()},"Maşın əlavə olundu")}
+});
+setInterval(()=>{if(S.mode!=="loading"&&!sel&&!document.activeElement?.matches?.("input,select,textarea"))render()},60000);
+
+/* ===== Başlanğıc ===== */
+function loginView(){return `<div class="login"><div class="brand"><i><svg viewBox="0 0 100 100" width="24" height="24" aria-hidden="true"><g transform="translate(58 4) scale(1.55) rotate(135 12 12)"><path fill="#fff" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></g><path fill="#fff" d="M18 64l6-18c1.5-4.5 4.5-7 9-7h34c4.5 0 7.5 2.5 9 7l6 18v18c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5v-4H33v4c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5z"/><path fill="#ff6a37" d="M29 62l4.5-13c.8-2.2 2.2-3.5 4.5-3.5h24c2.3 0 3.7 1.3 4.5 3.5L71 62z"/><circle cx="29" cy="71" r="4.5" fill="#ff6a37"/><circle cx="71" cy="71" r="4.5" fill="#ff6a37"/><rect x="41" y="68.5" width="18" height="5" rx="2.5" fill="#ff6a37"/></svg></i><span class="wm">arr<span class="wi">ı</span>vo</span></div>
+ <h1>Xoş gəlmisiniz</h1><p>Koordinatorun komandaya əlavə etdiyi e-poçtla daxil olun.</p>
+ <form id="fLogin"><input type="email" name="email" required placeholder="ad@mail.com" autocomplete="email" aria-label="E-poçt">
+ <input type="password" name="password" required minlength="6" placeholder="Parol (ən az 6 simvol)" autocomplete="current-password" aria-label="Parol">
+ <button class="btn" name="act" value="in">Daxil ol</button><button class="btn sec" name="act" value="up">İlk dəfədir? Hesab yarat</button></form><p id="lmsg" class="note" style="margin-top:12px"></p></div>`}
+const pend=new Set();let qt;
+function queue(t){if(!["transfers","drivers","vehicles","staff"].includes(t))return;if(t==="staff"&&me?.role!=="coordinator")return;pend.add(t);clearTimeout(qt);qt=setTimeout(async()=>{const ts=[...pend];pend.clear();await Promise.all(ts.map(load));render()},400)}
+async function trackPage(code){
+ document.body.classList.add("track");
+ const go=async()=>{
+  if(!sb){$("#main").innerHTML=`<div class="empty">Sistem hələ qurulmayıb.</div>`;return}
+  const {data,error}=await sb.rpc("track",{p_code:code});
+  $("#main").innerHTML=error||!data?`<div class="empty">Transfer tapılmadı və ya linkin vaxtı bitib.</div>`:phoneView(data,false);
+ };
+ await go();setInterval(go,30000);
+}
+async function boot(){
+ const m=location.hash.match(/^#t=([A-Za-z0-9]+)/);
+ if(m)return trackPage(m[1]);
+ if(!sb){S.mode="local";render();return}
+ const {data:{session}}=await sb.auth.getSession();
+ if(!session){S.mode="login";render();return}
+ S.email=session.user.email||"";
+ const {data,error}=await sb.rpc("whoami");
+ if(error||!data){S.mode="noaccess";render();return}
+ me=data;
+ if(me.role==="driver"){S.role="driver";S.driverId=me.driver_id||"";document.body.classList.add("is-driver")}
+ $("#logout").hidden=false;
+ await Promise.all(["transfers","drivers","vehicles"].concat(me.role==="coordinator"?["staff"]:[]).map(load));
+ S.mode="db";render();
+ sb.channel("arrivo").on("postgres_changes",{event:"*",schema:"public"},p=>queue(p.table)).subscribe();
+ setInterval(()=>queue("transfers"),5*60000);
+}
+if(sb)sb.auth.onAuthStateChange(ev=>{if(ev==="SIGNED_OUT")location.reload()});
+boot();
+}
+</script>
+</body>
+</html>
