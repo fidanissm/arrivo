@@ -716,7 +716,7 @@ $("#main").addEventListener("submit",async e=>{
   if(error){$("#lmsg").textContent="Xəta: "+error.message;return}
   recovering=false;history.replaceState(null,"",location.pathname);toast("Parol yeniləndi");S.mode="loading";render();boot();return}
  if(f.id==="fReq"){const bt=f.querySelector("button");bt.disabled=true;
-  const {data:rid,error}=await sb.rpc("create_request",{p:{type:o.type,date:o.date,sched:o.sched,flight:o.flight,city:o.city,address:o.address,pax:+o.pax||1,bags:+o.bags||0,name:o.name,phone:o.phone,note:o.note}});
+  const {data:rid,error}=await sb.rpc("create_request",{p:{type:o.type,date:o.date,sched:o.sched,flight:o.flight,city:o.city,address:o.address,pax:+o.pax||1,bags:+o.bags||0,name:o.name,phone:o.phone,note:o.note,lang:o.lang||"az"}});
   bt.disabled=false;if(error){toast(error.message);return}
   if(!o.wa&&rid)await sb.rpc("set_request_notify",{p_id:rid,p_on:false});
   toast("Sifariş göndərildi! Təkliflər gələndə burada görəcəksiniz.");f.reset();f.closest("details").open=false;await loadMine();render();return}
@@ -824,6 +824,7 @@ function orders(){
   <label>Ad, soyad<input name="name" required maxlength="80" value="${esc(last.name||"")}" autocomplete="name"></label>
   <label>Telefon / WhatsApp<input name="phone" type="tel" required maxlength="25" value="${esc(last.phone||"")}" placeholder="+994…" autocomplete="tel"></label>
   <label class="full">Qeyd<textarea name="note" maxlength="300" placeholder="Uşaq oturacağı, böyük baqaj, gecə uçuşu…"></textarea></label>
+  <label>Məktub dili / Email language<select name="lang">${[["az","Azərbaycan"],["en","English"],["ru","Русский"]].map(([k,v])=>`<option value="${k}" ${k===tlang()?"selected":""}>${v}</option>`).join("")}</select></label>
   <label class="chk full"><input type="checkbox" name="wa" checked>Təkliflər və sürücü haqqında WhatsApp-da xəbər al</label>
   <div class="acts"><button class="btn">Sifarişi göndər</button></div></form></details></section>
  ${sec("Açıq sifarişlər",open)}${sec("Təsdiqlənmiş",acc)}${sec("Keçmiş",old)}
