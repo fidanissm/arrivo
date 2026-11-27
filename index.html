@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Arrivo — transfer paneli</title>
+<title>Arrivo — Bakı hava limanı transferi · Baku airport transfer</title>
+<meta name="description" content="Baku (GYD) airport transfers: compare local companies, track your driver live on the map, flight delay tracking. Bakı hava limanı transferi, sürücünü xəritədə izlə. Трансфер из аэропорта Баку.">
 <meta name="theme-color" content="#ff5a36">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -263,6 +264,16 @@ body.customer .tabs,body.customer .datep{display:none}
 .legal{max-width:760px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:28px clamp(18px,4vw,40px);line-height:1.65}
 .legal h1{margin:0 0 4px;font-size:28px}.legal h2{font-size:18px;margin:26px 0 8px}.legal p,.legal li{font-size:15px;color:var(--ink2,inherit)}
 .legal ul{padding-left:20px;margin:6px 0}.legal .upd{color:var(--mut);font-size:13px;margin:0 0 18px}
+.lp{max-width:1040px;margin:0 auto}
+.lp-hero{display:grid;grid-template-columns:1.4fr 1fr;gap:28px;align-items:center;padding:18px 0 8px}.lp-k{margin:0;color:#ff6a37;font-weight:700;letter-spacing:.04em;font-size:13px}
+.lp-hero h1{font-size:clamp(28px,4.6vw,46px);line-height:1.1;margin:8px 0 14px;letter-spacing:-.02em}.lp-lead{font-size:17px;color:var(--mut);margin:0 0 20px;max-width:560px}
+.lp-cta{display:flex;gap:10px;flex-wrap:wrap}.lp-cta .btn{width:auto;min-width:190px;padding:0 22px}
+.lp-art{position:relative;display:grid;place-items:center}.lp-art svg{width:min(260px,62vw);height:auto;filter:drop-shadow(0 18px 30px rgba(255,106,55,.28));animation:arriB 3.2s ease-in-out infinite}
+.lp-bub{position:absolute;top:2%;right:2%;background:var(--card);border:1px solid var(--line);border-radius:16px 16px 16px 4px;padding:8px 12px;font-weight:600;font-size:14px;box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.lp-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:26px 0}.lp-steps>div{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}.lp-steps b{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#ff6a37;color:#fff}.lp-steps h3{margin:10px 0 4px;font-size:17px}.lp-steps p,.lp-feat p{margin:0;color:var(--mut);font-size:14.5px}
+.lp-feat{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.lp-feat>div{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}.lp-feat i{font-style:normal;font-size:26px}.lp-feat h3{margin:8px 0 4px;font-size:16px}
+.lp-co{display:flex;gap:20px;align-items:center;justify-content:space-between;margin:26px 0 8px;padding:22px;border-radius:22px;background:linear-gradient(135deg,#15161b,#2a2d36);color:#fff}.lp-co .btn{width:auto;flex:none;padding:0 26px}.lp-co h2{margin:0 0 6px}.lp-co p{margin:0;color:#c9ccd3;max-width:620px}
+@media(max-width:760px){.lp-hero{grid-template-columns:1fr}.lp-art{order:-1}.lp-art svg{width:150px}.lp-steps,.lp-feat{grid-template-columns:1fr}.lp-co{flex-direction:column;align-items:flex-start}.lp-cta .btn{flex:1;min-width:0}}
 .arri-btn{position:fixed;right:18px;bottom:18px;z-index:60;width:62px;height:62px;border-radius:50%;border:0;background:#fff;box-shadow:0 8px 24px rgba(20,20,30,.22);padding:6px;cursor:pointer;transition:transform .15s}.arri-btn:hover{transform:scale(1.06)}.arri-btn svg{width:100%;height:100%;animation:arriB 3.2s ease-in-out infinite}.arri-dot{position:absolute;top:4px;right:4px;width:12px;height:12px;border-radius:50%;background:#14a06f;border:2px solid #fff}
 @keyframes arriB{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 .arri-box{position:fixed;right:14px;bottom:92px;z-index:61;width:min(370px,calc(100vw - 28px));height:min(540px,calc(100vh - 120px));display:flex;flex-direction:column;background:var(--card,#fff);color:var(--ink,#15161b);border-radius:20px;box-shadow:0 16px 48px rgba(20,20,30,.28);overflow:hidden}
@@ -437,8 +448,9 @@ function render(){
  const m=$("#main");
  updateLive();geoSync();
  document.body.classList.toggle("on-admin",["admin","market","orders","report"].includes(S.role));
- document.body.classList.toggle("gate",["login","register","pending","blocked","reset"].includes(S.mode));
+ document.body.classList.toggle("gate",["home","login","register","pending","blocked","reset"].includes(S.mode));
  if(S.mode==="loading"){m.innerHTML=`<p class="note">${S.stale?"Baza hələ cavab vermir, internet bağlantısını yoxlayın.":"Yüklənir…"}</p>`;return}
+ if(S.mode==="home"){m.innerHTML=homeView();return}
  if(S.mode==="login"){m.innerHTML=loginView();return}
  if(S.mode==="reset"){m.innerHTML=resetView();return}
  if(S.mode==="register"){m.innerHTML=registerView();return}
@@ -690,6 +702,9 @@ $("#main").addEventListener("click",async e=>{
   if(!/^\S+@\S+\.\S+$/.test(em)){$("#lmsg").textContent=t3("Əvvəlcə yuxarıda e-poçtunuzu yazın, sonra yenidən basın.","Enter your email above first, then tap again.","Сначала введите e-mail выше, затем нажмите снова.");return}
   b.disabled=true;const {error}=await sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname});b.disabled=false;
   $("#lmsg").textContent=error?(/rate|seconds/i.test(error.message)?t3("Bir az gözləyin, sonra yenidən cəhd edin.","Please wait a bit and try again.","Подождите немного и попробуйте снова."):t3("Xəta: ","Error: ","Ошибка: ")+error.message):t3("Parolu yeniləmək üçün link "+em+" ünvanına göndərildi. Spam qovluğuna da baxın.","A password reset link was sent to "+em+". Check your spam folder too.","Ссылка для сброса пароля отправлена на "+em+". Проверьте и папку «Спам».");return}
+ if(g("#goBook")||g("#goLogin")){S.mode="login";render();window.scrollTo(0,0);return}
+ if(g("#goCo")){try{localStorage.setItem("arrivo_wantco","1")}catch(e){}S.mode="login";render();window.scrollTo(0,0);toast(t3("Əvvəlcə daxil olun və ya hesab yaradın, sonra şirkət qeydiyyatı açılacaq","Sign in or create an account first, then company sign-up opens","Сначала войдите или создайте аккаунт, затем откроется регистрация компании"));return}
+ if(g("#goHome")){S.mode="home";render();window.scrollTo(0,0);return}
  if(g("#coX")){try{localStorage.removeItem("arrivo_co")}catch(e){}S.co=null;render();return}
  if(g("#coCopy")){const u=coUrl();(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>toast("Link kopyalandı"),()=>prompt("Linki kopyalayın:",u));return}
  if(b=g("[data-lang]")){try{localStorage.setItem("arrivo_lang",b.dataset.lang)}catch(e){}document.documentElement.lang=b.dataset.lang;if(trackGo)trackGo();else{$("#logout").textContent=t3("Çıxış","Sign out","Выйти");render()}return}
@@ -765,7 +780,7 @@ function loginView(){return `${langBar(tlang())}<div class="login">${BRAND}${coC
  <input type="password" name="password" required minlength="6" placeholder="${t3("Parol (ən az 6 simvol)","Password (at least 6 characters)","Пароль (не менее 6 символов)")}" autocomplete="current-password" aria-label="${t3("Parol","Password","Пароль")}">
  <button class="btn" name="act" value="in">${t3("Daxil ol","Sign in","Войти")}</button><button class="btn sec" name="act" value="up">${t3("İlk dəfədir? Hesab yarat","First time? Create account","Впервые? Создать аккаунт")}</button></form>
  <p id="lmsg" class="note" style="margin-top:12px">${authErr?t3("Link işləmədi və ya vaxtı bitib. Yenidən \"Parolu unutmusunuz?\" basın.","The link did not work or has expired. Tap \"Forgot password?\" again.","Ссылка не сработала или устарела. Снова нажмите «Забыли пароль?»."):""}</p>
- <p class="note" style="text-align:center"><button class="linkb" id="forgot" type="button">${t3("Parolu unutmusunuz?","Forgot password?","Забыли пароль?")}</button></p>${legalLinks()}</div>`}
+ <p class="note" style="text-align:center"><button class="linkb" id="forgot" type="button">${t3("Parolu unutmusunuz?","Forgot password?","Забыли пароль?")}</button></p>${legalLinks()}${S.co?"":`<p class="note" style="text-align:center;margin:8px 0 0"><button class="linkb" id="goHome" type="button">← ${t3("Ana səhifə","Home","Главная")}</button></p>`}</div>`}
 function resetView(){return `<div class="login">${BRAND}<h1>${t3("Yeni parol","New password","Новый пароль")}</h1><p>${t3(esc(S.email)+" hesabı üçün yeni parol yazın.","Enter a new password for "+esc(S.email)+".","Введите новый пароль для "+esc(S.email)+".")}</p>
  <form id="fNewPass"><input type="password" name="p1" required minlength="6" placeholder="${t3("Yeni parol (ən az 6 simvol)","New password (at least 6 characters)","Новый пароль (не менее 6 символов)")}" autocomplete="new-password" aria-label="${t3("Yeni parol","New password","Новый пароль")}">
  <input type="password" name="p2" required minlength="6" placeholder="${t3("Parolu təkrar yazın","Repeat password","Повторите пароль")}" autocomplete="new-password" aria-label="${t3("Parolu təkrar yazın","Repeat password","Повторите пароль")}">
@@ -998,7 +1013,7 @@ const TL={
   thx:"Спасибо!",rate:"Оцените поездку",rateN:"Ваш отзыв поможет другим путешественникам выбрать компанию.",star:"звёзд",rateTx:"Комментарий (необязательно): водитель, машина, время…",send:"Отправить",sign:"При выходе из зала прилёта водитель будет ждать вас с табличкой с вашим именем.",call:"Позвонить водителю",
   nf:"Трансфер не найден или срок ссылки истёк.",nos:"Система ещё не настроена.",atAp:"Водитель в аэропорту",toAp:"До аэропорта примерно {m} мин",here:"Водитель на месте, ждёт вас",live:"Местоположение водителя",now:"только что",ago:"{m} мин назад",priv:"Политика конфиденциальности"}};
 const tlang=()=>{let l="";try{l=localStorage.getItem("arrivo_lang")||""}catch(e){}if(TL[l])return l;const n=(navigator.language||"").slice(0,2).toLowerCase();return n==="az"||n==="tr"?"az":n==="ru"||n==="uk"||n==="be"||n==="kk"?"ru":"en"};
-const ul=()=>S.mode!=="register"&&(document.body.classList.contains("customer")||["login","reset"].includes(S.mode))?tlang():"az";
+const ul=()=>S.mode!=="register"&&(document.body.classList.contains("customer")||["login","reset","home"].includes(S.mode))?tlang():"az";
 const t3=(a,e,r)=>{const l=ul();return l==="en"?e:l==="ru"?r:a};
 const ST3={new:["Gözlənilir","Scheduled","Ожидается"],enroute:["Sürücü yoldadır","Driver on the way","Водитель в пути"],arrived:["Sürücü çatdı","Driver has arrived","Водитель на месте"],pickedup:["Müştəri maşında","On board","В машине"],done:["Tamamlandı","Completed","Завершён"],noshow:["Gəlmədi","No-show","Неявка"],cancelled:["Ləğv edildi","Cancelled","Отменён"]};
 const stx=k=>ST3[k]?t3(...ST3[k]):"";
@@ -1086,7 +1101,7 @@ async function boot(){
  if(!sb){S.mode="local";render();return}
  await loadCo();
  const {data:{session}}=await sb.auth.getSession();
- if(!session){if(authErr)history.replaceState(null,"",location.pathname);S.mode="login";render();return}
+ if(!session){S.mode=authErr||S.co?"login":"home";if(authErr)history.replaceState(null,"",location.pathname);render();return}
  S.email=session.user.email||"";
  if(recovering){S.mode="reset";render();return}
  const {data,error}=await sb.rpc("whoami");
@@ -1094,7 +1109,8 @@ async function boot(){
  me=data;$("#logout").hidden=false;
  const co=me.company,hasCo=!!(me.role&&co&&co.status==="active");
  if(me.is_admin)$('.tab[data-r="admin"]').hidden=false;
- if(!me.role&&!me.is_admin){document.body.classList.add("customer");document.documentElement.lang=tlang();$("#logout").textContent=t3("Çıxış","Sign out","Выйти");S.role="orders";await loadMine();S.mode="db";render();
+ if(!me.role&&!me.is_admin){let wc=null;try{wc=localStorage.getItem("arrivo_wantco");localStorage.removeItem("arrivo_wantco")}catch(e){}
+  document.body.classList.add("customer");document.documentElement.lang=tlang();$("#logout").textContent=t3("Çıxış","Sign out","Выйти");S.role="orders";await loadMine();S.mode=wc?"register":"db";render();
   setInterval(async()=>{if(S.mode==="db"&&!busyForm()){await loadMine();render()}},20000);return}
  if(!hasCo&&!me.is_admin){S.mode=co&&co.status==="blocked"?"blocked":"pending";render();return}
  if(hasCo)$("#coName").textContent=co.name;
@@ -1120,6 +1136,30 @@ async function boot(){
 }
 window.addEventListener("hashchange",()=>{if(!/access_token|error_description|type=recovery/.test(location.hash))location.reload()});
 if(sb)sb.auth.onAuthStateChange((ev,ses)=>{if(ev==="SIGNED_OUT")location.reload();if(ev==="PASSWORD_RECOVERY"&&!recovering){recovering=true;S.email=ses?.user?.email||S.email;S.mode="reset";render()}});
+/* ===== Açıq ana səhifə (giriş etməmiş qonaq üçün) ===== */
+function homeView(){
+ const F=[
+  ["✈️",t3("Reysinizi izləyirik","We track your flight","Следим за рейсом"),t3("Reys gecikəndə sürücü yeni vaxta uyğun gəlir. Gözləmək üçün əlavə zəng, mesaj lazım deyil.","If your flight is late, the driver adjusts automatically. No calls, no stress.","Если рейс задержится, водитель приедет к новому времени. Без звонков и нервов.")],
+  ["📍",t3("Sürücü canlı xəritədə","Driver live on the map","Водитель на карте онлайн"),t3("Sürücünün adı, maşını, nömrəsi və harada olduğu linkdə. Taksi kimi, amma əvvəlcədən sifarişlə.","Driver name, car, plate and live location in one link. Like a taxi app, but pre-booked.","Имя водителя, машина, номер и где он сейчас — в одной ссылке. Как такси, но заранее.")],
+  ["🪧",t3("Adınızla qarşılama","Meet & greet with your name","Встреча с табличкой"),t3("Gəliş zalında sürücü adınız yazılmış lövhə ilə gözləyir.","Your driver waits in the arrivals hall with a sign showing your name.","Водитель ждёт в зале прилёта с табличкой с вашим именем.")],
+  ["⭐",t3("Reytinqli şirkətlər","Rated companies","Компании с рейтингом"),t3("Bir neçə yerli şirkət qiymət təklif edir, siz reytinqə və qiymətə baxıb seçirsiniz.","Several local companies send prices; you compare ratings and choose.","Несколько местных компаний предлагают цены — вы выбираете по рейтингу и цене.")],
+  ["🌍",t3("Öz dilinizdə","In your language","На вашем языке"),t3("Sayt, məktublar və izləmə səhifəsi Azərbaycan, İngilis və Rus dilində.","Website, emails and tracking page in English, Russian and Azerbaijani.","Сайт, письма и страница отслеживания на русском, английском и азербайджанском.")],
+  ["🚗",t3("Arri 24/7 kömək edir","Arri helps 24/7","Арри поможет 24/7"),t3("Sualınız olsa, sağ aşağıdakı balaca Arri-yə yazın.","Questions? Ask Arri, the little car in the corner.","Есть вопрос? Спросите Арри — маленькую машинку в углу.")]];
+ const S3=[[t3("Sifariş verin","Book","Закажите"),t3("Reys, vaxt və otel. 1 dəqiqə.","Flight, time and hotel. 1 minute.","Рейс, время и отель. 1 минута.")],
+  [t3("Təklifi seçin","Pick an offer","Выберите предложение"),t3("Şirkətlər qiymət göndərir, ən uyğununu seçirsiniz.","Companies send prices, you choose the best.","Компании присылают цены, вы выбираете лучшую.")],
+  [t3("Rahat gəlin","Arrive relaxed","Прилетайте спокойно"),t3("Sürücünü linkdə izləyin, o sizi lövhə ilə gözləyir.","Track your driver; they wait for you with a sign.","Следите за водителем — он ждёт вас с табличкой.")]];
+ return `${langBar(tlang())}<div class="lp">
+ <section class="lp-hero"><div><p class="lp-k">GYD · ${t3("Bakı hava limanı","Baku Airport","Аэропорт Баку")}</p>
+  <h1>${t3("Bakı hava limanı transferi — sürücünüzü xəritədə izləyin","Baku airport transfer — track your driver on the map","Трансфер из аэропорта Баку — водитель на карте онлайн")}</h1>
+  <p class="lp-lead">${t3("Yerli transfer şirkətlərindən qiymət alın, ən yaxşısını seçin. Reys gecikəndə sürücü yenə vaxtında olur.","Get prices from local transfer companies and pick the best. If your flight is late, your driver is still on time.","Получите цены от местных трансферных компаний и выберите лучшую. Даже если рейс задержится, водитель будет вовремя.")}</p>
+  <div class="lp-cta"><button class="btn big" id="goBook">${t3("Transfer sifariş et","Book a transfer","Заказать трансфер")}</button><button class="btn sec big" id="goLogin">${t3("Daxil ol","Sign in","Войти")}</button></div></div>
+  <div class="lp-art">${ARRI}<span class="lp-bub">${t3("Salam! Mən Arri 👋","Hi! I'm Arri 👋","Привет! Я Арри 👋")}</span></div></section>
+ <section class="lp-steps">${S3.map((x,i)=>`<div><b>${i+1}</b><h3>${x[0]}</h3><p>${x[1]}</p></div>`).join("")}</section>
+ <section class="lp-feat">${F.map(x=>`<div><i>${x[0]}</i><h3>${x[1]}</h3><p>${x[2]}</p></div>`).join("")}</section>
+ <section class="lp-co"><div><h2>${t3("Transfer şirkətisiniz?","Run a transfer company?","У вас трансферная компания?")}</h2>
+  <p>${t3("Arrivo-ya pulsuz qoşulun: transfer paneli, sürücü tətbiqi, canlı xəritə, reys izləmə, Instagram üçün öz sifariş linkiniz və aylıq hesabat — hamısı bir yerdə.","Join Arrivo for free: dispatch panel, driver app, live map, flight tracking, your own booking link for Instagram and monthly reports — all in one place.","Подключайтесь к Arrivo бесплатно: панель диспетчера, приложение водителя, карта, отслеживание рейсов, своя ссылка для Instagram и отчёты — всё в одном месте.")}</p></div>
+  <button class="btn big" id="goCo">${t3("Şirkətimi qoş","Join as a company","Подключить компанию")}</button></section>
+ <p class="legal-links"><a href="#qaydalar">${t3("İstifadə qaydaları","Terms of use","Условия использования")}</a> · <a href="#mexfilik">${t3("Məxfilik siyasəti","Privacy policy","Политика конфиденциальности")}</a> · arrivo.az@gmail.com</p></div>`}
 /* ===== Arri: köməkçi maskot, mini chat və Kömək bölməsi ===== */
 const ARRI=`<svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="arrG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a36"/><stop offset="1" stop-color="#ff9f43"/></linearGradient></defs>
 <path d="M32 15V8" stroke="#15161b" stroke-width="2.5" stroke-linecap="round"/><path fill="#15161b" d="M32 2.5l2.2 3.6h3.6l-2.6 1.6 1 3.3-4.2-2.2-4.2 2.2 1-3.3-2.6-1.6h3.6z"/>
@@ -1186,7 +1226,7 @@ function arriMount(){if($("#arriBtn"))return;
  h.addEventListener("click",e=>{if(e.target.closest("#helpX")||e.target===h)h.hidden=true});
  document.addEventListener("keydown",e=>{if(e.key==="Escape"){p.hidden=true;h.hidden=true}});
 }
-function arriSync(){arriMount();const show=!document.body.classList.contains("track")&&["db","login","local"].includes(S.mode)&&!location.hash.match(/^#(qaydalar|mexfilik)$/);
+function arriSync(){arriMount();const show=!document.body.classList.contains("track")&&["db","login","local","home"].includes(S.mode)&&!location.hash.match(/^#(qaydalar|mexfilik)$/);
  $("#arriBtn").hidden=!show;if(!show){$("#arriBox").hidden=true}
  const hb=$("#helpBtn");if(hb)hb.hidden=!(S.mode==="db"&&me&&arriRole()!=="cu")}
 function arriRender(){const l=arriLang(),T=AT[l],r=arriRole(),p=$("#arriBox");
