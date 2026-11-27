@@ -263,6 +263,18 @@ body.customer .tabs,body.customer .datep{display:none}
 .legal{max-width:760px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:28px clamp(18px,4vw,40px);line-height:1.65}
 .legal h1{margin:0 0 4px;font-size:28px}.legal h2{font-size:18px;margin:26px 0 8px}.legal p,.legal li{font-size:15px;color:var(--ink2,inherit)}
 .legal ul{padding-left:20px;margin:6px 0}.legal .upd{color:var(--mut);font-size:13px;margin:0 0 18px}
+.arri-btn{position:fixed;right:18px;bottom:18px;z-index:60;width:62px;height:62px;border-radius:50%;border:0;background:#fff;box-shadow:0 8px 24px rgba(20,20,30,.22);padding:6px;cursor:pointer;transition:transform .15s}.arri-btn:hover{transform:scale(1.06)}.arri-btn svg{width:100%;height:100%;animation:arriB 3.2s ease-in-out infinite}.arri-dot{position:absolute;top:4px;right:4px;width:12px;height:12px;border-radius:50%;background:#14a06f;border:2px solid #fff}
+@keyframes arriB{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.arri-box{position:fixed;right:14px;bottom:92px;z-index:61;width:min(370px,calc(100vw - 28px));height:min(540px,calc(100vh - 120px));display:flex;flex-direction:column;background:var(--card,#fff);color:var(--ink,#15161b);border-radius:20px;box-shadow:0 16px 48px rgba(20,20,30,.28);overflow:hidden}
+.arri-box[hidden],.arri-btn[hidden],.helpv[hidden]{display:none}
+.arri-box header{display:flex;align-items:center;gap:8px;padding:10px 12px;background:linear-gradient(135deg,#ff5a36,#ff9f43);color:#fff}.arri-box header b{flex:1;font-size:15px}.arri-box header .linkb{color:#fff;font-size:13px}.arri-box header .x,.helpv .x{background:none;border:0;color:inherit;font-size:18px;cursor:pointer;padding:4px 6px}
+.arri-av{display:inline-block;width:34px;height:34px;background:#fff;border-radius:50%;padding:3px;flex:none}.arri-av svg{width:100%;height:100%}
+.arri-log{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.arri-m{max-width:86%;padding:9px 12px;border-radius:14px;font-size:14px;line-height:1.45}.arri-m.a{background:var(--card2);align-self:flex-start;border-bottom-left-radius:4px}.arri-m.u{background:#ff6a37;color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.arri-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.arri-chip{border:1px solid var(--line,#e6e8ec);background:transparent;color:inherit;border-radius:999px;padding:6px 10px;font:inherit;font-size:12.5px;cursor:pointer;text-align:left}.arri-chip:hover{border-color:#ff6a37;color:#ff6a37}
+.arri-f{display:flex;gap:6px;padding:10px;border-top:1px solid var(--line,#e6e8ec)}.arri-f input{flex:1;min-width:0}.arri-f .btn{padding:0 14px}
+.helpv{position:fixed;inset:0;z-index:70;background:rgba(15,16,20,.5);overflow:auto;padding:24px 12px}.helpv-in{max-width:720px;margin:0 auto;background:var(--card,#fff);color:var(--ink,#15161b);border-radius:20px;padding:20px 22px}.helpv-in header{display:flex;align-items:center;gap:10px}.helpv-in h1{flex:1;margin:0;font-size:24px}.helpv-in h2{font-size:17px;margin:20px 0 8px}
+.helpv details{border-bottom:1px solid var(--line,#e6e8ec);padding:10px 0}.helpv summary{cursor:pointer;font-weight:600}.helpv details p{margin:8px 0 2px;line-height:1.55;font-size:14.5px}
 .cocard{text-align:left;display:flex;gap:12px;align-items:center;padding:14px 16px;margin:0 0 12px;border:2px solid #ff6a37}.cocard>div{flex:1;min-width:0}.cocard b{display:block;font-size:16px}.cocard>div>span{display:block;font-size:13px;color:var(--mut)}.cocard .x{background:none;border:0;font-size:18px;color:var(--mut);cursor:pointer;padding:4px 8px}
 .dirtag{background:#fff1e8;color:#b8430f;border-radius:10px;padding:8px 12px;margin:8px 0 0;font-size:13px}
 .langs{display:flex;justify-content:flex-end;gap:4px;margin:0 0 10px}.langs button{font:600 12px/1 inherit;padding:6px 9px;border:1px solid var(--line,#ddd);border-radius:8px;background:transparent;color:var(--mut);cursor:pointer}.langs button.on{background:#15161b;color:#fff;border-color:#15161b}
@@ -270,6 +282,8 @@ body.customer .tabs,body.customer .datep{display:none}
 .nbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 14px;margin-bottom:12px;font-size:14px;box-shadow:var(--sh)}.nbar span{flex:1;min-width:200px}
 .callb{display:block;text-align:center;text-decoration:none;line-height:46px;margin-bottom:8px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:760px){body:not(.customer):not(.gate) .arri-btn{bottom:88px;width:54px;height:54px}body:not(.customer):not(.gate) .arri-box{bottom:150px;height:min(520px,calc(100vh - 170px))}#helpBtn{font-size:0;width:38px;padding:0}#helpBtn::after{content:"?";font-size:17px;font-weight:700}}
+@media(prefers-reduced-motion:reduce){.arri-btn svg{animation:none}}
 @media(max-width:900px){.tab span{display:none}.coName{display:none}}
 @media(max-width:760px){
  .top{backdrop-filter:none;background:var(--bg)}
@@ -299,7 +313,7 @@ body.customer .tabs,body.customer .datep{display:none}
    <button class="tab" role="tab" data-r="admin" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><span>Admin</span></button>
   </nav>
   <div class="datep"><button id="prev" aria-label="Əvvəlki gün">‹</button><label><span id="dateL">Bu gün</span><input type="date" id="date" aria-label="Tarix"></label><button id="next" aria-label="Növbəti gün">›</button></div>
-  <button class="out" id="logout" hidden>Çıxış</button>
+  <button class="out" id="helpBtn" hidden>Kömək</button><button class="out" id="logout" hidden>Çıxış</button>
  </div>
 </header>
 <section class="wrap livewrap" id="live" hidden><div class="box"><h3>Canlı xəritə <span class="load" id="liveN"></span></h3><div id="lmap"></div></div></section>
@@ -417,6 +431,7 @@ const dayLabel=s=>s===todayStr()?"Bu gün":s===shiftDate(todayStr(),1)?"Sabah":s
 
 /* ===== Görünüşlər ===== */
 function render(){
+ arriSync();
  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.r===S.role));
  $("#date").value=S.date;$("#dateL").textContent=dayLabel(S.date)+(S.date===todayStr()?" · "+nice(S.date):"");
  const m=$("#main");
@@ -1105,6 +1120,97 @@ async function boot(){
 }
 window.addEventListener("hashchange",()=>{if(!/access_token|error_description|type=recovery/.test(location.hash))location.reload()});
 if(sb)sb.auth.onAuthStateChange((ev,ses)=>{if(ev==="SIGNED_OUT")location.reload();if(ev==="PASSWORD_RECOVERY"&&!recovering){recovering=true;S.email=ses?.user?.email||S.email;S.mode="reset";render()}});
+/* ===== Arri: köməkçi maskot, mini chat və Kömək bölməsi ===== */
+const ARRI=`<svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="arrG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a36"/><stop offset="1" stop-color="#ff9f43"/></linearGradient></defs>
+<path d="M32 15V8" stroke="#15161b" stroke-width="2.5" stroke-linecap="round"/><path fill="#15161b" d="M32 2.5l2.2 3.6h3.6l-2.6 1.6 1 3.3-4.2-2.2-4.2 2.2 1-3.3-2.6-1.6h3.6z"/>
+<rect x="11" y="50" width="10" height="9" rx="3.5" fill="#15161b"/><rect x="43" y="50" width="10" height="9" rx="3.5" fill="#15161b"/>
+<rect x="6" y="14" width="52" height="40" rx="17" fill="url(#arrG)"/>
+<rect x="13" y="20" width="38" height="19" rx="9.5" fill="#fff"/>
+<circle cx="25" cy="29.5" r="4.2" fill="#15161b"/><circle cx="39" cy="29.5" r="4.2" fill="#15161b"/><circle cx="26.4" cy="28" r="1.4" fill="#fff"/><circle cx="40.4" cy="28" r="1.4" fill="#fff"/>
+<circle cx="16" cy="44" r="3" fill="#ffd166"/><circle cx="48" cy="44" r="3" fill="#ffd166"/>
+<path d="M26.5 43.5q5.5 4.5 11 0" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg>`;
+
+// Bilik bazası: k = açar sözlər (aksentsiz, kiçik hərf), r = kimə (co koordinator, dr sürücü, cu müştəri)
+const KB=[
+ {r:"co",k:["transfer elave","yeni transfer","transfer yarat","transfer yaz"],q:"Transfer necə əlavə edim?",a:"Paneldə <b>+ Yeni transfer</b> basın: növ (qarşılama / yola salma), tarix, müştərinin adı və telefonu, nəfər / baqaj, qiymət, reys, vaxt və ünvanı yazın, sürücü ilə maşını seçin → <b>Yadda saxla</b>. Sürücünün nə vaxt yola çıxacağını sistem özü hesablayır."},
+ {r:"co",k:["surucu teyin","surucu sec","masin teyin","masin sec","teyin"],q:"Sürücü və maşını necə təyin edim?",a:"Transferin üstünə basın, açılan pəncərədə <b>Sürücü</b> və <b>Maşın</b> seçin → <b>Yadda saxla</b>. Sürücü bunu dərhal öz telefonunda görür və bildiriş alır."},
+ {r:"co",k:["surucu elave","yeni surucu","masin elave","yeni masin","park"],q:"Sürücü və maşın necə əlavə olunur?",a:"<b>Park</b> bölməsində <b>+ Maşın əlavə et</b> (model, nömrə, yer sayı, rəng) və <b>+ Sürücü əlavə et</b> (ad, telefon, adi maşını). Sürücünün sistemə girməsi üçün onun e-poçtunu <b>Park → Komanda</b>ya da əlavə edin."},
+ {r:"co",k:["komanda","isci","email elave","e-poct elave","koordinator elave","giris icaze"],q:"İşçini sistemə necə qoşum?",a:"<b>Park → Komanda → + Komandaya əlavə et</b>: e-poçt, ad, rol (sürücü / koordinator). Sürücünü siyahıdakı sürücü ilə bağlayın. Sonra həmin işçi bu e-poçtla saytda hesab yaradır və avtomatik şirkətinizə düşür."},
+ {r:"co",k:["whatsapp","mesaj","musteriye gonder","link gonder","izleme linki"],q:"Müştəriyə izləmə linkini necə göndərim?",a:"Transferi açın → <b>WhatsApp mesajı</b>. Mesajda sürücü, maşın və canlı izləmə linki olur. Müştəri linkdə sürücünü xəritədə görür, öz dilində (AZ / EN / RU)."},
+ {r:"co",k:["reys","gecikme","enis","flight","legv reys"],q:"Reys gecikəndə nə olur?",a:"Reys nömrəsi yazılan bu günkü və sabahkı transferlərin gözlənilən enişi, gecikməsi və ləğvi avtomatik yenilənir. Lazım olsa transferi açıb <b>Gözlənilən eniş</b> vaxtını əl ilə də yaza bilərsiniz."},
+ {r:"co",k:["birlesdir","bir masina","qrup","yigmaq"],q:"Bir neçə müştərini bir maşına necə yığım?",a:"Eyni reyslə gələn bir neçə müştəri olanda Paneldə “💡 Bir maşına yığmaq olar” qutusu çıxır. <b>Birləşdir</b> → <b>Təsdiqlə</b> basın, hamısı uyğun maşına yazılır."},
+ {r:"co",k:["sifaris","teklif","qiymet teklif","bazar","arrivo sifaris"],q:"Arrivo sifarişlərinə necə təklif verim?",a:"<b>Sifarişlər</b> bölməsində açıq sifarişə qiymət (₼) və qısa qeyd yazın → <b>Təklif göndər</b>. Müştəri sizi seçəndə bildiriş və e-poçt gəlir, transfer avtomatik Panelə düşür."},
+ {r:"co",k:["link","sifaris linki","instagram","birbasa","menim linkim","sirket linki"],q:"Şirkətimin sifariş linki haradadır?",a:"<b>Park → Sifariş linkiniz</b>. <b>Linki kopyala</b> və ya <b>WhatsApp-da paylaş</b>. Linklə gələn sifariş 2 saat yalnız sizə görünür (⭐ Birbaşa sifariş). Bu müddətdə təklif verməsəniz, digər şirkətlərə açılır."},
+ {r:"co",k:["hesabat","excel","csv","gelir","ayliq"],q:"Aylıq hesabatı haradan görüm?",a:"<b>Hesabat</b> bölməsi ay üzrə transferləri, gəliri, ləğvləri, günlər və sürücülər üzrə bölgünü göstərir. <b>⬇ Excel-ə yüklə (CSV)</b> ilə Excel-də açın."},
+ {r:"co",k:["reytinq","rey","ulduz","qiymetlendirme"],q:"Müştəri rəylərini harada görüm?",a:"<b>Park → Reytinq</b> qutusunda orta ulduz, rəy sayı və son şərhlər (sürücü adı ilə) görünür."},
+ {r:"co",k:["xerite","harada","canli","surucu hardadir","yer"],q:"Sürücü hazırda haradadır?",a:"Yolda olan sürücülərin yeri Panelin yuxarısındakı <b>Canlı xəritə</b>də görünür. Görünmürsə, sürücü “Yola çıxdım” basmalı, telefonda yer icazəsi verməli və səhifəni açıq saxlamalıdır."},
+ {r:"co",k:["sil","sehv","legv et","transfer sil"],q:"Səhv transferi necə silim?",a:"Transferi açın → <b>Sil</b>. Müştəri ləğv edibsə, silmək əvəzinə statusu <b>Ləğv edildi</b> edin ki, hesabatda qalsın."},
+ {r:"co",k:["sirket melumat","telefon","sirketin adi","link adi"],q:"Şirkət məlumatlarını necə dəyişim?",a:"<b>Park → Şirkət məlumatları</b>: ad, telefon (WhatsApp), şəhər və link adı. Telefonu mütləq yazın: müştərilər sizə bu nömrə ilə zəng edir."},
+ {r:"dr",k:["yola cixdim","status","duyme","catdim","qarsiladim","catdirdim","nece isleyir"],q:"Hansı düyməni nə vaxt basım?",a:"Növbəti işdə bir böyük düymə var: <b>Yola çıxdım</b> → <b>Çatdım</b> → <b>Qarşıladım</b> → <b>Çatdırdım</b>. Hər mərhələdə basın, müştəri və koordinator dərhal görür."},
+ {r:"dr",k:["lovhe","ad lovhesi","ad yazilmis"],q:"Ad lövhəsi nədir?",a:"<b>Ad lövhəsi</b> düyməsi telefonu tam ekran lövhəyə çevirir: müştərinin adı böyük yazılır. Gəliş zalında telefonu belə tutun."},
+ {r:"dr",k:["gelmedi","musteri yoxdur","no show","gozleyirem"],q:"Müştəri gəlmədisə nə edim?",a:"“Çatdım” basdıqdan sonra <b>Gəlmədi</b> düyməsi çıxır. Əvvəl müştəriyə zəng edin, sonra koordinatora xəbər verin və bu düyməni basın."},
+ {r:"dr",k:["yer","lokasiya","xerite","icaze","gps"],q:"Yerim niyə görünmür?",a:"Telefon yer (lokasiya) icazəsi istəyəndə <b>İcazə ver</b> basın. “Yola çıxdım”dan sonra transfer bitənə qədər səhifəni açıq saxlayın: yer yalnız səhifə açıq olanda yenilənir."},
+ {r:"dr",k:["qurasdir","tetbiq","telefona","app","ana ekran"],q:"Arrivo-nu telefona necə quraşdırım?",a:"Android: yuxarıdakı zolaqda <b>Quraşdır</b>. iPhone: Safari-də <b>Paylaş</b> → <b>Ana ekrana əlavə et</b>. Sonra Arrivo adi tətbiq kimi açılır."},
+ {r:"co dr",k:["parol","sifre","unutdum","daxil ola bilmirem","giris"],q:"Daxil ola bilmirəm",a:"Girişdə <b>Parolu unutmusunuz?</b> basın, e-poçtunuza link gələcək (spam qovluğuna da baxın). İşçisinizsə, e-poçtunuz <b>Park → Komanda</b>da düz yazılmalıdır."},
+ {r:"co dr",k:["elaqe","problem","kömek","komek","destek","support"],q:"Problem həll olmur",a:"<b>arrivo.az@gmail.com</b> ünvanına ekran şəkli ilə yazın, tez cavab verəcəyik."},
+ {r:"cu",k:["sifaris","nece sifaris","transfer sifaris","book","order","заказ","заказать"],q:["Necə sifariş verim?","How do I book?","Как заказать?"],a:["<b>+ Yeni sifariş</b>: tarix, eniş / uçuş vaxtı, reys, otel / ünvan, ad və telefonu yazın → <b>Sifarişi göndər</b>. Şirkətlər qiymət təklif edəcək, ən uyğununu seçəcəksiniz.","Tap <b>+ New order</b>: enter the date, landing / departure time, flight, hotel / address, your name and phone → <b>Send order</b>. Companies will send prices and you choose the best one.","Нажмите <b>+ Новый заказ</b>: дата, время посадки / вылета, рейс, отель / адрес, имя и телефон → <b>Отправить заказ</b>. Компании пришлют цены, вы выберете лучшую."]},
+ {r:"cu",k:["teklif","sec","qiymet","offer","price","choose","предлож","цена","выбра"],q:["Təklifi necə seçim?","How do I choose an offer?","Как выбрать предложение?"],a:["Sifarişinizin altında şirkətlərin qiymətləri və reytinqi görünür. Bəyəndiyinizdə <b>Seç</b> → <b>Təsdiqlə</b> basın. Şirkət sizinlə əlaqə saxlayacaq.","Under your order you see each company's price and rating. Tap <b>Choose</b> → <b>Confirm</b> on the one you like. The company will contact you.","Под заказом видны цены и рейтинг компаний. Нажмите <b>Выбрать</b> → <b>Подтвердить</b>. Компания свяжется с вами."]},
+ {r:"cu",k:["surucu","harada","izle","xerite","driver","where","track","водител","где","отслед"],q:["Sürücüm haradadır?","Where is my driver?","Где мой водитель?"],a:["Təsdiqlənmiş sifarişdə <b>Transferi izlə</b> basın: sürücünün adı, maşını, nömrəsi və yolda olanda xəritədə yeri görünür.","On your confirmed order tap <b>Track transfer</b>: you will see the driver's name, car, plate and, while on the way, the live location on a map.","В подтверждённом заказе нажмите <b>Отследить</b>: имя водителя, машина, номер и, пока он в пути, его место на карте."]},
+ {r:"cu",k:["legv","imtina","cancel","отмен"],q:["Sifarişi necə ləğv edim?","How do I cancel?","Как отменить заказ?"],a:["Sifarişin altında <b>Sifarişi ləğv et</b> (və ya <b>Ləğv et</b>) basın, sonra yenə basıb təsdiqləyin. Sürücü yola çıxıbsa, şirkətə zəng edin.","Tap <b>Cancel order</b> (or <b>Cancel</b>) under your order, then tap again to confirm. If the driver is already on the way, call the company.","Нажмите <b>Отменить заказ</b> (или <b>Отменить</b>) и подтвердите повторным нажатием. Если водитель уже в пути, позвоните в компанию."]},
+ {r:"cu",k:["odenis","pul","nagd","kart","pay","payment","cash","card","оплат","налич","карт"],q:["Ödəniş necə olur?","How do I pay?","Как оплатить?"],a:["Ödənişi birbaşa transfer şirkətinə edirsiniz (adətən sürücüyə nağd və ya şirkətin dediyi üsulla). Qiymət seçdiyiniz təklifdə yazılıb.","You pay the transfer company directly (usually the driver in cash, or as the company tells you). The price is the one in the offer you chose.","Оплата напрямую трансферной компании (обычно водителю наличными или как скажет компания). Цена указана в выбранном предложении."]},
+ {r:"cu",k:["gecikme","reys gecik","delay","late","задерж","опозд"],q:["Reysim gecikərsə?","What if my flight is late?","Что если рейс задержится?"],a:["Narahat olmayın: reys nömrəsini yazmısınızsa, gecikmə izlənilir və sürücü yeni vaxta uyğun gəlir.","Don't worry: if you entered your flight number, delays are tracked and the driver adjusts to the new time.","Не волнуйтесь: если вы указали номер рейса, задержки отслеживаются и водитель подстроится под новое время."]},
+ {r:"cu",k:["dil","language","язык","english","русск"],q:["Dili necə dəyişim?","How do I change language?","Как сменить язык?"],a:["Yuxarıdakı <b>AZ / EN / RU</b> düymələri ilə.","Use the <b>AZ / EN / RU</b> buttons at the top.","Кнопками <b>AZ / EN / RU</b> вверху."]},
+ {r:"cu",k:["elaqe","problem","komek","help","contact","support","помощ","связ"],q:["Kiminlə əlaqə saxlayım?","Who do I contact?","Куда обратиться?"],a:["Transferlə bağlı: seçdiyiniz şirkətə <b>Şirkətə zəng</b> düyməsi ilə. Saytla bağlı: <b>arrivo.az@gmail.com</b>.","About your transfer: call the company with <b>Call company</b>. About the website: <b>arrivo.az@gmail.com</b>.","По трансферу: кнопка <b>Позвонить</b> в компанию. По сайту: <b>arrivo.az@gmail.com</b>."]}
+];
+const arriRole=()=>{if(document.body.classList.contains("customer")||!me)return "cu";if(me.role==="driver"&&!me.is_admin)return "dr";return "co"};
+const arriLang=()=>arriRole()==="cu"?tlang():"az";
+const pick3=(v,l)=>Array.isArray(v)?v[l==="en"?1:l==="ru"?2:0]:v;
+const fold=s=>String(s||"").toLowerCase().replace(/[əä]/g,"e").replace(/ı/g,"i").replace(/ö/g,"o").replace(/ü/g,"u").replace(/ş/g,"s").replace(/ç/g,"c").replace(/ğ/g,"g").replace(/ё/g,"е");
+const AT={az:{hi:"Salam! Mən Arri, Arrivo-nun köməkçisiyəm. Nə sualınız var?",ph:"Sualınızı yazın…",send:"Göndər",dk:"Bunu dəqiq bilmirəm 🙈 Aşağıdakı suallardan birini seçin və ya arrivo.az@gmail.com ünvanına yazın.",full:"📖 Tam təlimat",title:"Arri · köməkçi",think:"Fikirləşirəm…"},
+ en:{hi:"Hi! I'm Arri, Arrivo's helper. How can I help?",ph:"Type your question…",send:"Send",dk:"I'm not sure about that 🙈 Pick one of the questions below or write to arrivo.az@gmail.com.",full:"📖 Help",title:"Arri · helper",think:"Thinking…"},
+ ru:{hi:"Привет! Я Арри, помощник Arrivo. Чем помочь?",ph:"Напишите вопрос…",send:"Отправить",dk:"Точно не знаю 🙈 Выберите вопрос ниже или напишите на arrivo.az@gmail.com.",full:"📖 Помощь",title:"Арри · помощник",think:"Думаю…"}};
+let arriLog=[],arriAI=true;
+function kbFor(r){return KB.filter(x=>x.r.split(" ").includes(r))}
+function kbAnswer(text,r,l){const t=fold(text);let best=null,bs=0;
+ for(const x of kbFor(r)){let s=0;for(const k of x.k){const f=fold(k);if(t.includes(f))s+=f.length>6?3:2;else{const w=f.split(" ").filter(p=>p.length>2&&t.includes(p.slice(0,Math.max(4,p.length-2))));s+=w.length}}
+  if(s>bs){bs=s;best=x}}
+ return bs>=2?pick3(best.a,l):null}
+function arriMount(){if($("#arriBtn"))return;
+ const b=document.createElement("button");b.id="arriBtn";b.className="arri-btn";b.setAttribute("aria-label","Arri");b.innerHTML=ARRI+'<i class="arri-dot"></i>';document.body.appendChild(b);
+ const p=document.createElement("section");p.id="arriBox";p.className="arri-box";p.hidden=true;p.setAttribute("role","dialog");document.body.appendChild(p);
+ const h=document.createElement("div");h.id="helpV";h.className="helpv";h.hidden=true;h.setAttribute("role","dialog");document.body.appendChild(h);
+ b.addEventListener("click",()=>{p.hidden?arriOpen():(p.hidden=true)});
+ p.addEventListener("click",e=>{const q=e.target.closest("[data-aq]");if(q){arriAsk(q.dataset.aq);return}
+  if(e.target.closest("#arriX")){p.hidden=true;return}if(e.target.closest("#arriFull")){helpOpen();return}});
+ p.addEventListener("submit",e=>{e.preventDefault();const i=$("#arriIn");const v=i.value.trim();if(!v)return;i.value="";arriAsk(v)});
+ h.addEventListener("click",e=>{if(e.target.closest("#helpX")||e.target===h)h.hidden=true});
+ document.addEventListener("keydown",e=>{if(e.key==="Escape"){p.hidden=true;h.hidden=true}});
+}
+function arriSync(){arriMount();const show=!document.body.classList.contains("track")&&["db","login","local"].includes(S.mode)&&!location.hash.match(/^#(qaydalar|mexfilik)$/);
+ $("#arriBtn").hidden=!show;if(!show){$("#arriBox").hidden=true}
+ const hb=$("#helpBtn");if(hb)hb.hidden=!(S.mode==="db"&&me&&arriRole()!=="cu")}
+function arriRender(){const l=arriLang(),T=AT[l],r=arriRole(),p=$("#arriBox");
+ const chips=kbFor(r).slice(0,r==="co"?6:5).map(x=>`<button type="button" class="arri-chip" data-aq="${esc(pick3(x.q,l))}">${esc(pick3(x.q,l))}</button>`).join("");
+ p.innerHTML=`<header><span class="arri-av">${ARRI}</span><b>${T.title}</b>${r==="cu"?"":`<button type="button" class="linkb" id="arriFull">${T.full}</button>`}<button type="button" class="x" id="arriX" aria-label="✕">✕</button></header>
+ <div class="arri-log" id="arriLog">${[{w:"a",t:T.hi}].concat(arriLog).map(m=>`<div class="arri-m ${m.w}">${m.w==="a"?m.t:esc(m.t)}</div>`).join("")}<div class="arri-chips">${chips}</div></div>
+ <form class="arri-f"><input id="arriIn" maxlength="300" placeholder="${T.ph}" autocomplete="off"><button class="btn">${T.send}</button></form>`;
+ const g=$("#arriLog");g.scrollTop=g.scrollHeight}
+function arriOpen(){$("#arriBox").hidden=false;arriRender();setTimeout(()=>$("#arriIn")?.focus(),50)}
+async function arriAsk(q){const l=arriLang(),r=arriRole(),T=AT[l];arriLog.push({w:"u",t:q});arriLog.push({w:"a",t:`<span class="mut">${T.think}</span>`,tmp:1});arriRender();
+ let ans=null;
+ if(arriAI&&sb&&S.mode==="db"){try{const kb=kbFor(r).map(x=>"S: "+pick3(x.q,l)+"\nC: "+pick3(x.a,l).replace(/<[^>]+>/g,"")).join("\n\n");
+   const {data,error}=await sb.functions.invoke("assistant",{body:{q,role:r,lang:l,kb,history:arriLog.filter(m=>!m.tmp).slice(-7,-1).map(m=>({role:m.w==="u"?"user":"assistant",content:m.t.replace(/<[^>]+>/g,"")}))}});
+   if(!error&&data&&data.answer)ans=esc(data.answer).replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>").replace(/\n/g,"<br>");else arriAI=false}catch(e){arriAI=false}}
+ if(!ans)ans=kbAnswer(q,r,l)||T.dk;
+ arriLog=arriLog.filter(m=>!m.tmp);arriLog.push({w:"a",t:ans});if(arriLog.length>40)arriLog=arriLog.slice(-40);arriRender()}
+function helpOpen(){const r=arriRole(),h=$("#helpV");$("#arriBox").hidden=true;
+ const sec=(t,items)=>`<section><h2>${t}</h2>${items.map(x=>`<details><summary>${esc(pick3(x.q,"az"))}</summary><p>${pick3(x.a,"az")}</p></details>`).join("")}</section>`;
+ const co=KB.filter(x=>x.r.split(" ").includes("co")),dr=KB.filter(x=>x.r==="dr"||x.r==="co dr");
+ h.innerHTML=`<div class="helpv-in"><header><span class="arri-av">${ARRI}</span><h1>Kömək</h1><button type="button" class="x" id="helpX" aria-label="Bağla">✕</button></header>
+ <p class="note">Arrivo-nun qısa təlimatı. Sualınız burada yoxdursa, sağ aşağıdakı <b>Arri</b>yə yazın və ya <b>arrivo.az@gmail.com</b> ünvanına müraciət edin.</p>
+ ${r==="dr"?sec("Sürücü",dr):sec("Koordinator",co)+sec("Sürücü",dr.filter(x=>x.r==="dr"))}</div>`;
+ h.hidden=false;h.scrollTop=0}
+$("#helpBtn").addEventListener("click",()=>helpOpen());
 boot();
 }
 </script>
