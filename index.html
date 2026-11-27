@@ -246,6 +246,17 @@ body.customer .tabs,body.customer .datep{display:none}
 .stars button.on{color:#ffb020}
 .rate textarea{width:100%;box-sizing:border-box;min-height:64px;margin-bottom:10px}
 .star{color:#ffb020;font-weight:800}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px}
+.kpi span{display:block;font-size:12px;color:var(--mut);font-weight:700}.kpi b{display:block;font-size:24px;margin-top:2px}.kpi small{color:var(--mut);font-size:12px}
+.bars{display:flex;align-items:flex-end;gap:3px;height:120px;padding:8px 2px 0}
+.bars i{flex:1;background:linear-gradient(180deg,#ff9f43,#ff5a36);border-radius:4px 4px 0 0;min-height:2px;position:relative}
+.bars i.z{background:var(--line)}
+.bars-x{display:flex;justify-content:space-between;font-size:11px;color:var(--mut);padding:4px 2px 0}
+.rtab{width:100%;border-collapse:collapse;font-size:14px}.rtab th{text-align:left;font-size:12px;color:var(--mut);font-weight:700;padding:8px 6px;border-bottom:1px solid var(--line)}
+.rtab td{padding:9px 6px;border-bottom:1px solid var(--line)}.rtab td.n,.rtab th.n{text-align:right;white-space:nowrap}
+.rbox{padding-bottom:14px}.rbox>.note,.rbox>.bars,.rbox>.bars-x,.rbox>div{padding-left:16px;padding-right:16px}
+.mnav{display:flex;align-items:center;gap:8px}.mnav b{min-width:130px;text-align:center}
 .legal{max-width:760px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:28px clamp(18px,4vw,40px);line-height:1.65}
 .legal h1{margin:0 0 4px;font-size:28px}.legal h2{font-size:18px;margin:26px 0 8px}.legal p,.legal li{font-size:15px;color:var(--ink2,inherit)}
 .legal ul{padding-left:20px;margin:6px 0}.legal .upd{color:var(--mut);font-size:13px;margin:0 0 18px}
@@ -277,6 +288,7 @@ body.customer .tabs,body.customer .datep{display:none}
    <button class="tab" role="tab" data-r="driver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 14.5V21M9.6 11.2 3.5 9.5M14.4 11.2l6.1-1.7"/></svg><span>Sürücü</span></button>
    <button class="tab" role="tab" data-r="fleet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 17h14M3 13l2-6h14l2 6v4H3z"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/></svg><span>Park</span></button>
    <button class="tab" role="tab" data-r="cust"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg><span>Müştəri</span></button>
+   <button class="tab" role="tab" data-r="report" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Hesabat</span></button>
    <button class="tab" role="tab" data-r="market" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16l-1.5 12h-13z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span>Sifarişlər</span><i class="cnt" id="mktN"></i></button>
    <button class="tab" role="tab" data-r="admin" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><span>Admin</span></button>
   </nav>
@@ -324,13 +336,13 @@ let sel=null;
 const live=()=>sb&&S.mode==="db";
 const clean=o=>{if(!o.id)delete o.id;return o};
 function fromRow(col,r){
- if(col==="transfers")return {id:r.id,type:r.type,date:r.date,name:r.name,phone:r.phone,pax:r.pax,bags:r.bags,flight:r.flight,city:r.city,sched:r.sched,est:r.est,address:r.address,note:r.note,driverId:r.driver_id||"",vehicleId:r.vehicle_id||"",status:r.status,flightCancelled:r.flight_cancelled,flightStatus:r.flight_status||"",code:r.code,history:r.history||[],lat:r.drv_lat??null,lng:r.drv_lng??null,locAt:r.drv_at||null};
+ if(col==="transfers")return {id:r.id,type:r.type,date:r.date,name:r.name,phone:r.phone,pax:r.pax,bags:r.bags,flight:r.flight,city:r.city,sched:r.sched,est:r.est,address:r.address,note:r.note,driverId:r.driver_id||"",vehicleId:r.vehicle_id||"",status:r.status,flightCancelled:r.flight_cancelled,flightStatus:r.flight_status||"",code:r.code,history:r.history||[],price:r.price??null,lat:r.drv_lat??null,lng:r.drv_lng??null,locAt:r.drv_at||null};
  if(col==="drivers")return {id:r.id,name:r.name,phone:r.phone,vehicleId:r.vehicle_id||""};
  if(col==="staff")return {id:r.email,email:r.email,role:r.role,name:r.name,driverId:r.driver_id||""};
  return {...r};
 }
 function toRow(col,o){
- if(col==="transfers")return clean({id:o.id,type:o.type,date:o.date,name:o.name,phone:o.phone||"",pax:+o.pax||1,bags:+o.bags||0,flight:o.flight||"",city:o.city||"",sched:o.sched,est:o.est||"",address:o.address||"",note:o.note||"",driver_id:o.driverId||null,vehicle_id:o.vehicleId||null,status:o.status||"new",flight_cancelled:!!o.flightCancelled,history:o.history||[]});
+ if(col==="transfers")return clean({id:o.id,type:o.type,date:o.date,name:o.name,phone:o.phone||"",pax:+o.pax||1,bags:+o.bags||0,flight:o.flight||"",city:o.city||"",sched:o.sched,est:o.est||"",address:o.address||"",note:o.note||"",driver_id:o.driverId||null,vehicle_id:o.vehicleId||null,status:o.status||"new",flight_cancelled:!!o.flightCancelled,history:o.history||[],price:o.price===""||o.price==null||isNaN(+o.price)?null:+o.price});
  if(col==="drivers")return clean({id:o.id,name:o.name,phone:o.phone||"",vehicle_id:o.vehicleId||null});
  if(col==="vehicles")return clean({id:o.id,model:o.model,plate:o.plate,seats:+o.seats||4,color:o.color||""});
  if(col==="staff")return {email:String(o.email).trim().toLowerCase(),role:o.role,name:o.name||"",driver_id:o.driverId||null};
@@ -403,7 +415,7 @@ function render(){
  $("#date").value=S.date;$("#dateL").textContent=dayLabel(S.date)+(S.date===todayStr()?" · "+nice(S.date):"");
  const m=$("#main");
  updateLive();geoSync();
- document.body.classList.toggle("on-admin",["admin","market","orders"].includes(S.role));
+ document.body.classList.toggle("on-admin",["admin","market","orders","report"].includes(S.role));
  document.body.classList.toggle("gate",["login","register","pending","blocked","reset"].includes(S.mode));
  if(S.mode==="loading"){m.innerHTML=`<p class="note">${S.stale?"Baza hələ cavab vermir, internet bağlantısını yoxlayın.":"Yüklənir…"}</p>`;return}
  if(S.mode==="login"){m.innerHTML=loginView();return}
@@ -413,7 +425,7 @@ function render(){
  const hadQ=document.activeElement&&document.activeElement.id==="q",qPos=hadQ?document.activeElement.selectionStart:0;
  const banner=S.mode==="local"?`<p class="note"><b>Sınaq rejimi:</b> Supabase ayarları doldurulmayıb, dəyişikliklər yalnız bu səhifədə qalır və yeniləyəndə silinir.</p>`:S.stale?`<p class="note">Məlumat köhnə ola bilər, bağlantı bərpa olunur…</p>`:"";
  const keep=[...m.querySelectorAll("form#fReq,form#fCo,form.offer")].map(f=>({k:f.id?"#"+f.id:`form.offer[data-req="${f.dataset.req}"]`,v:[...f.elements].filter(x=>x.name).map(x=>[x.name,x.value]),open:f.closest("details")?.open}));
- m.innerHTML=banner+(["coord","market","orders","driver"].includes(S.role)?notifBar():"")+({coord,driver,fleet,cust,admin,orders,market}[S.role]||coord)();
+ m.innerHTML=banner+(["coord","market","orders","driver"].includes(S.role)?notifBar():"")+({coord,driver,fleet,cust,admin,orders,market,report}[S.role]||coord)();
  keep.forEach(s=>{const f=m.querySelector(s.k);if(!f)return;s.v.forEach(([n,v])=>{if(f.elements[n])f.elements[n].value=v});const d=f.closest("details");if(d&&s.open!=null)d.open=s.open});
  const mk=S.market?S.market.filter(x=>x.state==="open"&&(!x.my_offer||x.my_offer.status==="withdrawn")).length:0;$("#mktN").textContent=mk||"";
  if(hadQ){const q=$("#q");if(q){q.focus();q.setSelectionRange(qPos,qPos)}}
@@ -568,6 +580,7 @@ function openDrawer(t,keep){
   <label class="full">Müştərinin adı, soyadı<input name="name" value="${esc(t.name||"")}" required maxlength="80" placeholder="Rəşad Əliyev"></label>
   <label>Telefon / WhatsApp<input name="phone" type="tel" value="${esc(t.phone||"")}" maxlength="25" placeholder="+994…"></label>
   <label>Nəfər / baqaj<span style="display:flex;gap:6px"><input name="pax" type="number" min="1" max="60" value="${esc(t.pax||1)}" style="flex:1"><input name="bags" type="number" min="0" max="60" value="${esc(t.bags??1)}" style="flex:1"></span></label>
+  <label>Qiymət, ₼<input name="price" type="number" min="0" max="99999" step="0.5" value="${t.price??""}" placeholder="məs. 40"></label>
   <label>Reys nömrəsi<input name="flight" value="${esc(t.flight||"")}" maxlength="10" placeholder="J2 61"></label>
   <label>${t.type==="dep"?"Haraya uçur":"Haradan gəlir"}<input name="city" value="${esc(t.city||"")}" maxlength="40" placeholder="İstanbul"></label>
   <label>${t.type==="dep"?"Uçuş vaxtı":"Planlaşdırılmış eniş"}<input type="time" name="sched" value="${esc(t.sched||"")}" required></label>
@@ -620,7 +633,7 @@ async function advance(id,to){
 let tt;function toast(m){const el=$("#toast");el.textContent=m;el.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>el.classList.remove("on"),2600)}
 
 /* ===== Hadisələr ===== */
-document.querySelector(".tabs").addEventListener("click",async e=>{const b=e.target.closest(".tab");if(b){S.role=b.dataset.r;closeDrawer();render();if(S.role==="admin"&&live()){await loadAdmin();render()}if(S.role==="market"&&live()){await loadMarket();render()}}});
+document.querySelector(".tabs").addEventListener("click",async e=>{const b=e.target.closest(".tab");if(b){S.role=b.dataset.r;closeDrawer();render();if(S.role==="admin"&&live()){await loadAdmin();render()}if(S.role==="market"&&live()){await loadMarket();render()}if(S.role==="report"&&live()){await loadReport();render()}}});
 $("#date").addEventListener("change",e=>{if(e.target.value){S.date=e.target.value;render()}});
 $("#prev").onclick=()=>{S.date=shiftDate(S.date,-1);render()};
 $("#next").onclick=()=>{S.date=shiftDate(S.date,1);render()};
@@ -656,6 +669,8 @@ $("#main").addEventListener("click",async e=>{
  if(b=g("#rateGo")){if(!rateN)return;b.disabled=true;const {error}=await sb.rpc("rate_transfer",{p_code:trackCode,p_stars:rateN,p_comment:($("#rateTx")?.value||"").trim()});
   if(error){b.disabled=false;toast(error.message);return}
   $("#rateBox").innerHTML=`<h4>Təşəkkür edirik!</h4><p class="star" style="font-size:22px;margin:4px 0 0">${"★".repeat(rateN)}${"☆".repeat(5-rateN)}</p>`;return}
+ if(b=g("[data-rm]")){const [y,mo]=S.rMonth.split("-").map(Number),d=new Date(Date.UTC(y,mo-1+(+b.dataset.rm),1));S.rMonth=d.toISOString().slice(0,7);render();await loadReport();render();return}
+ if(g("#csv")){exportCSV();return}
  if(g("#toReg")){S.mode="register";render();return}
  if(g("#backCust")){S.mode="db";render();return}
  if(b=g("[data-track]")){window.open(location.origin+location.pathname+"#t="+b.dataset.track,"_blank","noopener");return}
@@ -868,6 +883,41 @@ function legalView(k){
  <h2>9. Tətbiq olunan qanun</h2><p>Bu qaydalar Azərbaycan Respublikasının qanunvericiliyinə uyğun tənzimlənir.</p>
  <h2>10. Əlaqə</h2><p>Arrivo · <a href="mailto:arrivo.az@gmail.com">arrivo.az@gmail.com</a></p></article>`;
 }
+const MONTHS=["Yanvar","Fevral","Mart","Aprel","May","İyun","İyul","Avqust","Sentyabr","Oktyabr","Noyabr","Dekabr"];
+const monthRange=m=>{const [y,mo]=m.split("-").map(Number),last=new Date(Date.UTC(y,mo,0)).getUTCDate();return [`${m}-01`,`${m}-${String(last).padStart(2,"0")}`,last]};
+async function loadReport(){if(!S.rMonth)S.rMonth=todayStr().slice(0,7);const [a,b]=monthRange(S.rMonth);
+ const {data,error}=await sb.from("transfers").select("*").gte("date",a).lte("date",b).order("date").order("sched").limit(5000);
+ if(error){toast("Hesabat yüklənmədi");return}S.rData=(data||[]).map(r=>fromRow("transfers",r));S.rFor=S.rMonth}
+function report(){
+ if(!S.rData||S.rFor!==S.rMonth)return `<p class="note">Yüklənir…</p>`;
+ const L=S.rData,[a,,days]=monthRange(S.rMonth),[y,mo]=S.rMonth.split("-").map(Number);
+ const done=L.filter(t=>t.status==="done"),lost=L.filter(t=>["cancelled","noshow"].includes(t.status));
+ const rev=done.reduce((s,t)=>s+(+t.price||0),0),priced=done.filter(t=>t.price!=null).length;
+ const arr=L.filter(t=>t.type==="arr").length,web=L.filter(t=>t.note&&t.note.startsWith("Arrivo sifarişi")).length;
+ const R=(S.ratings||[]).filter(r=>String(r.created_at).slice(0,7)===S.rMonth),ravg=R.length?(R.reduce((s,r)=>s+r.stars,0)/R.length).toFixed(1):"—";
+ const per=Array.from({length:days},(_,i)=>L.filter(t=>+t.date.slice(8,10)===i+1&&!["cancelled"].includes(t.status)).length),mx=Math.max(1,...per);
+ const drv=S.drivers.map(d=>{const x=L.filter(t=>t.driverId===d.id),dn=x.filter(t=>t.status==="done"),rr=(S.ratings||[]).filter(r=>r.driver_id===d.id&&String(r.created_at).slice(0,7)===S.rMonth);
+  return {d,n:x.length,dn:dn.length,rev:dn.reduce((s,t)=>s+(+t.price||0),0),r:rr.length?(rr.reduce((s,r)=>s+r.stars,0)/rr.length).toFixed(1):""}}).filter(x=>x.n).sort((p,q)=>q.n-p.n);
+ const noDrv=L.filter(t=>!t.driverId&&!["cancelled"].includes(t.status)).length;
+ const kpi=(l,v,s)=>`<div class="kpi"><span>${l}</span><b>${v}</b>${s?`<small>${s}</small>`:""}</div>`;
+ return `<section class="hero"><p class="hi">Hesabat</p><div class="mnav"><button class="btn sec" data-rm="-1" aria-label="Əvvəlki ay">‹</button><h1 style="margin:0">${MONTHS[mo-1]} ${y}</h1><button class="btn sec" data-rm="1" aria-label="Növbəti ay">›</button></div></section>
+ <div class="kpis">${kpi("Transferlər",L.length,`${arr} qarşılama · ${L.length-arr} yola salma`)}${kpi("Tamamlanıb",done.length,L.length?Math.round(done.length/L.length*100)+"%":"")}
+ ${kpi("Gəlir",money(rev),priced<done.length?`${done.length-priced} transferin qiyməti yazılmayıb`:"tamamlanmış transferlər")}${kpi("Ləğv / gəlmədi",lost.length,"")}
+ ${kpi("Arrivo sifarişləri",web,"müştərinin saytdan seçdiyi")}${kpi("Reytinq",R.length?"★ "+ravg:"—",R.length?R.length+" rəy":"bu ay rəy yoxdur")}</div>
+ <section class="box rbox"><h3>Günlər üzrə <span class="load">ən çox ${mx}</span></h3><div class="bars">${per.map((n,i)=>`<i class="${n?"":"z"}" style="height:${n?Math.max(6,n/mx*100):2}%" title="${i+1} ${MONTHS[mo-1]}: ${n} transfer"></i>`).join("")}</div><div class="bars-x"><span>1</span><span>${Math.ceil(days/2)}</span><span>${days}</span></div></section>
+ <section class="box rbox" style="margin-top:12px"><h3>Sürücülər <span class="load">${drv.length}</span></h3>
+ ${drv.length?`<div style="overflow-x:auto"><table class="rtab"><thead><tr><th>Sürücü</th><th class="n">Transfer</th><th class="n">Bitib</th><th class="n">Gəlir</th><th class="n">Reytinq</th></tr></thead><tbody>
+ ${drv.map(x=>`<tr><td>${esc(x.d.name)}</td><td class="n">${x.n}</td><td class="n">${x.dn}</td><td class="n">${money(x.rev)}</td><td class="n">${x.r?`<span class="star">★ ${x.r}</span>`:"—"}</td></tr>`).join("")}</tbody></table></div>`:`<p class="note">Bu ay sürücüyə təyin olunmuş transfer yoxdur.</p>`}
+ ${noDrv?`<p class="note">${noDrv} transferə sürücü təyin olunmayıb.</p>`:""}</section>
+ <div class="rq-acts" style="margin-top:14px"><button class="btn" id="csv" ${L.length?"":"disabled"}>⬇ Excel-ə yüklə (CSV)</button></div>
+ <p class="note">Gəlir yalnız tamamlanmış və qiyməti yazılmış transferlərdən hesablanır. Qiyməti transferi açıb "Qiymət" xanasına yazmaq olar.</p>`;
+}
+function exportCSV(){
+ const q=v=>{v=v==null?"":String(v);return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+ const head=["Tarix","Vaxt","Növ","Müştəri","Telefon","Reys","Şəhər","Ünvan","Nəfər","Baqaj","Sürücü","Maşın","Status","Qiymət (AZN)","Qeyd"];
+ const rows=S.rData.map(t=>{const v=S.vehicles.find(x=>x.id===t.vehicleId);return [t.date,t.sched,t.type==="arr"?"Qarşılama":"Yola salma",t.name,t.phone,t.flight,t.city,t.address,t.pax,t.bags,dName(t.driverId),v?`${v.model} ${v.plate}`:"",ST[t.status]||t.status,t.price??"",t.note]});
+ const csv="\ufeff"+[head,...rows].map(r=>r.map(q).join(";")).join("\r\n");
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download=`arrivo-hesabat-${S.rMonth}.csv`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
 let trackCode="",rateN=0;
 const GYD=[40.4675,50.0467];
 const hav=(a,b)=>{const r=x=>x*Math.PI/180,dl=r(b[0]-a[0]),dg=r(b[1]-a[1]),h=Math.sin(dl/2)**2+Math.cos(r(a[0]))*Math.cos(r(b[0]))*Math.sin(dg/2)**2;return 12742*Math.asin(Math.sqrt(h))};
@@ -959,7 +1009,7 @@ async function boot(){
  else if(me.role==="driver"){S.role="driver";S.driverId=me.driver_id||""}
  if(hasCo)await Promise.all(["transfers","drivers","vehicles"].concat(me.role==="coordinator"?["staff"]:[]).map(load));
  if(me.is_admin)await loadAdmin();
- if(hasCo&&me.role==="coordinator"){$('.tab[data-r="market"]').hidden=false;await loadMarket();
+ if(hasCo&&me.role==="coordinator"){$('.tab[data-r="market"]').hidden=false;$('.tab[data-r="report"]').hidden=false;await loadMarket();
   setInterval(async()=>{if(S.mode==="db"&&!sel&&!busyForm()){await loadMarket();render()}},30000)}
  S.mode="db";render();
  sb.channel("arrivo").on("postgres_changes",{event:"*",schema:"public"},p=>{const n=p.new||{};
