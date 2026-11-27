@@ -256,6 +256,9 @@ body.customer .tabs,body.customer .datep{display:none}
 .rtab{width:100%;border-collapse:collapse;font-size:14px}.rtab th{text-align:left;font-size:12px;color:var(--mut);font-weight:700;padding:8px 6px;border-bottom:1px solid var(--line)}
 .rtab td{padding:9px 6px;border-bottom:1px solid var(--line)}.rtab td.n,.rtab th.n{text-align:right;white-space:nowrap}
 .rbox{padding-bottom:14px}.rbox>.note,.rbox>.bars,.rbox>.bars-x,.rbox>div{padding-left:16px;padding-right:16px}
+.grpbox{border:1px solid color-mix(in srgb,var(--acc) 35%,var(--line));margin:12px 0}
+.grpbox .it{align-items:center}.grpbox .it>div{flex:1;min-width:0}
+.ibar .x{background:none;border:0;font-size:18px;color:var(--mut);cursor:pointer;padding:4px 8px}
 .mnav{display:flex;align-items:center;gap:8px}.mnav b{min-width:130px;text-align:center}
 .legal{max-width:760px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:28px clamp(18px,4vw,40px);line-height:1.65}
 .legal h1{margin:0 0 4px;font-size:28px}.legal h2{font-size:18px;margin:26px 0 8px}.legal p,.legal li{font-size:15px;color:var(--ink2,inherit)}
@@ -425,7 +428,7 @@ function render(){
  const hadQ=document.activeElement&&document.activeElement.id==="q",qPos=hadQ?document.activeElement.selectionStart:0;
  const banner=S.mode==="local"?`<p class="note"><b>Sınaq rejimi:</b> Supabase ayarları doldurulmayıb, dəyişikliklər yalnız bu səhifədə qalır və yeniləyəndə silinir.</p>`:S.stale?`<p class="note">Məlumat köhnə ola bilər, bağlantı bərpa olunur…</p>`:"";
  const keep=[...m.querySelectorAll("form#fReq,form#fCo,form.offer")].map(f=>({k:f.id?"#"+f.id:`form.offer[data-req="${f.dataset.req}"]`,v:[...f.elements].filter(x=>x.name).map(x=>[x.name,x.value]),open:f.closest("details")?.open}));
- m.innerHTML=banner+(["coord","market","orders","driver"].includes(S.role)?notifBar():"")+({coord,driver,fleet,cust,admin,orders,market,report}[S.role]||coord)();
+ m.innerHTML=banner+(["coord","market","orders","driver"].includes(S.role)?installBar()+notifBar():"")+({coord,driver,fleet,cust,admin,orders,market,report}[S.role]||coord)();
  keep.forEach(s=>{const f=m.querySelector(s.k);if(!f)return;s.v.forEach(([n,v])=>{if(f.elements[n])f.elements[n].value=v});const d=f.closest("details");if(d&&s.open!=null)d.open=s.open});
  const mk=S.market?S.market.filter(x=>x.state==="open"&&(!x.my_offer||x.my_offer.status==="withdrawn")).length:0;$("#mktN").textContent=mk||"";
  if(hadQ){const q=$("#q");if(q){q.focus();q.setSelectionRange(qPos,qPos)}}
@@ -470,6 +473,7 @@ function coord(){
   <div class="stats"><span><b>${moving.length}</b>hərəkətdə</span><span class="${unassigned?"bad":""}"><b>${unassigned}</b>maşınsız</span><span class="${delayed?"warn":""}"><b>${delayed}</b>gecikən reys</span><span><b>${finished.filter(t=>t.status==="done").length}</b>tamamlanıb</span></div>
   ${act.length?timeline(act,isToday):""}</section>
  ${alerts.length?`<div class="alerts">${alerts.map(([t,a])=>`<button data-id="${esc(t.id)}"><i></i>${av(t.name,"sm")}<span><b>${esc(t.name.split(" ")[0])}:</b> ${esc(a)}</span></button>`).join("")}</div>`:""}
+ ${grpBox(list)}
  <div class="tools"><input type="search" id="q" placeholder="Ad, telefon, reys, sürücü…" value="${esc(S.q)}" aria-label="Axtarış">
   ${[["all","Hamısı"],["arr","Qarşılama"],["dep","Yola salma"],["todo","Maşınsız"]].map(([k,l])=>`<button class="chip" data-f="${k}" aria-pressed="${S.f===k}">${l}</button>`).join("")}
   <button class="btn" id="add">+ Yeni transfer</button></div>
@@ -671,6 +675,12 @@ $("#main").addEventListener("click",async e=>{
   $("#rateBox").innerHTML=`<h4>Təşəkkür edirik!</h4><p class="star" style="font-size:22px;margin:4px 0 0">${"★".repeat(rateN)}${"☆".repeat(5-rateN)}</p>`;return}
  if(b=g("[data-rm]")){const [y,mo]=S.rMonth.split("-").map(Number),d=new Date(Date.UTC(y,mo-1+(+b.dataset.rm),1));S.rMonth=d.toISOString().slice(0,7);render();await loadReport();render();return}
  if(g("#csv")){exportCSV();return}
+ if(b=g("[data-merge]")){if(!b.dataset.sure){b.dataset.sure=1;b.textContent="Təsdiqlə";return}b.disabled=true;
+  const G=grpSuggest(dayList()).find(x=>x.k===b.dataset.merge);if(!G||!G.veh){toast("Qrup tapılmadı");render();return}
+  let ok=true;for(const t of G.a){if(t.vehicleId===G.veh.id&&(!G.drv||t.driverId===G.drv))continue;ok=await save("transfers",{...t,vehicleId:G.veh.id,driverId:G.drv||t.driverId})&&ok}
+  toast(ok?`${G.a.length} transfer bir maşına yığıldı`:"Bəzi transferlər yenilənmədi");return}
+ if(g("#inst")){if(instEvt){instEvt.prompt();const r=await instEvt.userChoice.catch(()=>null);instEvt=null;if(r&&r.outcome==="accepted")toast("Arrivo quraşdırıldı")}render();return}
+ if(g("#instX")){try{localStorage.setItem("arrivo-inst-x","1")}catch(e){}render();return}
  if(g("#toReg")){S.mode="register";render();return}
  if(g("#backCust")){S.mode="db";render();return}
  if(b=g("[data-track]")){window.open(location.origin+location.pathname+"#t="+b.dataset.track,"_blank","noopener");return}
@@ -918,6 +928,33 @@ function exportCSV(){
  const rows=S.rData.map(t=>{const v=S.vehicles.find(x=>x.id===t.vehicleId);return [t.date,t.sched,t.type==="arr"?"Qarşılama":"Yola salma",t.name,t.phone,t.flight,t.city,t.address,t.pax,t.bags,dName(t.driverId),v?`${v.model} ${v.plate}`:"",ST[t.status]||t.status,t.price??"",t.note]});
  const csv="\ufeff"+[head,...rows].map(r=>r.map(q).join(";")).join("\r\n");
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download=`arrivo-hesabat-${S.rMonth}.csv`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+function grpSuggest(list){
+ const by={};
+ list.filter(t=>t.status==="new"&&t.flight).forEach(t=>{const f=t.flight.replace(/\s+/g,"").toUpperCase(),k=t.type==="arr"?"arr|"+f:"dep|"+f+"|"+(t.address||"").trim().toLocaleLowerCase();(by[k]=by[k]||[]).push(t)});
+ return Object.entries(by).filter(([,a])=>a.length>1&&(new Set(a.map(t=>t.vehicleId||"-")).size>1||a.some(t=>!t.vehicleId))).map(([k,a])=>{
+  const pax=a.reduce((s,t)=>s+(+t.pax||1),0),bags=a.reduce((s,t)=>s+(+t.bags||0),0);
+  const own=a.map(t=>S.vehicles.find(v=>v.id===t.vehicleId)).filter(v=>v&&+v.seats>=pax);
+  const veh=own[0]||S.vehicles.filter(v=>+v.seats>=pax).sort((x,y)=>x.seats-y.seats)[0];
+  const drv=veh&&(a.find(t=>t.vehicleId===veh.id&&t.driverId)?.driverId||S.drivers.find(d=>d.vehicleId===veh.id)?.id)||a.find(t=>t.driverId)?.driverId||"";
+  return {k,a,pax,bags,veh,drv}})}
+function grpBox(list){
+ if(S.date<todayStr())return "";
+ const G=grpSuggest(list);if(!G.length)return "";
+ return `<section class="box grpbox"><h3>💡 Bir maşına yığmaq olar <span class="load">${G.length}</span></h3>
+ ${G.map(g=>{const t0=g.a[0];return `<div class="it"><div><b>${esc(t0.flight)} · ${t0.type==="arr"?"qarşılama":"yola salma"} · ${g.a.length} müştəri</b>
+  <span class="sub">${g.a.map(t=>esc(t.name.split(" ")[0])).join(", ")} · ${g.pax} nəfər, ${g.bags} baqaj${t0.type==="dep"?" · "+esc(t0.address):""}</span>
+  <span class="sub mut">${g.veh?`→ ${esc(g.veh.model)} ${esc(g.veh.plate)} (${+g.veh.seats} yer)${g.drv?", "+esc(dName(g.drv)):", sürücü seçilməyib"}`:`Bu qədər yer olan maşın yoxdur (${g.pax} nəfər)`}</span></div>
+  ${g.veh?`<button class="btn" data-merge="${esc(g.k)}">Birləşdir</button>`:""}</div>`}).join("")}
+ <p class="note" style="padding:0 16px">Eyni reyslə gələn (və ya eyni oteldən eyni reysə gedən) müştəriləri bir maşına yığmaq yanacaq və sürücüyə qənaət edir.</p></section>`}
+let instEvt=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();instEvt=e;if(S.mode==="db")render()});
+const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+const instHidden=()=>{try{return localStorage.getItem("arrivo-inst-x")==="1"}catch(e){return false}};
+function installBar(){
+ if(isStandalone()||instHidden())return "";
+ if(instEvt)return `<div class="nbar ibar"><span>📲 Arrivo-nu telefonunuza tətbiq kimi quraşdırın: bir toxunuşla açılır, tam ekran işləyir.</span><button class="btn sec" id="inst">Quraşdır</button><button class="x" id="instX" aria-label="Bağla">✕</button></div>`;
+ if(/iphone|ipad|ipod/i.test(navigator.userAgent))return `<div class="nbar ibar"><span>📲 iPhone-da tətbiq kimi: aşağıda <b>Paylaş</b> düyməsini basın, sonra <b>"Ana ekrana əlavə et"</b> seçin.</span><button class="x" id="instX" aria-label="Bağla">✕</button></div>`;
+ return ""}
 let trackCode="",rateN=0;
 const GYD=[40.4675,50.0467];
 const hav=(a,b)=>{const r=x=>x*Math.PI/180,dl=r(b[0]-a[0]),dg=r(b[1]-a[1]),h=Math.sin(dl/2)**2+Math.cos(r(a[0]))*Math.cos(r(b[0]))*Math.sin(dg/2)**2;return 12742*Math.asin(Math.sqrt(h))};
