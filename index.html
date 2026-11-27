@@ -263,6 +263,7 @@ body.customer .tabs,body.customer .datep{display:none}
 .legal{max-width:760px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:28px clamp(18px,4vw,40px);line-height:1.65}
 .legal h1{margin:0 0 4px;font-size:28px}.legal h2{font-size:18px;margin:26px 0 8px}.legal p,.legal li{font-size:15px;color:var(--ink2,inherit)}
 .legal ul{padding-left:20px;margin:6px 0}.legal .upd{color:var(--mut);font-size:13px;margin:0 0 18px}
+.langs{display:flex;justify-content:flex-end;gap:4px;margin:0 0 10px}.langs button{font:600 12px/1 inherit;padding:6px 9px;border:1px solid var(--line,#ddd);border-radius:8px;background:transparent;color:var(--mut);cursor:pointer}.langs button.on{background:#15161b;color:#fff;border-color:#15161b}
 .legal-links{text-align:center;font-size:12px;color:var(--mut);margin:14px 0 0}.legal-links a{color:inherit}
 .nbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 14px;margin-bottom:12px;font-size:14px;box-shadow:var(--sh)}.nbar span{flex:1;min-width:200px}
 .callb{display:block;text-align:center;text-decoration:none;line-height:46px;margin-bottom:8px}
@@ -541,23 +542,22 @@ function team(){
   <label>Hansı sürücüdür<select name="driverId"><option value="">—</option>${S.drivers.map(d=>`<option value="${esc(d.id)}">${esc(d.name)}</option>`).join("")}</select></label>
   <div class="acts"><button class="btn">Əlavə et</button></div></form></details></section>`;
 }
-function phoneView(d,preview){
- const c=calc({type:d.type,sched:d.sched,est:d.est}),idx=FLOW.indexOf(d.status);
- const steps=c.arr?["Transfer təsdiqləndi","Sürücü hava limanına yoldadır","Sürücü sizi gəliş zalında gözləyir","Yoldasınız: "+(d.address||""),"Çatdınız, xoş istirahətlər!"]
-  :["Transfer təsdiqləndi","Sürücü sizə tərəf yoldadır","Sürücü ünvandadır, sizi gözləyir","Hava limanına yoldasınız","Çatdınız, uğurlu uçuş!"];
+function phoneView(d,preview,lg){
+ const T=TL[lg]||TL.az,c=calc({type:d.type,sched:d.sched,est:d.est}),idx=FLOW.indexOf(d.status);
+ const steps=c.arr?T.sa.map(x=>x.replace("{a}",d.address||"")):T.sd;
  const tel=String(d.driver_phone||"").replace(/[^\d+]/g,"");
- return `<div class="phone"><div class="ph-top"><span class="wm inv" style="font-size:24px;color:#fff">arr<span class="wi">ı</span>vo</span><h2>Salam, ${esc(d.first_name||"")}!</h2>${d.company?`<p class="ph-co">${esc(d.company)}${d.company_phone?" · "+esc(d.company_phone):""}</p>`:""}
-  <p>${d.flight_cancelled?"Reysiniz ləğv edilib, sizinlə əlaqə saxlayacağıq.":c.arr?`${esc(d.flight||"")} reysi · eniş ${hm(c.land)}${c.delay>=5?", gecikmə nəzərə alınıb":""}`:`Sizi ${hm(c.pick)}-da götürəcəyik · uçuş ${hm(c.sched)}`}</p></div>
-  <div class="ph-card">${d.driver&&d.plate?`<div class="ph-drv">${av(d.driver,"xl")}<div><span class="mut" style="font-size:13px">Sürücünüz</span><b>${esc(d.driver)}</b><span class="mut" style="font-size:13px">${esc(d.driver_phone||"")}</span></div></div>
-   <div class="ph-car"><span>${esc(d.car||"")}${d.color?", "+esc(d.color):""}</span>${plate(d.plate)}</div>`:`<p style="margin:0">Sürücü məlumatı tezliklə burada görünəcək.</p>`}</div>
-  ${d.status==="cancelled"?`<p class="empty" style="margin:16px">Bu transfer ləğv edilib.</p>`:`<ol class="steps">${steps.map((s,i)=>`<li class="${d.status==="done"||i<idx?"d":i===idx?"n":""}"><i></i><span>${esc(s)}</span></li>`).join("")}</ol>`}
-  ${!preview&&d.status==="done"?(d.rated?`<div class="rate"><h4>Təşəkkür edirik!</h4><p class="star" style="font-size:22px;margin:4px 0 0">${"★".repeat(+d.rated)}${"☆".repeat(5-+d.rated)}</p></div>`
-   :`<div class="rate" id="rateBox"><h4>Səfərinizi qiymətləndirin</h4><p class="note" style="margin:0">Rəyiniz digər müştərilərə şirkət seçməkdə kömək edəcək.</p>
-   <div class="stars">${[1,2,3,4,5].map(n=>`<button type="button" data-star="${n}" aria-label="${n} ulduz">★</button>`).join("")}</div>
-   <textarea id="rateTx" maxlength="500" placeholder="Şərh (istəyə bağlı): sürücü, maşın, vaxt…"></textarea>
-   <button class="btn" id="rateGo" disabled>Göndər</button></div>`):""}
-  <div class="ph-foot">${c.arr?`<p class="note">Gəliş zalından çıxanda sürücü adınız yazılmış lövhə ilə sizi gözləyəcək.</p>`:""}
-   ${!preview&&tel?`<a class="btn callb" href="tel:${esc(tel)}">Sürücüyə zəng et</a>`:""}${preview||""}</div></div>`;
+ return `<div class="phone"><div class="ph-top"><span class="wm inv" style="font-size:24px;color:#fff">arr<span class="wi">ı</span>vo</span><h2>${T.hi}, ${esc(d.first_name||"")}!</h2>${d.company?`<p class="ph-co">${esc(d.company)}${d.company_phone?" · "+esc(d.company_phone):""}</p>`:""}
+  <p>${d.flight_cancelled?T.cancF:c.arr?(lg==="az"||!lg?`${esc(d.flight||"")} ${T.fl}`:`${T.fl} ${esc(d.flight||"")}`)+` · ${T.land} ${hm(c.land)}${c.delay>=5?", "+T.delay:""}`:`${T.pick.replace("{t}",hm(c.pick))} · ${T.dep} ${hm(c.sched)}`}</p></div>
+  <div class="ph-card">${d.driver&&d.plate?`<div class="ph-drv">${av(d.driver,"xl")}<div><span class="mut" style="font-size:13px">${T.drv}</span><b>${esc(d.driver)}</b><span class="mut" style="font-size:13px">${esc(d.driver_phone||"")}</span></div></div>
+   <div class="ph-car"><span>${esc(d.car||"")}${d.color?", "+esc(d.color):""}</span>${plate(d.plate)}</div>`:`<p style="margin:0">${T.noDrv}</p>`}</div>
+  ${d.status==="cancelled"?`<p class="empty" style="margin:16px">${T.canc}</p>`:`<ol class="steps">${steps.map((s,i)=>`<li class="${d.status==="done"||i<idx?"d":i===idx?"n":""}"><i></i><span>${esc(s)}</span></li>`).join("")}</ol>`}
+  ${!preview&&d.status==="done"?(d.rated?`<div class="rate"><h4>${T.thx}</h4><p class="star" style="font-size:22px;margin:4px 0 0">${"★".repeat(+d.rated)}${"☆".repeat(5-+d.rated)}</p></div>`
+   :`<div class="rate" id="rateBox"><h4>${T.rate}</h4><p class="note" style="margin:0">${T.rateN}</p>
+   <div class="stars">${[1,2,3,4,5].map(n=>`<button type="button" data-star="${n}" aria-label="${n} ${T.star}">★</button>`).join("")}</div>
+   <textarea id="rateTx" maxlength="500" placeholder="${T.rateTx}"></textarea>
+   <button class="btn" id="rateGo" disabled>${T.send}</button></div>`):""}
+  <div class="ph-foot">${c.arr?`<p class="note">${T.sign}</p>`:""}
+   ${!preview&&tel?`<a class="btn callb" href="tel:${esc(tel)}">${T.call}</a>`:""}${preview||""}</div></div>`;
 }
 function cust(){
  const list=dayList();
@@ -669,10 +669,11 @@ $("#main").addEventListener("click",async e=>{
   if(!/^\S+@\S+\.\S+$/.test(em)){$("#lmsg").textContent="Əvvəlcə yuxarıda e-poçtunuzu yazın, sonra yenidən basın.";return}
   b.disabled=true;const {error}=await sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname});b.disabled=false;
   $("#lmsg").textContent=error?(/rate|seconds/i.test(error.message)?"Bir az gözləyin, sonra yenidən cəhd edin.":"Xəta: "+error.message):"Parolu yeniləmək üçün link "+em+" ünvanına göndərildi. Spam qovluğuna da baxın.";return}
+ if(b=g("[data-lang]")){try{localStorage.setItem("arrivo_lang",b.dataset.lang)}catch(e){}document.documentElement.lang=b.dataset.lang;if(trackGo)trackGo();return}
  if(b=g("[data-star]")){rateN=+b.dataset.star;document.querySelectorAll("[data-star]").forEach(x=>x.classList.toggle("on",+x.dataset.star<=rateN));$("#rateGo").disabled=false;return}
  if(b=g("#rateGo")){if(!rateN)return;b.disabled=true;const {error}=await sb.rpc("rate_transfer",{p_code:trackCode,p_stars:rateN,p_comment:($("#rateTx")?.value||"").trim()});
   if(error){b.disabled=false;toast(error.message);return}
-  $("#rateBox").innerHTML=`<h4>Təşəkkür edirik!</h4><p class="star" style="font-size:22px;margin:4px 0 0">${"★".repeat(rateN)}${"☆".repeat(5-rateN)}</p>`;return}
+  $("#rateBox").innerHTML=`<h4>${TL[tlang()].thx}</h4><p class="star" style="font-size:22px;margin:4px 0 0">${"★".repeat(rateN)}${"☆".repeat(5-rateN)}</p>`;return}
  if(b=g("[data-rm]")){const [y,mo]=S.rMonth.split("-").map(Number),d=new Date(Date.UTC(y,mo-1+(+b.dataset.rm),1));S.rMonth=d.toISOString().slice(0,7);render();await loadReport();render();return}
  if(g("#csv")){exportCSV();return}
  if(b=g("[data-merge]")){if(!b.dataset.sure){b.dataset.sure=1;b.textContent="Təsdiqlə";return}b.disabled=true;
@@ -955,7 +956,22 @@ function installBar(){
  if(instEvt)return `<div class="nbar ibar"><span>📲 Arrivo-nu telefonunuza tətbiq kimi quraşdırın: bir toxunuşla açılır, tam ekran işləyir.</span><button class="btn sec" id="inst">Quraşdır</button><button class="x" id="instX" aria-label="Bağla">✕</button></div>`;
  if(/iphone|ipad|ipod/i.test(navigator.userAgent))return `<div class="nbar ibar"><span>📲 iPhone-da tətbiq kimi: aşağıda <b>Paylaş</b> düyməsini basın, sonra <b>"Ana ekrana əlavə et"</b> seçin.</span><button class="x" id="instX" aria-label="Bağla">✕</button></div>`;
  return ""}
-let trackCode="",rateN=0;
+let trackCode="",rateN=0,trackGo=null;
+const TL={
+ az:{hi:"Salam",cancF:"Reysiniz ləğv edilib, sizinlə əlaqə saxlayacağıq.",fl:"reysi",land:"eniş",delay:"gecikmə nəzərə alınıb",pick:"Sizi {t}-da götürəcəyik",dep:"uçuş",drv:"Sürücünüz",noDrv:"Sürücü məlumatı tezliklə burada görünəcək.",canc:"Bu transfer ləğv edilib.",
+  sa:["Transfer təsdiqləndi","Sürücü hava limanına yoldadır","Sürücü sizi gəliş zalında gözləyir","Yoldasınız: {a}","Çatdınız, xoş istirahətlər!"],sd:["Transfer təsdiqləndi","Sürücü sizə tərəf yoldadır","Sürücü ünvandadır, sizi gözləyir","Hava limanına yoldasınız","Çatdınız, uğurlu uçuş!"],
+  thx:"Təşəkkür edirik!",rate:"Səfərinizi qiymətləndirin",rateN:"Rəyiniz digər müştərilərə şirkət seçməkdə kömək edəcək.",star:"ulduz",rateTx:"Şərh (istəyə bağlı): sürücü, maşın, vaxt…",send:"Göndər",sign:"Gəliş zalından çıxanda sürücü adınız yazılmış lövhə ilə sizi gözləyəcək.",call:"Sürücüyə zəng et",
+  nf:"Transfer tapılmadı və ya linkin vaxtı bitib.",nos:"Sistem hələ qurulmayıb.",atAp:"Sürücü hava limanındadır",toAp:"Hava limanına təxminən {m} dəq qalıb",here:"Sürücü yerindədir, sizi gözləyir",live:"Sürücünün canlı yeri",now:"indicə yeniləndi",ago:"{m} dəq əvvəl",priv:"Məxfilik siyasəti"},
+ en:{hi:"Hello",cancF:"Your flight has been cancelled. We will contact you.",fl:"Flight",land:"landing",delay:"delay taken into account",pick:"We will pick you up at {t}",dep:"flight",drv:"Your driver",noDrv:"Driver details will appear here soon.",canc:"This transfer has been cancelled.",
+  sa:["Transfer confirmed","Driver is on the way to the airport","Driver is waiting for you in the arrivals hall","On the way: {a}","You have arrived. Enjoy your stay!"],sd:["Transfer confirmed","Driver is on the way to you","Driver is at your address, waiting for you","On the way to the airport","You have arrived. Have a good flight!"],
+  thx:"Thank you!",rate:"Rate your trip",rateN:"Your review helps other travellers choose a company.",star:"stars",rateTx:"Comment (optional): driver, car, timing…",send:"Send",sign:"When you leave the arrivals hall, your driver will be waiting with a sign showing your name.",call:"Call the driver",
+  nf:"Transfer not found or the link has expired.",nos:"The system is not set up yet.",atAp:"Driver is at the airport",toAp:"About {m} min to the airport",here:"Driver is here, waiting for you",live:"Driver's live location",now:"just updated",ago:"{m} min ago",priv:"Privacy policy"},
+ ru:{hi:"Здравствуйте",cancF:"Ваш рейс отменён. Мы свяжемся с вами.",fl:"Рейс",land:"посадка",delay:"с учётом задержки",pick:"Мы заберём вас в {t}",dep:"вылет",drv:"Ваш водитель",noDrv:"Данные водителя скоро появятся здесь.",canc:"Этот трансфер отменён.",
+  sa:["Трансфер подтверждён","Водитель едет в аэропорт","Водитель ждёт вас в зале прилёта","В пути: {a}","Вы приехали. Хорошего отдыха!"],sd:["Трансфер подтверждён","Водитель едет к вам","Водитель на месте, ждёт вас","Едем в аэропорт","Вы приехали. Хорошего полёта!"],
+  thx:"Спасибо!",rate:"Оцените поездку",rateN:"Ваш отзыв поможет другим путешественникам выбрать компанию.",star:"звёзд",rateTx:"Комментарий (необязательно): водитель, машина, время…",send:"Отправить",sign:"При выходе из зала прилёта водитель будет ждать вас с табличкой с вашим именем.",call:"Позвонить водителю",
+  nf:"Трансфер не найден или срок ссылки истёк.",nos:"Система ещё не настроена.",atAp:"Водитель в аэропорту",toAp:"До аэропорта примерно {m} мин",here:"Водитель на месте, ждёт вас",live:"Местоположение водителя",now:"только что",ago:"{m} мин назад",priv:"Политика конфиденциальности"}};
+const tlang=()=>{let l="";try{l=localStorage.getItem("arrivo_lang")||""}catch(e){}if(TL[l])return l;const n=(navigator.language||"").slice(0,2).toLowerCase();return n==="az"||n==="tr"?"az":n==="ru"||n==="uk"||n==="be"||n==="kk"?"ru":"en"};
+const langBar=l=>`<div class="langs">${["az","en","ru"].map(k=>`<button type="button" data-lang="${k}" class="${k===l?"on":""}">${k.toUpperCase()}</button>`).join("")}</div>`;
 const GYD=[40.4675,50.0467];
 const hav=(a,b)=>{const r=x=>x*Math.PI/180,dl=r(b[0]-a[0]),dg=r(b[1]-a[1]),h=Math.sin(dl/2)**2+Math.cos(r(a[0]))*Math.cos(r(b[0]))*Math.sin(dg/2)**2;return 12742*Math.asin(Math.sqrt(h))};
 const etaMin=km=>Math.max(1,Math.round(km*1.3/45*60));
@@ -1001,13 +1017,14 @@ const pend=new Set();let qt;
 function queue(t){if(!["transfers","drivers","vehicles","staff"].includes(t))return;if(t==="staff"&&me?.role!=="coordinator")return;pend.add(t);clearTimeout(qt);qt=setTimeout(async()=>{const ts=[...pend];pend.clear();await Promise.all(ts.map(load));render()},400)}
 async function trackPage(code){
  document.body.classList.add("track");
- $("#main").innerHTML=`<div class="tmapw" id="tmapw" hidden><div id="tmap"></div><p class="tmap-n" id="tmapN"></p></div><div id="tbody"></div><p class="legal-links"><a href="#mexfilik">Məxfilik siyasəti</a></p>`;
+ $("#main").innerHTML=`<div id="tlang"></div><div class="tmapw" id="tmapw" hidden><div id="tmap"></div><p class="tmap-n" id="tmapN"></p></div><div id="tbody"></div><p class="legal-links"><a href="#mexfilik" id="tpriv"></a></p>`;
  let map=null,car=null,iv=null;trackCode=code;
- const go=async()=>{
-  if(!sb){$("#tbody").innerHTML=`<div class="empty">Sistem hələ qurulmayıb.</div>`;return}
+ const go=trackGo=async()=>{
+  const lg=tlang(),T=TL[lg];document.documentElement.lang=lg;$("#tlang").innerHTML=langBar(lg);$("#tpriv").textContent=T.priv;
+  if(!sb){$("#tbody").innerHTML=`<div class="empty">${T.nos}</div>`;return}
   const {data,error}=await sb.rpc("track",{p_code:code});
   if(document.activeElement&&document.activeElement.id==="rateTx")return;
-  $("#tbody").innerHTML=error||!data?`<div class="empty">Transfer tapılmadı və ya linkin vaxtı bitib.</div>`:phoneView(data,false);
+  $("#tbody").innerHTML=error||!data?`<div class="empty">${T.nf}</div>`:phoneView(data,false,lg);
   if(data&&["done","cancelled","noshow"].includes(data.status)&&iv){clearInterval(iv);iv=null}
   const has=!!(data&&data.lat!=null&&window.L);$("#tmapw").hidden=!has;if(!has)return;
   const ll=[+data.lat,+data.lng];
@@ -1016,7 +1033,7 @@ async function trackPage(code){
   setTimeout(()=>map.invalidateSize(),0);
   const km=hav(ll,GYD),toAp=(data.type==="arr"&&data.status==="enroute")||(data.type==="dep"&&data.status==="pickedup");
   const age=+data.loc_age||0;
-  $("#tmapN").textContent=(toAp?(km<0.6?"Sürücü hava limanındadır":`Hava limanına təxminən ${etaMin(km)} dəq qalıb`):data.status==="arrived"?"Sürücü yerindədir, sizi gözləyir":"Sürücünün canlı yeri")+" · "+(age<60?"indicə yeniləndi":Math.round(age/60)+" dəq əvvəl");
+  $("#tmapN").textContent=(toAp?(km<0.6?T.atAp:T.toAp.replace("{m}",etaMin(km))):data.status==="arrived"?T.here:T.live)+" · "+(age<60?T.now:T.ago.replace("{m}",Math.round(age/60)));
  };
  await go();iv=setInterval(go,10000);
 }
