@@ -56,8 +56,8 @@ async function sendWhatsApp(env) {
   const sb = supa(env);
   const old = new Date(Date.now() - 2 * 3600e3).toISOString();
   // 2 saatdan köhnə göndərilməmiş mesajlar artıq aktual deyil
-  await sb(`notifications?status=eq.pending&created_at=lt.${old}`, { method: "PATCH", body: JSON.stringify({ status: "skipped" }) });
-  const r = await sb("notifications?select=id,to_phone,template,params,attempts&status=eq.pending&order=id&limit=40");
+  await sb(`notifications?channel=eq.whatsapp&status=eq.pending&created_at=lt.${old}`, { method: "PATCH", body: JSON.stringify({ status: "skipped" }) });
+  const r = await sb("notifications?select=id,to_phone,template,params,attempts&channel=eq.whatsapp&status=eq.pending&order=id&limit=40");
   if (!r.ok) throw new Error("Supabase " + r.status);
   const list = await r.json();
   let sent = 0, failed = 0;
