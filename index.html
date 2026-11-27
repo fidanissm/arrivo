@@ -263,6 +263,8 @@ body.customer .tabs,body.customer .datep{display:none}
 .legal{max-width:760px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:28px clamp(18px,4vw,40px);line-height:1.65}
 .legal h1{margin:0 0 4px;font-size:28px}.legal h2{font-size:18px;margin:26px 0 8px}.legal p,.legal li{font-size:15px;color:var(--ink2,inherit)}
 .legal ul{padding-left:20px;margin:6px 0}.legal .upd{color:var(--mut);font-size:13px;margin:0 0 18px}
+.cocard{text-align:left;display:flex;gap:12px;align-items:center;padding:14px 16px;margin:0 0 12px;border:2px solid #ff6a37}.cocard>div{flex:1;min-width:0}.cocard b{display:block;font-size:16px}.cocard>div>span{display:block;font-size:13px;color:var(--mut)}.cocard .x{background:none;border:0;font-size:18px;color:var(--mut);cursor:pointer;padding:4px 8px}
+.dirtag{background:#fff1e8;color:#b8430f;border-radius:10px;padding:8px 12px;margin:8px 0 0;font-size:13px}
 .langs{display:flex;justify-content:flex-end;gap:4px;margin:0 0 10px}.langs button{font:600 12px/1 inherit;padding:6px 9px;border:1px solid var(--line,#ddd);border-radius:8px;background:transparent;color:var(--mut);cursor:pointer}.langs button.on{background:#15161b;color:#fff;border-color:#15161b}
 .legal-links{text-align:center;font-size:12px;color:var(--mut);margin:14px 0 0}.legal-links a{color:inherit}
 .nbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 14px;margin-bottom:12px;font-size:14px;box-shadow:var(--sh)}.nbar span{flex:1;min-width:200px}
@@ -524,11 +526,15 @@ function fleet(){
 function companyBox(){const c=S.company||{},R=S.ratings||[],avg=R.length?(R.reduce((a,r)=>a+r.stars,0)/R.length).toFixed(1):"";
  const rv=R.filter(r=>r.comment).slice(0,3).map(r=>`<div class="it"><div><b class="star">${"★".repeat(r.stars)}</b><span class="sub">${esc(r.comment)}</span><span class="sub mut">${esc(dName(r.driver_id)||"")} · ${esc(String(r.created_at).slice(0,10))}</span></div></div>`).join("");
  return `<section class="box" style="grid-column:1/-1"><h3>Reytinq <span class="load">${R.length?`★ ${avg} · ${R.length} rəy`:"hələ rəy yoxdur"}</span></h3>${rv||`<p class="note" style="margin:0 0 6px">Transfer bitəndə müştəri linkdə 1–5 ulduzla qiymət verə bilir. Rəylər burada görünəcək.</p>`}</section>
+ <section class="box" style="grid-column:1/-1"><h3>Sifariş linkiniz</h3>
+ <p class="note" style="margin:0 0 10px">Bu linki Instagram bio-nuza, WhatsApp-a və ya saytınıza qoyun. Linklə gələn sifariş <b>2 saat yalnız sizə</b> görünür. Bu müddətdə təklif verməsəniz, digər şirkətlərə açılır. Müştəri səhifəni öz dilində (AZ / EN / RU) görür.</p>
+ ${c.slug?`<div class="rq-ok" style="word-break:break-all;margin:0 0 10px"><b>${esc(coUrl())}</b></div><div class="rq-acts" style="margin:0"><button class="btn" id="coCopy" type="button">Linki kopyala</button><a class="btn sec" style="text-decoration:none;display:inline-flex;align-items:center" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent("Hava limanı transferini buradan sifariş edin / Book your airport transfer: "+coUrl())}">WhatsApp-da paylaş</a></div>`:`<p class="rq-mut">Link hazırlanır…</p>`}</section>
  <section class="box" style="grid-column:1/-1"><h3>Şirkət məlumatları</h3>
  ${c.phone?"":`<p class="rq-mut" style="margin:0 0 10px">⚠ Şirkətin telefonunu yazın. Müştərilər sizə zəng edə bilsin və WhatsApp bildirişləri gəlsin.</p>`}
  <form id="fCo"><label>Şirkətin adı<input name="name" required minlength="2" maxlength="80" value="${esc(c.name||"")}"></label>
  <label>Telefon (WhatsApp)<input name="phone" type="tel" maxlength="25" placeholder="+994 50 000 00 00" value="${esc(c.phone||"")}"></label>
  <label>Şəhər<input name="city" maxlength="40" value="${esc(c.city||"")}"></label>
+ <label>Link adı (kiçik latın hərfləri, rəqəm, -)<input name="slug" maxlength="40" value="${esc(c.slug||"")}" placeholder="baku-transfer" autocapitalize="off" spellcheck="false"></label>
  <label class="chk full"><input type="checkbox" name="wa" ${c.notify_wa!==false?"checked":""}>Yeni sifarişlər barədə WhatsApp bildirişi al</label>
  <div class="acts"><button class="btn">Yadda saxla</button></div></form>
  <p class="note">Məktublar (yeni sifariş, qəbul edilmiş təklif) komandadakı bütün koordinatorların e-poçtuna gedir.</p></section>`}
@@ -669,6 +675,8 @@ $("#main").addEventListener("click",async e=>{
   if(!/^\S+@\S+\.\S+$/.test(em)){$("#lmsg").textContent=t3("Əvvəlcə yuxarıda e-poçtunuzu yazın, sonra yenidən basın.","Enter your email above first, then tap again.","Сначала введите e-mail выше, затем нажмите снова.");return}
   b.disabled=true;const {error}=await sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname});b.disabled=false;
   $("#lmsg").textContent=error?(/rate|seconds/i.test(error.message)?t3("Bir az gözləyin, sonra yenidən cəhd edin.","Please wait a bit and try again.","Подождите немного и попробуйте снова."):t3("Xəta: ","Error: ","Ошибка: ")+error.message):t3("Parolu yeniləmək üçün link "+em+" ünvanına göndərildi. Spam qovluğuna da baxın.","A password reset link was sent to "+em+". Check your spam folder too.","Ссылка для сброса пароля отправлена на "+em+". Проверьте и папку «Спам».");return}
+ if(g("#coX")){try{localStorage.removeItem("arrivo_co")}catch(e){}S.co=null;render();return}
+ if(g("#coCopy")){const u=coUrl();(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>toast("Link kopyalandı"),()=>prompt("Linki kopyalayın:",u));return}
  if(b=g("[data-lang]")){try{localStorage.setItem("arrivo_lang",b.dataset.lang)}catch(e){}document.documentElement.lang=b.dataset.lang;if(trackGo)trackGo();else{$("#logout").textContent=t3("Çıxış","Sign out","Выйти");render()}return}
  if(b=g("[data-star]")){rateN=+b.dataset.star;document.querySelectorAll("[data-star]").forEach(x=>x.classList.toggle("on",+x.dataset.star<=rateN));$("#rateGo").disabled=false;return}
  if(b=g("#rateGo")){if(!rateN)return;b.disabled=true;const {error}=await sb.rpc("rate_transfer",{p_code:trackCode,p_stars:rateN,p_comment:($("#rateTx")?.value||"").trim()});
@@ -707,8 +715,10 @@ $("#main").addEventListener("submit",async e=>{
   boot();return}
  if(f.id==="fCo"){const bt=f.querySelector("button");bt.disabled=true;
   const upd={name:(o.name||"").trim(),phone:(o.phone||"").trim(),city:(o.city||"").trim()||"Bakı",notify_wa:!!o.wa};
-  const {error}=await sb.from("companies").update(upd).eq("id",S.company.id);bt.disabled=false;
-  if(error){toast("Yadda saxlanmadı: "+error.message);return}
+  const sl=(o.slug||"").trim().toLowerCase();if(sl!==(S.company.slug||""))upd.slug=sl;
+  const {data:cu,error}=await sb.from("companies").update(upd).eq("id",S.company.id).select("slug");bt.disabled=false;
+  if(error){toast(/duplicate|unique/i.test(error.message)?"Bu link adı artıq tutulub, başqasını yazın":/slug_chk/.test(error.message)?"Link adı yalnız kiçik latın hərfləri, rəqəm və - ola bilər (3–40 simvol)":"Yadda saxlanmadı: "+error.message);return}
+  if(cu&&cu[0])upd.slug=cu[0].slug;
   Object.assign(S.company,upd);if(me.company)me.company.name=upd.name;$("#coName").textContent=upd.name;
   document.activeElement?.blur?.();f.remove();toast("Şirkət məlumatları yeniləndi");render();return}
  if(f.id==="fNewPass"){if(o.p1!==o.p2){$("#lmsg").textContent=t3("Parollar eyni deyil.","Passwords do not match.","Пароли не совпадают.");return}
@@ -716,7 +726,7 @@ $("#main").addEventListener("submit",async e=>{
   if(error){$("#lmsg").textContent=t3("Xəta: ","Error: ","Ошибка: ")+error.message;return}
   recovering=false;history.replaceState(null,"",location.pathname);toast(t3("Parol yeniləndi","Password updated","Пароль обновлён"));S.mode="loading";render();boot();return}
  if(f.id==="fReq"){const bt=f.querySelector("button");bt.disabled=true;
-  const {data:rid,error}=await sb.rpc("create_request",{p:{type:o.type,date:o.date,sched:o.sched,flight:o.flight,city:o.city,address:o.address,pax:+o.pax||1,bags:+o.bags||0,name:o.name,phone:o.phone,note:o.note,lang:o.lang||"az"}});
+  const {data:rid,error}=await sb.rpc("create_request",{p:{type:o.type,date:o.date,sched:o.sched,flight:o.flight,city:o.city,address:o.address,pax:+o.pax||1,bags:+o.bags||0,name:o.name,phone:o.phone,note:o.note,lang:o.lang||"az",company:S.co?S.co.slug:""}});
   bt.disabled=false;if(error){toast(error.message);return}
   if(!o.wa&&rid)await sb.rpc("set_request_notify",{p_id:rid,p_on:false});
   toast(t3("Sifariş göndərildi! Təkliflər gələndə burada görəcəksiniz.","Order sent! You will see offers here as they arrive.","Заказ отправлен! Предложения появятся здесь."));f.reset();f.closest("details").open=false;await loadMine();render();return}
@@ -734,7 +744,7 @@ setInterval(()=>{if(S.mode!=="loading"&&!sel&&!document.activeElement?.matches?.
 
 /* ===== Başlanğıc ===== */
 const BRAND=`<div class="brand"><i><svg viewBox="0 0 100 100" width="24" height="24" aria-hidden="true"><g transform="translate(58 4) scale(1.55) rotate(135 12 12)"><path fill="#fff" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></g><path fill="#fff" d="M18 64l6-18c1.5-4.5 4.5-7 9-7h34c4.5 0 7.5 2.5 9 7l6 18v18c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5v-4H33v4c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5z"/><path fill="#ff6a37" d="M29 62l4.5-13c.8-2.2 2.2-3.5 4.5-3.5h24c2.3 0 3.7 1.3 4.5 3.5L71 62z"/><circle cx="29" cy="71" r="4.5" fill="#ff6a37"/><circle cx="71" cy="71" r="4.5" fill="#ff6a37"/><rect x="41" y="68.5" width="18" height="5" rx="2.5" fill="#ff6a37"/></svg></i><span class="wm">arr<span class="wi">ı</span>vo</span></div>`;
-function loginView(){return `${langBar(tlang())}<div class="login">${BRAND}
+function loginView(){return `${langBar(tlang())}<div class="login">${BRAND}${coCard()}
  <h1>${t3("Xoş gəlmisiniz","Welcome","Добро пожаловать")}</h1><p>${t3("Hava limanı transferi sifariş etmək və ya şirkətinizi qoşmaq üçün hesab yaradın. Şirkət işçisisinizsə, şirkətinizin əlavə etdiyi e-poçtla daxil olun.","Create an account to book an airport transfer in Azerbaijan or to join as a company. Company staff: sign in with the email your company added.","Создайте аккаунт, чтобы заказать трансфер из аэропорта в Азербайджане или подключить свою компанию. Сотрудники компаний входят с e-mail, который добавила компания.")}</p>
  <form id="fLogin"><input type="email" name="email" required placeholder="${t3("ad@mail.com","name@mail.com","name@mail.com")}" autocomplete="email" aria-label="${t3("E-poçt","Email","E-mail")}">
  <input type="password" name="password" required minlength="6" placeholder="${t3("Parol (ən az 6 simvol)","Password (at least 6 characters)","Пароль (не менее 6 символов)")}" autocomplete="current-password" aria-label="${t3("Parol","Password","Пароль")}">
@@ -784,7 +794,7 @@ async function loadMine(){const {data,error}=await sb.rpc("my_requests");if(erro
   if(r.transfer_status&&ts.has(r.id)&&ts.get(r.id)!==r.transfer_status&&ST[r.transfer_status])notify(t3("Transferiniz","Your transfer","Ваш трансфер"),stx(r.transfer_status),"tr-"+r.id)}}
 async function loadMarket(){const {data,error}=await sb.rpc("market");if(error)return;const prev=S.market;S.market=data||[];
  if(!prev)return;const seen=new Set(prev.map(x=>x.id));
- S.market.filter(x=>x.state==="open"&&!seen.has(x.id)).forEach(x=>notify("Yeni transfer sifarişi",`${nice(x.date)} ${x.sched} · ${x.type==="arr"?"Hava limanı → "+x.address:x.address+" → Hava limanı"}`,"rq-"+x.id))}
+ S.market.filter(x=>x.state==="open"&&!seen.has(x.id)).forEach(x=>notify(x.direct?"⭐ Sizə birbaşa sifariş":"Yeni transfer sifarişi",`${nice(x.date)} ${x.sched} · ${x.type==="arr"?"Hava limanı → "+x.address:x.address+" → Hava limanı"}`,"rq-"+x.id))}
 const canNotify=()=>"Notification" in window;
 let swReg=null;
 if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").then(r=>{swReg=r}).catch(()=>{});
@@ -811,7 +821,7 @@ function orders(){
   else b=`<p class="rq-mut">${r.status==="cancelled"?t3("Ləğv edilib","Cancelled","Отменён"):t3("Vaxtı keçib, təklif seçilməyib","Expired, no offer chosen","Истёк, предложение не выбрано")}</p>`;
   return `<div class="box rq">${reqHead(r)}${b}</div>`};
  const sec=(t,a)=>a.length?`<section class="grp"><h2>${t}<span>${a.length}</span></h2>${a.map(card).join("")}</section>`:"";
- return `${langBar(tlang())}<section class="hero"><p class="hi">${greet()}!</p><h1>${open.length?t3(`${open.length} açıq sifariş · ${nOf} təklif`,`Open orders: ${open.length} · Offers: ${nOf}`,`Открытых заказов: ${open.length} · Предложений: ${nOf}`):t3("Hava limanı transferi sifariş edin","Book an airport transfer","Закажите трансфер из аэропорта")}</h1>
+ return `${langBar(tlang())}${coCard()}<section class="hero"><p class="hi">${greet()}!</p><h1>${open.length?t3(`${open.length} açıq sifariş · ${nOf} təklif`,`Open orders: ${open.length} · Offers: ${nOf}`,`Открытых заказов: ${open.length} · Предложений: ${nOf}`):t3("Hava limanı transferi sifariş edin","Book an airport transfer","Закажите трансфер из аэропорта")}</h1>
   <p class="lead">${t3("Sifarişinizi yazın, transfer şirkətləri qiymət təklif etsin, ən uyğununu seçin. Sürücü və maşın məlumatı sonra linkdə görünəcək.","Tell us about your trip, transfer companies send their prices, and you choose the best one. Driver and car details will appear in your link.","Опишите поездку — трансферные компании пришлют цены, а вы выберете лучшую. Данные водителя и машины появятся по ссылке.")}</p></section>
  <section class="box" style="margin-top:12px"><details ${L.length?"":"open"}><summary>+ ${t3("Yeni sifariş","New order","Новый заказ")}</summary><form id="fReq" class="reqf">
   <label>${t3("Növ","Type","Тип")}<select name="type"><option value="arr">${t3("Qarşılama (hava limanı → ünvan)","Arrival (airport → address)","Встреча (аэропорт → адрес)")}</option><option value="dep">${t3("Yola salma (ünvan → hava limanı)","Departure (address → airport)","Проводы (адрес → аэропорт)")}</option></select></label>
@@ -833,7 +843,7 @@ function orders(){
 }
 function market(){
  const M=S.market;if(!M)return `<p class="note">Yüklənir…</p>`;
- const open=M.filter(x=>x.state==="open"),won=M.filter(x=>x.state==="won"),closed=M.filter(x=>x.state==="closed");
+ const open=M.filter(x=>x.state==="open").sort((a,b)=>(b.direct?1:0)-(a.direct?1:0)),won=M.filter(x=>x.state==="won"),closed=M.filter(x=>x.state==="closed");
  const form=(x,o)=>`<form class="offer" data-req="${esc(x.id)}"><input name="price" type="number" min="1" max="99999" step="0.5" required placeholder="Qiymət, ₼" value="${o?esc(o.price):""}" aria-label="Qiymət"><input name="note" maxlength="200" placeholder="Maşın, qeyd (məs. Mercedes Vito)" value="${o?esc(o.note):""}" aria-label="Qeyd"><button class="btn">${o&&o.status==="pending"?"Yenilə":"Təklif göndər"}</button></form>`;
  const card=x=>{const o=x.my_offer;let b="";
   if(x.state==="open"){b=`<p class="rq-n">${+x.offers_count?`${+x.offers_count} şirkət təklif verib`:"Hələ heç kim təklif verməyib, birinci siz olun"}</p>`;
@@ -841,7 +851,8 @@ function market(){
    else b+=form(x,o&&o.status==="withdrawn"?o:null)}
   else if(x.state==="won")b=`<div class="rq-ok"><b>Müştəri sizi seçdi!</b> ${o?money(o.price)+" · ":""}Transfer Paneldə, sürücü və maşın təyin edin.</div>`;
   else b=`<p class="rq-mut">${o&&o.status==="withdrawn"?"Təklifi geri götürdünüz":"Müştəri başqa təklifi seçdi və ya sifariş bağlandı"}</p>`;
-  return `<div class="box rq">${reqHead(x,x.first_name)}${b}</div>`};
+  const dir=x.direct&&x.state==="open"?`<p class="dirtag">⭐ <b>Birbaşa sifariş</b>: müştəri sizin linkinizlə gəlib.${x.direct_until?` ${new Date(x.direct_until).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Baku"})}-dək yalnız sizə görünür, sonra təklif verməsəniz digər şirkətlərə açılacaq.`:""}</p>`:"";
+  return `<div class="box rq">${reqHead(x,x.first_name)}${dir}${b}</div>`};
  const sec=(t,a)=>a.length?`<section class="grp"><h2>${t}<span>${a.length}</span></h2>${a.map(card).join("")}</section>`:"";
  return `<section class="hero"><p class="hi">Arrivo sifarişləri</p><h1>${open.length?`${open.length} açıq sifariş`:"Hazırda açıq sifariş yoxdur"}</h1>
   <p class="lead">Müştərilər Arrivo-da transfer sifariş edir. Qiymət təklif edin, müştəri sizi seçsə, transfer avtomatik Panelə düşəcək.</p></section>
@@ -979,6 +990,11 @@ const stx=k=>ST3[k]?t3(...ST3[k]):"";
 const cDay=s=>{const l=ul();if(l==="az")return dayLabel(s)+(s===todayStr()||s===shiftDate(todayStr(),1)?" · "+nice(s):"");
  const d=new Date(s+"T00:00:00Z").toLocaleDateString(l==="ru"?"ru-RU":"en-GB",{day:"numeric",month:"long",timeZone:"UTC"});
  return s===todayStr()?t3("","Today","Сегодня")+" · "+d:s===shiftDate(todayStr(),1)?t3("","Tomorrow","Завтра")+" · "+d:d};
+const coUrl=()=>location.origin+location.pathname+"#s="+(S.company&&S.company.slug||"");
+const coCard=()=>{const c=S.co;if(!c)return "";const tel=String(c.phone||"").replace(/[^\d+]/g,"");
+ return `<div class="box cocard">${av(c.name)}<div><span>${t3("Sifarişiniz birbaşa bu şirkətə gedəcək","Your order goes directly to","Ваш заказ уйдёт напрямую в")}</span><b>${esc(c.name)}</b><span>${+c.rating_n?`<span class="star" style="display:inline">★ ${esc(c.rating)}</span> · ${+c.rating_n} ${t3("rəy","reviews","отз.")}`:t3("Hələ rəy yoxdur","No reviews yet","Пока нет отзывов")}${tel?` · <a href="tel:${esc(tel)}" style="color:inherit">${esc(c.phone)}</a>`:""}</span></div><button class="x" id="coX" type="button" aria-label="${t3("Bütün şirkətlərdən təklif al","Get offers from all companies","Получить предложения от всех компаний")}" title="${t3("Bütün şirkətlərdən təklif al","Get offers from all companies","Получить предложения от всех компаний")}">✕</button></div>`};
+async function loadCo(){let slug="";try{slug=localStorage.getItem("arrivo_co")||""}catch(e){}
+ if(!slug||!sb){S.co=null;return}const {data}=await sb.rpc("company_public",{p_slug:slug});S.co=data||null;if(!data)try{localStorage.removeItem("arrivo_co")}catch(e){}}
 const langBar=l=>`<div class="langs">${["az","en","ru"].map(k=>`<button type="button" data-lang="${k}" class="${k===l?"on":""}">${k.toUpperCase()}</button>`).join("")}</div>`;
 const GYD=[40.4675,50.0467];
 const hav=(a,b)=>{const r=x=>x*Math.PI/180,dl=r(b[0]-a[0]),dg=r(b[1]-a[1]),h=Math.sin(dl/2)**2+Math.cos(r(a[0]))*Math.cos(r(b[0]))*Math.sin(dg/2)**2;return 12742*Math.asin(Math.sqrt(h))};
@@ -1050,7 +1066,10 @@ async function boot(){
  if(lg){document.body.classList.add("gate");$("#main").innerHTML=legalView(lg[1]);window.scrollTo(0,0);return}
  const m=location.hash.match(/^#t=([A-Za-z0-9]+)/);
  if(m)return trackPage(m[1]);
+ const sm=location.hash.match(/^#s=([A-Za-z0-9-]{3,40})/);
+ if(sm){try{localStorage.setItem("arrivo_co",sm[1].toLowerCase())}catch(e){}history.replaceState(null,"",location.pathname+location.search)}
  if(!sb){S.mode="local";render();return}
+ await loadCo();
  const {data:{session}}=await sb.auth.getSession();
  if(!session){if(authErr)history.replaceState(null,"",location.pathname);S.mode="login";render();return}
  S.email=session.user.email||"";
@@ -1064,7 +1083,7 @@ async function boot(){
   setInterval(async()=>{if(S.mode==="db"&&!busyForm()){await loadMine();render()}},20000);return}
  if(!hasCo&&!me.is_admin){S.mode=co&&co.status==="blocked"?"blocked":"pending";render();return}
  if(hasCo)$("#coName").textContent=co.name;
- if(hasCo&&me.role==="coordinator"){const {data:cd}=await sb.from("companies").select("id,name,phone,city,notify_wa").eq("id",co.id).single();S.company=cd||{...co};
+ if(hasCo&&me.role==="coordinator"){const {data:cd}=await sb.from("companies").select("id,name,phone,city,notify_wa,slug").eq("id",co.id).single();S.company=cd||{...co};
   const {data:rt}=await sb.from("ratings").select("stars,comment,driver_id,created_at").order("created_at",{ascending:false}).limit(500);S.ratings=rt||[]}
  if(!hasCo){document.querySelectorAll('.tab:not([data-r="admin"])').forEach(x=>x.hidden=true);document.body.classList.add("admin-only");S.role="admin"}
  else if(me.role==="driver"&&!me.is_admin){S.role="driver";S.driverId=me.driver_id||"";document.body.classList.add("is-driver")}
