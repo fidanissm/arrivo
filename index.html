@@ -9,6 +9,7 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Baloo+2:wght@800&display=swap" rel="stylesheet">
@@ -198,10 +199,17 @@ textarea{min-height:70px;resize:vertical}
 .login h1{margin:0 0 6px;font-size:24px}.login p{color:var(--mut);margin:0 0 16px}
 .login form{display:grid;gap:10px;padding:0;grid-template-columns:minmax(0,1fr)}
 body.track .top{display:none}body.track .wrap{padding-top:20px}
-body.is-driver .tabs,body.gate .tabs,body.gate .datep{display:none}
+body.is-driver .tabs,body.gate .tabs,body.gate .datep,body.admin-only .datep{display:none}
+.tab[hidden]{display:none!important}
+.coName{font-size:13px;font-weight:700;color:var(--mut);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.linkb{background:none;border:0;padding:0;color:var(--acc);font:inherit;font-weight:700;cursor:pointer;text-decoration:underline}
+.it .sub{display:block;margin-top:2px}
+body.on-admin .datep{display:none}
+@media(max-width:760px){.it.co{flex-wrap:wrap}.it.co>div{flex:1 1 calc(100% - 64px)}.it.co>.load{margin-left:60px}.it.co>button{margin-left:auto}}
+.ph-co{margin:6px 0 0;font-size:13px;opacity:.85}
 .callb{display:block;text-align:center;text-decoration:none;line-height:46px;margin-bottom:8px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
-@media(max-width:900px){.tab span{display:none}}
+@media(max-width:900px){.tab span{display:none}.coName{display:none}}
 @media(max-width:760px){
  .top{backdrop-filter:none;background:var(--bg)}
  .bar1{flex-wrap:wrap}
@@ -219,12 +227,13 @@ body.is-driver .tabs,body.gate .tabs,body.gate .datep{display:none}
 <body>
 <header class="top">
  <div class="bar1">
-  <div class="brand"><i><svg viewBox="0 0 100 100" width="24" height="24" aria-hidden="true"><g transform="translate(58 4) scale(1.55) rotate(135 12 12)"><path fill="#fff" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></g><path fill="#fff" d="M18 64l6-18c1.5-4.5 4.5-7 9-7h34c4.5 0 7.5 2.5 9 7l6 18v18c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5v-4H33v4c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5z"/><path fill="#ff6a37" d="M29 62l4.5-13c.8-2.2 2.2-3.5 4.5-3.5h24c2.3 0 3.7 1.3 4.5 3.5L71 62z"/><circle cx="29" cy="71" r="4.5" fill="#ff6a37"/><circle cx="71" cy="71" r="4.5" fill="#ff6a37"/><rect x="41" y="68.5" width="18" height="5" rx="2.5" fill="#ff6a37"/></svg></i><span class="wm">arr<span class="wi">ı</span>vo</span></div>
+  <div class="brand"><i><svg viewBox="0 0 100 100" width="24" height="24" aria-hidden="true"><g transform="translate(58 4) scale(1.55) rotate(135 12 12)"><path fill="#fff" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></g><path fill="#fff" d="M18 64l6-18c1.5-4.5 4.5-7 9-7h34c4.5 0 7.5 2.5 9 7l6 18v18c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5v-4H33v4c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5z"/><path fill="#ff6a37" d="M29 62l4.5-13c.8-2.2 2.2-3.5 4.5-3.5h24c2.3 0 3.7 1.3 4.5 3.5L71 62z"/><circle cx="29" cy="71" r="4.5" fill="#ff6a37"/><circle cx="71" cy="71" r="4.5" fill="#ff6a37"/><rect x="41" y="68.5" width="18" height="5" rx="2.5" fill="#ff6a37"/></svg></i><span class="wm">arr<span class="wi">ı</span>vo</span><span class="coName" id="coName"></span></div>
   <nav class="tabs" role="tablist">
    <button class="tab" role="tab" data-r="coord"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg><span>Panel</span></button>
    <button class="tab" role="tab" data-r="driver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 14.5V21M9.6 11.2 3.5 9.5M14.4 11.2l6.1-1.7"/></svg><span>Sürücü</span></button>
    <button class="tab" role="tab" data-r="fleet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 17h14M3 13l2-6h14l2 6v4H3z"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/></svg><span>Park</span></button>
    <button class="tab" role="tab" data-r="cust"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg><span>Müştəri</span></button>
+   <button class="tab" role="tab" data-r="admin" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><span>Admin</span></button>
   </nav>
   <div class="datep"><button id="prev" aria-label="Əvvəlki gün">‹</button><label><span id="dateL">Bu gün</span><input type="date" id="date" aria-label="Tarix"></label><button id="next" aria-label="Növbəti gün">›</button></div>
   <button class="out" id="logout" hidden>Çıxış</button>
@@ -254,15 +263,13 @@ const NEXT={new:["enroute","Yola çıxdım"],enroute:["arrived","Çatdım"],arri
 const uid=()=>Math.random().toString(36).slice(2,10);
 
 /* ===== AYARLAR: Supabase → Project Settings → API ===== */
-const CONFIG={
- SUPABASE_URL:"https://yrpkfstjbngsxklenpkd.supabase.co",       // məs. "https://abcdxyz.supabase.co"
- SUPABASE_ANON_KEY:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlycGtmc3RqYm5nc3hrbGVucGtkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU3MTMzMTYsImV4cCI6MjExMTI4OTMxNn0.puDgf0HJPgialQASKRrk3FDPbpSQiGVDaAujnKViR50"   // "anon public" açarı (gizli deyil, saytda ola bilər)
-};
+/* Açarlar config.js faylındadır: window.ARRIVO_CONFIG={SUPABASE_URL:"…",SUPABASE_ANON_KEY:"…"} */
+const CONFIG=Object.assign({SUPABASE_URL:"",SUPABASE_ANON_KEY:""},window.ARRIVO_CONFIG||{});
 const FST={Expected:"planlaşdırılıb",Unknown:"",CheckIn:"qeydiyyat",Boarding:"minik",GateClosed:"qapı bağlı",Departed:"qalxdı",EnRoute:"havada",Approaching:"enişə gəlir",Arrived:"endi",Delayed:"gecikir",Canceled:"ləğv",CanceledUncertain:"ləğv ola bilər",Diverted:"yönləndirildi"};
-const sb=CONFIG.SUPABASE_URL&&window.supabase?window.supabase.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_ANON_KEY):null;
+const sb=CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY&&window.supabase?window.supabase.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_ANON_KEY):null;
 let me=null;
 
-let S={role:"coord",date:todayStr(),q:"",f:"all",driverId:"",custId:"",transfers:[],drivers:[],vehicles:[],mode:"loading",stale:false,staff:[],email:""};
+let S={role:"coord",date:todayStr(),q:"",f:"all",driverId:"",custId:"",transfers:[],drivers:[],vehicles:[],mode:"loading",stale:false,staff:[],email:"",admin:null};
 let sel=null;
 
 /* ===== Saxlama: Supabase; ayar yoxdursa bu brauzerdə müvəqqəti ===== */
@@ -300,7 +307,7 @@ const store={
 };
 async function save(col,obj,msg){
  try{await store.put(col,obj);if(msg)toast(msg);return true}
- catch(e){toast(e&&e.code==="42501"?"Bu dəyişiklik üçün icazəniz yoxdur.":"Yadda saxlanmadı: "+(e&&e.message||"xəta"));return false}
+ catch(e){const c=e&&e.code;toast(col==="staff"&&(c==="42501"||c==="23505")?"Bu e-poçt artıq başqa şirkətdə qeydiyyatdadır.":c==="42501"?"Bu dəyişiklik üçün icazəniz yoxdur.":"Yadda saxlanmadı: "+(e&&e.message||"xəta"));return false}
 }
 
 /* ===== Hesablamalar ===== */
@@ -347,13 +354,15 @@ function render(){
  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.r===S.role));
  $("#date").value=S.date;$("#dateL").textContent=dayLabel(S.date)+(S.date===todayStr()?" · "+nice(S.date):"");
  const m=$("#main");
- document.body.classList.toggle("gate",S.mode==="login"||S.mode==="noaccess");
+ document.body.classList.toggle("on-admin",S.role==="admin");
+ document.body.classList.toggle("gate",["login","register","pending","blocked"].includes(S.mode));
  if(S.mode==="loading"){m.innerHTML=`<p class="note">${S.stale?"Baza hələ cavab vermir, internet bağlantısını yoxlayın.":"Yüklənir…"}</p>`;return}
  if(S.mode==="login"){m.innerHTML=loginView();return}
- if(S.mode==="noaccess"){m.innerHTML=`<div class="login"><h1>Giriş icazəsi yoxdur</h1><p>${esc(S.email)} ünvanı komandaya əlavə olunmayıb. Koordinatordan "Park → Komanda" bölməsində sizi əlavə etməsini xahiş edin.</p><button class="btn sec" id="logout2">Başqa e-poçtla gir</button></div>`;return}
+ if(S.mode==="register"){m.innerHTML=registerView();return}
+ if(S.mode==="pending"||S.mode==="blocked"){m.innerHTML=waitView();return}
  const hadQ=document.activeElement&&document.activeElement.id==="q",qPos=hadQ?document.activeElement.selectionStart:0;
  const banner=S.mode==="local"?`<p class="note"><b>Sınaq rejimi:</b> Supabase ayarları doldurulmayıb, dəyişikliklər yalnız bu səhifədə qalır və yeniləyəndə silinir.</p>`:S.stale?`<p class="note">Məlumat köhnə ola bilər, bağlantı bərpa olunur…</p>`:"";
- m.innerHTML=banner+({coord,driver,fleet,cust}[S.role])();
+ m.innerHTML=banner+({coord,driver,fleet,cust,admin}[S.role]||coord)();
  if(hadQ){const q=$("#q");if(q){q.focus();q.setSelectionRange(qPos,qPos)}}
  const tl=m.querySelector(".tl");if(tl&&S.date===todayStr()&&tl.scrollWidth>tl.clientWidth)tl.scrollLeft=nowMin()/1440*tl.scrollWidth-tl.clientWidth/2;
 }
@@ -456,7 +465,7 @@ function phoneView(d,preview){
  const steps=c.arr?["Transfer təsdiqləndi","Sürücü hava limanına yoldadır","Sürücü sizi gəliş zalında gözləyir","Yoldasınız: "+(d.address||""),"Çatdınız, xoş istirahətlər!"]
   :["Transfer təsdiqləndi","Sürücü sizə tərəf yoldadır","Sürücü ünvandadır, sizi gözləyir","Hava limanına yoldasınız","Çatdınız, uğurlu uçuş!"];
  const tel=String(d.driver_phone||"").replace(/[^\d+]/g,"");
- return `<div class="phone"><div class="ph-top"><span class="wm inv" style="font-size:24px;color:#fff">arr<span class="wi">ı</span>vo</span><h2>Salam, ${esc(d.first_name||"")}!</h2>
+ return `<div class="phone"><div class="ph-top"><span class="wm inv" style="font-size:24px;color:#fff">arr<span class="wi">ı</span>vo</span><h2>Salam, ${esc(d.first_name||"")}!</h2>${d.company?`<p class="ph-co">${esc(d.company)}${d.company_phone?" · "+esc(d.company_phone):""}</p>`:""}
   <p>${d.flight_cancelled?"Reysiniz ləğv edilib, sizinlə əlaqə saxlayacağıq.":c.arr?`${esc(d.flight||"")} reysi · eniş ${hm(c.land)}${c.delay>=5?", gecikmə nəzərə alınıb":""}`:`Sizi ${hm(c.pick)}-da götürəcəyik · uçuş ${hm(c.sched)}`}</p></div>
   <div class="ph-card">${d.driver&&d.plate?`<div class="ph-drv">${av(d.driver,"xl")}<div><span class="mut" style="font-size:13px">Sürücünüz</span><b>${esc(d.driver)}</b><span class="mut" style="font-size:13px">${esc(d.driver_phone||"")}</span></div></div>
    <div class="ph-car"><span>${esc(d.car||"")}${d.color?", "+esc(d.color):""}</span>${plate(d.plate)}</div>`:`<p style="margin:0">Sürücü məlumatı tezliklə burada görünəcək.</p>`}</div>
@@ -469,7 +478,7 @@ function cust(){
  if(!list.length)return `<div class="empty">${esc(dayLabel(S.date))} transfer yoxdur.</div>`;
  if(!list.some(t=>t.id===S.custId))S.custId=list[0].id;
  const t=list.find(x=>x.id===S.custId),d=S.drivers.find(x=>x.id===t.driverId),v=S.vehicles.find(x=>x.id===t.vehicleId);
- const data={type:t.type,first_name:t.name.split(" ")[0],flight:t.flight,city:t.city,sched:t.sched,est:t.est,address:t.address,status:t.status,flight_cancelled:t.flightCancelled,driver:d?.name,driver_phone:d?.phone,car:v?.model,color:v?.color,plate:v?.plate};
+ const data={type:t.type,first_name:t.name.split(" ")[0],flight:t.flight,city:t.city,sched:t.sched,est:t.est,address:t.address,status:t.status,flight_cancelled:t.flightCancelled,driver:d?.name,driver_phone:d?.phone,car:v?.model,color:v?.color,plate:v?.plate,company:me?.company?.name||""};
  const btns=`<button class="btn" data-wa="${esc(t.id)}" style="width:100%">${live()&&String(t.phone||"").replace(/\D/g,"").length>=9?"WhatsApp-da göndər":"WhatsApp mesajını kopyala"}</button>${live()&&t.code?`<button class="btn sec" data-open="${esc(t.id)}" style="width:100%;margin-top:8px">Müştəri linkini aç</button>`:""}`;
  return `<p class="note">Müştəri WhatsApp ilə gələn linkdə bunu görəcək. Qonağı seçin:</p>
  <div class="dsel">${list.map(x=>`<button data-cs="${esc(x.id)}" aria-pressed="${x.id===t.id}">${av(x.name,"sm")}${esc(x.name.split(" ")[0])}</button>`).join("")}</div>
@@ -527,7 +536,7 @@ async function wa(t){
  let txt=c.arr?`Salam, ${t.name}! ${nice(t.date)} tarixində ${t.flight||""} reysi ilə gəlişinizdə (${hm(c.land)}) sizi gəliş zalında adınız yazılmış lövhə ilə qarşılayacağıq.`+who
   :`Salam, ${t.name}! ${nice(t.date)} tarixində sizi ${hm(c.pick)}-da ${t.address||"ünvandan"} götürüb hava limanına aparacağıq (uçuş ${hm(c.sched)}).`+who;
  const link=live()?trackLink(t):"";if(link)txt+=`\nTransferinizi canlı izləyin: ${link}`;
- txt+="\nArrivo";
+ txt+="\n"+(me&&me.company&&me.company.name?me.company.name+" · Arrivo":"Arrivo");
  const num=String(t.phone||"").replace(/\D/g,"");
  if(live()&&num.length>=9){window.open("https://wa.me/"+num+"?text="+encodeURIComponent(txt),"_blank","noopener");return}
  try{await navigator.clipboard.writeText(txt);toast("Mesaj kopyalandı, WhatsApp-a yapışdırın")}catch(e){toast(txt)}
@@ -540,7 +549,7 @@ async function advance(id,to){
 let tt;function toast(m){const el=$("#toast");el.textContent=m;el.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>el.classList.remove("on"),2600)}
 
 /* ===== Hadisələr ===== */
-document.querySelector(".tabs").addEventListener("click",e=>{const b=e.target.closest(".tab");if(b){S.role=b.dataset.r;closeDrawer();render()}});
+document.querySelector(".tabs").addEventListener("click",async e=>{const b=e.target.closest(".tab");if(b){S.role=b.dataset.r;closeDrawer();render();if(S.role==="admin"&&live()){await loadAdmin();render()}}});
 $("#date").addEventListener("change",e=>{if(e.target.value){S.date=e.target.value;render()}});
 $("#prev").onclick=()=>{S.date=shiftDate(S.date,-1);render()};
 $("#next").onclick=()=>{S.date=shiftDate(S.date,1);render()};
@@ -566,6 +575,8 @@ $("#main").addEventListener("click",async e=>{
  if(b=g("[data-dels]")){if(b.dataset.sure){await store.del("staff",b.dataset.dels).catch(()=>toast("Silinmədi"))}else{b.dataset.sure=1;b.textContent="Əminsiniz?"}return}
  if(b=g("[data-open]")){const t=S.transfers.find(x=>x.id===b.dataset.open);if(t&&t.code)window.open(trackLink(t),"_blank","noopener");return}
  if(g("#logout2")){await sb.auth.signOut();return}
+ if(g("#recheck")){S.mode="loading";render();boot();return}
+ if(b=g("[data-co]")){b.disabled=true;const {error}=await sb.rpc("admin_set_company_status",{p_id:b.dataset.co,p_status:b.dataset.st});if(error)toast("Alınmadı: "+error.message);else toast(b.dataset.st==="active"?"Şirkət aktivləşdirildi":"Şirkət bloklandı");await loadAdmin();render();return}
  if(b=g("[data-delv]")){if(b.dataset.sure){await store.del("vehicles",b.dataset.delv).catch(()=>toast("Silinmədi"))}else{b.dataset.sure=1;b.textContent="Əminsiniz?"}return}
  if(b=g("[data-id]")){const t=S.transfers.find(x=>x.id===b.dataset.id);if(t)openDrawer(t);return}
 });
@@ -580,16 +591,49 @@ $("#main").addEventListener("submit",async e=>{
   if(error){$("#lmsg").textContent=/Invalid login/i.test(error.message)?"E-poçt və ya parol səhvdir. İlk dəfədirsə, \"Hesab yarat\" düyməsinə basın.":/registered/i.test(error.message)?"Bu e-poçtla hesab artıq var, \"Daxil ol\" düyməsinə basın.":"Xəta: "+error.message;return}
   if(!data.session){$("#lmsg").textContent="Hesab yaradıldı, amma e-poçt təsdiqi tələb olunur. Təlimatdakı \"Confirm email\" ayarını söndürün.";return}
   boot();return}
+ if(f.id==="fReg"){const bt=f.querySelector("button");bt.disabled=true;
+  const {error}=await sb.rpc("register_company",{p_name:(o.company||"").trim(),p_owner:(o.owner||"").trim(),p_phone:(o.phone||"").trim(),p_city:(o.city||"").trim()});
+  bt.disabled=false;if(error){$("#lmsg").textContent="Xəta: "+error.message;return}
+  S.mode="loading";render();boot();return}
  if(f.id==="fVeh"){await save("vehicles",{model:o.model.trim(),plate:o.plate.trim().toUpperCase(),seats:+o.seats||4,color:o.color.trim()},"Maşın əlavə olundu")}
 });
 setInterval(()=>{if(S.mode!=="loading"&&!sel&&!document.activeElement?.matches?.("input,select,textarea"))render()},60000);
 
 /* ===== Başlanğıc ===== */
-function loginView(){return `<div class="login"><div class="brand"><i><svg viewBox="0 0 100 100" width="24" height="24" aria-hidden="true"><g transform="translate(58 4) scale(1.55) rotate(135 12 12)"><path fill="#fff" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></g><path fill="#fff" d="M18 64l6-18c1.5-4.5 4.5-7 9-7h34c4.5 0 7.5 2.5 9 7l6 18v18c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5v-4H33v4c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5z"/><path fill="#ff6a37" d="M29 62l4.5-13c.8-2.2 2.2-3.5 4.5-3.5h24c2.3 0 3.7 1.3 4.5 3.5L71 62z"/><circle cx="29" cy="71" r="4.5" fill="#ff6a37"/><circle cx="71" cy="71" r="4.5" fill="#ff6a37"/><rect x="41" y="68.5" width="18" height="5" rx="2.5" fill="#ff6a37"/></svg></i><span class="wm">arr<span class="wi">ı</span>vo</span></div>
- <h1>Xoş gəlmisiniz</h1><p>Koordinatorun komandaya əlavə etdiyi e-poçtla daxil olun.</p>
+const BRAND=`<div class="brand"><i><svg viewBox="0 0 100 100" width="24" height="24" aria-hidden="true"><g transform="translate(58 4) scale(1.55) rotate(135 12 12)"><path fill="#fff" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></g><path fill="#fff" d="M18 64l6-18c1.5-4.5 4.5-7 9-7h34c4.5 0 7.5 2.5 9 7l6 18v18c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5v-4H33v4c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5z"/><path fill="#ff6a37" d="M29 62l4.5-13c.8-2.2 2.2-3.5 4.5-3.5h24c2.3 0 3.7 1.3 4.5 3.5L71 62z"/><circle cx="29" cy="71" r="4.5" fill="#ff6a37"/><circle cx="71" cy="71" r="4.5" fill="#ff6a37"/><rect x="41" y="68.5" width="18" height="5" rx="2.5" fill="#ff6a37"/></svg></i><span class="wm">arr<span class="wi">ı</span>vo</span></div>`;
+function loginView(){return `<div class="login">${BRAND}
+ <h1>Xoş gəlmisiniz</h1><p>Daxil olun. Şirkətinizi qoşmaq üçün yeni hesab yaradın, işçisinizsə şirkətinizin sizi əlavə etdiyi e-poçtla girin.</p>
  <form id="fLogin"><input type="email" name="email" required placeholder="ad@mail.com" autocomplete="email" aria-label="E-poçt">
  <input type="password" name="password" required minlength="6" placeholder="Parol (ən az 6 simvol)" autocomplete="current-password" aria-label="Parol">
  <button class="btn" name="act" value="in">Daxil ol</button><button class="btn sec" name="act" value="up">İlk dəfədir? Hesab yarat</button></form><p id="lmsg" class="note" style="margin-top:12px"></p></div>`}
+function registerView(){return `<div class="login">${BRAND}<h1>Şirkətinizi qoşun</h1><p>${esc(S.email)} hələ heç bir şirkətə bağlı deyil. Transfer və ya turizm şirkətisinizsə, qeydiyyatdan keçin.</p>
+ <form id="fReg"><input name="company" required minlength="2" maxlength="80" placeholder="Şirkətin adı" aria-label="Şirkətin adı">
+ <input name="owner" maxlength="60" placeholder="Adınız, soyadınız" aria-label="Adınız, soyadınız" autocomplete="name">
+ <input name="phone" type="tel" maxlength="25" placeholder="Şirkətin telefonu (+994…)" aria-label="Telefon" autocomplete="tel">
+ <input name="city" maxlength="40" placeholder="Şəhər (Bakı)" aria-label="Şəhər">
+ <button class="btn">Şirkəti qeydiyyatdan keçir</button></form><p id="lmsg" class="note" style="margin-top:12px"></p>
+ <p class="note">Sürücü və ya koordinatorsunuz? Şirkətinizdən e-poçtunuzu <b>Park → Komanda</b> bölməsinə əlavə etməsini istəyin, sonra <button class="linkb" id="recheck">yenidən yoxlayın</button>.</p>
+ <button class="btn ghost" id="logout2">Başqa e-poçtla gir</button></div>`}
+function waitView(){const co=me&&me.company||{},bl=S.mode==="blocked";
+ return `<div class="login">${BRAND}<h1>${bl?"Hesab dayandırılıb":"Təsdiq gözlənilir"}</h1>
+ <p>${bl?`<b>${esc(co.name||"")}</b> şirkətinin Arrivo hesabı dayandırılıb. Ətraflı məlumat üçün Arrivo ilə əlaqə saxlayın.`:`Təşəkkürlər! <b>${esc(co.name||"")}</b> qeydiyyatdan keçdi. Arrivo komandası şirkəti yoxlayıb aktivləşdirəcək, sonra burada maşın, sürücü və transferlərinizi idarə edəcəksiniz.`}</p>
+ <button class="btn sec" id="recheck">Yenidən yoxla</button><button class="btn ghost" id="logout2" style="margin-top:8px">Çıxış</button></div>`}
+async function loadAdmin(){const {data,error}=await sb.rpc("admin_companies");if(error){toast("Şirkətlər yüklənmədi");return}S.admin=data||[]}
+function admin(){
+ const A=S.admin;if(!A)return `<p class="note">Yüklənir…</p>`;
+ const n=s=>A.filter(c=>c.status===s).length,tot=A.reduce((a,c)=>a+(+c.transfers30||0),0);
+ const SL={pending:"Təsdiq gözləyir",active:"Aktiv",blocked:"Bloklanıb"};
+ const row=c=>`<div class="it co">${av(c.name,"lg")}<div><b>${esc(c.name)}</b><span class="sub">${esc(c.owner_email)}${c.phone?" · "+esc(c.phone):""} · ${esc(c.city)}</span>
+  <span class="sub">${+c.vehicles} maşın · ${+c.drivers} sürücü · ${+c.staff} işçi · ${+c.transfers30} transfer (30 gün) · ${esc(String(c.created_at).slice(0,10))}</span></div>
+  <span class="load ${c.status==="active"?"":"busy"}">${SL[c.status]||esc(c.status)}</span>
+  ${c.status==="active"?`<button class="del" data-co="${esc(c.id)}" data-st="blocked">Blokla</button>`:`<button class="btn" data-co="${esc(c.id)}" data-st="active">${c.status==="blocked"?"Aktivləşdir":"Təsdiqlə"}</button>`}</div>`;
+ const pend=A.filter(c=>c.status==="pending"),rest=A.filter(c=>c.status!=="pending");
+ return `<section class="hero"><p class="hi">Platforma idarəsi</p><h1>${A.length} şirkət · son 30 gündə ${tot} transfer</h1>
+  <div class="stats"><span class="${pend.length?"warn":""}"><b>${pend.length}</b>təsdiq gözləyir</span><span><b>${n("active")}</b>aktiv</span><span class="${n("blocked")?"bad":""}"><b>${n("blocked")}</b>bloklanıb</span></div></section>
+ <div class="fleet">${pend.length?`<section class="box" style="grid-column:1/-1"><h3>Yeni müraciətlər <span class="load busy">${pend.length}</span></h3>${pend.map(row).join("")}</section>`:""}
+ <section class="box" style="grid-column:1/-1"><h3>Şirkətlər <span class="load">${rest.length}</span></h3>${rest.map(row).join("")||`<div class="it"><span>Hələ aktiv şirkət yoxdur.</span></div>`}</section></div>
+ <p class="note" style="margin-top:12px">Şirkətlərin müştəri məlumatlarını admin görmür, yalnız say və statistikanı görür.</p>`;
+}
 const pend=new Set();let qt;
 function queue(t){if(!["transfers","drivers","vehicles","staff"].includes(t))return;if(t==="staff"&&me?.role!=="coordinator")return;pend.add(t);clearTimeout(qt);qt=setTimeout(async()=>{const ts=[...pend];pend.clear();await Promise.all(ts.map(load));render()},400)}
 async function trackPage(code){
@@ -609,11 +653,18 @@ async function boot(){
  if(!session){S.mode="login";render();return}
  S.email=session.user.email||"";
  const {data,error}=await sb.rpc("whoami");
- if(error||!data){S.mode="noaccess";render();return}
- me=data;
- if(me.role==="driver"){S.role="driver";S.driverId=me.driver_id||"";document.body.classList.add("is-driver")}
- $("#logout").hidden=false;
- await Promise.all(["transfers","drivers","vehicles"].concat(me.role==="coordinator"?["staff"]:[]).map(load));
+ if(error||!data){S.mode="loading";S.stale=true;render();return}
+ me=data;$("#logout").hidden=false;
+ const co=me.company,hasCo=!!(me.role&&co&&co.status==="active");
+ if(me.is_admin)$('.tab[data-r="admin"]').hidden=false;
+ if(!me.role&&!me.is_admin){S.mode="register";render();return}
+ if(!hasCo&&!me.is_admin){S.mode=co&&co.status==="blocked"?"blocked":"pending";render();return}
+ if(hasCo)$("#coName").textContent=co.name;
+ if(!hasCo){document.querySelectorAll('.tab:not([data-r="admin"])').forEach(x=>x.hidden=true);document.body.classList.add("admin-only");S.role="admin"}
+ else if(me.role==="driver"&&!me.is_admin){S.role="driver";S.driverId=me.driver_id||"";document.body.classList.add("is-driver")}
+ else if(me.role==="driver"){S.role="driver";S.driverId=me.driver_id||""}
+ if(hasCo)await Promise.all(["transfers","drivers","vehicles"].concat(me.role==="coordinator"?["staff"]:[]).map(load));
+ if(me.is_admin)await loadAdmin();
  S.mode="db";render();
  sb.channel("arrivo").on("postgres_changes",{event:"*",schema:"public"},p=>queue(p.table)).subscribe();
  setInterval(()=>queue("transfers"),5*60000);
