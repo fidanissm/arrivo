@@ -301,6 +301,8 @@ const uid=()=>Math.random().toString(36).slice(2,10);
 /* Açarlar config.js faylındadır: window.ARRIVO_CONFIG={SUPABASE_URL:"…",SUPABASE_ANON_KEY:"…"} */
 const CONFIG=Object.assign({SUPABASE_URL:"",SUPABASE_ANON_KEY:""},window.ARRIVO_CONFIG||{});
 const FST={Expected:"planlaşdırılıb",Unknown:"",CheckIn:"qeydiyyat",Boarding:"minik",GateClosed:"qapı bağlı",Departed:"qalxdı",EnRoute:"havada",Approaching:"enişə gəlir",Arrived:"endi",Delayed:"gecikir",Canceled:"ləğv",CanceledUncertain:"ləğv ola bilər",Diverted:"yönləndirildi"};
+let recovering=/type=recovery/.test(location.hash);
+const authErr=(location.hash.match(/error_description=([^&]+)/)||[])[1];
 const sb=CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY&&window.supabase?window.supabase.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_ANON_KEY):null;
 let me=null;
 
@@ -391,9 +393,10 @@ function render(){
  const m=$("#main");
  updateLive();geoSync();
  document.body.classList.toggle("on-admin",["admin","market","orders"].includes(S.role));
- document.body.classList.toggle("gate",["login","register","pending","blocked"].includes(S.mode));
+ document.body.classList.toggle("gate",["login","register","pending","blocked","reset"].includes(S.mode));
  if(S.mode==="loading"){m.innerHTML=`<p class="note">${S.stale?"Baza hələ cavab vermir, internet bağlantısını yoxlayın.":"Yüklənir…"}</p>`;return}
  if(S.mode==="login"){m.innerHTML=loginView();return}
+ if(S.mode==="reset"){m.innerHTML=resetView();return}
  if(S.mode==="register"){m.innerHTML=registerView();return}
  if(S.mode==="pending"||S.mode==="blocked"){m.innerHTML=waitView();return}
  const hadQ=document.activeElement&&document.activeElement.id==="q",qPos=hadQ?document.activeElement.selectionStart:0;
@@ -618,6 +621,10 @@ $("#main").addEventListener("click",async e=>{
  if(g("#logout2")){await sb.auth.signOut();return}
  if(g("#recheck")){S.mode="loading";render();boot();return}
  if(g("#notifOn")){beep();await Notification.requestPermission().catch(()=>{});render();if(Notification.permission==="granted")notify("Bildirişlər açıqdır","Yeni hadisələr burada görünəcək","on");return}
+ if(b=g("#forgot")){const em=($("#fLogin")?.email?.value||"").trim().toLowerCase();
+  if(!/^\S+@\S+\.\S+$/.test(em)){$("#lmsg").textContent="Əvvəlcə yuxarıda e-poçtunuzu yazın, sonra yenidən basın.";return}
+  b.disabled=true;const {error}=await sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname});b.disabled=false;
+  $("#lmsg").textContent=error?(/rate|seconds/i.test(error.message)?"Bir az gözləyin, sonra yenidən cəhd edin.":"Xəta: "+error.message):"Parolu yeniləmək üçün link "+em+" ünvanına göndərildi. Spam qovluğuna da baxın.";return}
  if(g("#toReg")){S.mode="register";render();return}
  if(g("#backCust")){S.mode="db";render();return}
  if(b=g("[data-track]")){window.open(location.origin+location.pathname+"#t="+b.dataset.track,"_blank","noopener");return}
@@ -641,6 +648,10 @@ $("#main").addEventListener("submit",async e=>{
   if(error){$("#lmsg").textContent=/Invalid login/i.test(error.message)?"E-poçt və ya parol səhvdir. İlk dəfədirsə, \"Hesab yarat\" düyməsinə basın.":/registered/i.test(error.message)?"Bu e-poçtla hesab artıq var, \"Daxil ol\" düyməsinə basın.":"Xəta: "+error.message;return}
   if(!data.session){$("#lmsg").textContent="Hesab yaradıldı, amma e-poçt təsdiqi tələb olunur. Təlimatdakı \"Confirm email\" ayarını söndürün.";return}
   boot();return}
+ if(f.id==="fNewPass"){if(o.p1!==o.p2){$("#lmsg").textContent="Parollar eyni deyil.";return}
+  const bt=f.querySelector("button");bt.disabled=true;const {error}=await sb.auth.updateUser({password:o.p1});bt.disabled=false;
+  if(error){$("#lmsg").textContent="Xəta: "+error.message;return}
+  recovering=false;history.replaceState(null,"",location.pathname);toast("Parol yeniləndi");S.mode="loading";render();boot();return}
  if(f.id==="fReq"){const bt=f.querySelector("button");bt.disabled=true;
   const {data:rid,error}=await sb.rpc("create_request",{p:{type:o.type,date:o.date,sched:o.sched,flight:o.flight,city:o.city,address:o.address,pax:+o.pax||1,bags:+o.bags||0,name:o.name,phone:o.phone,note:o.note}});
   bt.disabled=false;if(error){toast(error.message);return}
@@ -664,7 +675,13 @@ function loginView(){return `<div class="login">${BRAND}
  <h1>Xoş gəlmisiniz</h1><p>Hava limanı transferi sifariş etmək və ya şirkətinizi qoşmaq üçün hesab yaradın. Şirkət işçisisinizsə, şirkətinizin əlavə etdiyi e-poçtla daxil olun.</p>
  <form id="fLogin"><input type="email" name="email" required placeholder="ad@mail.com" autocomplete="email" aria-label="E-poçt">
  <input type="password" name="password" required minlength="6" placeholder="Parol (ən az 6 simvol)" autocomplete="current-password" aria-label="Parol">
- <button class="btn" name="act" value="in">Daxil ol</button><button class="btn sec" name="act" value="up">İlk dəfədir? Hesab yarat</button></form><p id="lmsg" class="note" style="margin-top:12px"></p></div>`}
+ <button class="btn" name="act" value="in">Daxil ol</button><button class="btn sec" name="act" value="up">İlk dəfədir? Hesab yarat</button></form>
+ <p id="lmsg" class="note" style="margin-top:12px">${authErr?"Link işləmədi və ya vaxtı bitib. Yenidən \"Parolu unutmusunuz?\" basın.":""}</p>
+ <p class="note" style="text-align:center"><button class="linkb" id="forgot" type="button">Parolu unutmusunuz?</button></p></div>`}
+function resetView(){return `<div class="login">${BRAND}<h1>Yeni parol</h1><p>${esc(S.email)} hesabı üçün yeni parol yazın.</p>
+ <form id="fNewPass"><input type="password" name="p1" required minlength="6" placeholder="Yeni parol (ən az 6 simvol)" autocomplete="new-password" aria-label="Yeni parol">
+ <input type="password" name="p2" required minlength="6" placeholder="Parolu təkrar yazın" autocomplete="new-password" aria-label="Parolu təkrar yazın">
+ <button class="btn">Parolu yadda saxla</button></form><p id="lmsg" class="note" style="margin-top:12px"></p></div>`}
 function registerView(){return `<div class="login">${BRAND}<h1>Şirkətinizi qoşun</h1><p>${esc(S.email)} ilə transfer və ya turizm şirkətinizi Arrivo-ya qoşun. Təsdiqdən sonra maşın, sürücü və sifarişləri idarə edəcəksiniz.</p>
  <form id="fReg"><input name="company" required minlength="2" maxlength="80" placeholder="Şirkətin adı" aria-label="Şirkətin adı">
  <input name="owner" maxlength="60" placeholder="Adınız, soyadınız" aria-label="Adınız, soyadınız" autocomplete="name">
@@ -832,8 +849,9 @@ async function boot(){
  if(m)return trackPage(m[1]);
  if(!sb){S.mode="local";render();return}
  const {data:{session}}=await sb.auth.getSession();
- if(!session){S.mode="login";render();return}
+ if(!session){if(authErr)history.replaceState(null,"",location.pathname);S.mode="login";render();return}
  S.email=session.user.email||"";
+ if(recovering){S.mode="reset";render();return}
  const {data,error}=await sb.rpc("whoami");
  if(error||!data){S.mode="loading";S.stale=true;render();return}
  me=data;$("#logout").hidden=false;
@@ -861,7 +879,7 @@ async function boot(){
   queue(p.table)}).subscribe();
  setInterval(()=>queue("transfers"),5*60000);
 }
-if(sb)sb.auth.onAuthStateChange(ev=>{if(ev==="SIGNED_OUT")location.reload()});
+if(sb)sb.auth.onAuthStateChange((ev,ses)=>{if(ev==="SIGNED_OUT")location.reload();if(ev==="PASSWORD_RECOVERY"&&!recovering){recovering=true;S.email=ses?.user?.email||S.email;S.mode="reset";render()}});
 boot();
 }
 </script>
