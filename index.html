@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Arrivo — Bakı hava limanı transferi · Baku airport transfer</title>
 <meta name="description" content="Baku (GYD) airport transfers: compare local companies, track your driver live on the map, flight delay tracking. Bakı hava limanı transferi, sürücünü xəritədə izlə. Трансфер из аэропорта Баку.">
-<meta name="theme-color" content="#0E1A2B">
+<meta name="theme-color" content="#1B1F3B">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
@@ -17,10 +17,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&display=swap" rel="stylesheet">
 <style>
-/* IDEA: airport wayfinding. Navy signboards, signal yellow, one legible grotesque.
-   The memorable thing is the arrivals board and the driver's name sign; everything else stays quiet.
-   TYPE: Archivo (variable width): wide for headings and times, normal for text. Tabular figures.
-   COLOUR: ink navy #0E1A2B, signal yellow #FFC629, cool paper #F3F4F6, slate #5A6577, line #E1E5EA. No gradients. */
+/* IDEA: night sky over Baku with a coral glow. Night #1B1F3B, indigo #3D4AA8, coral #FF7A59, mist #F3F4FB.
+   Dark heroes with soft light spots; white rounded cards; coral only for the main action and warnings. Archivo. */
 :root{color-scheme:light dark;
 --bg:light-dark(#f1f2f6,#0d0e12);--card:light-dark(#fff,#17191f);--card2:light-dark(#f5f6f9,#1e2128);
 --ink:light-dark(#15161b,#f0f1f4);--mut:light-dark(#646b76,#9aa2ad);--line:light-dark(#e6e8ec,#272b33);
@@ -37,8 +35,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:21px;letter-spacing:-.02em}
 .wm{font-family:"Baloo 2","Plus Jakarta Sans",system-ui,sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1;display:inline-flex;align-items:baseline}
 .wi{position:relative;display:inline-block}
-.wi:before{content:"";position:absolute;left:50%;bottom:.6em;width:.36em;height:.45em;transform:translateX(-50%);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 30'%3E%3Cpath fill='%230E1A2B' d='M12 29C6 22 2 17 2 11.5a10 10 0 0 1 20 0C22 17 18 22 12 29z'/%3E%3Ccircle cx='12' cy='11.5' r='4' fill='%23FFC629'/%3E%3C/svg%3E") center/contain no-repeat}
-.wm.inv .wi:before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 30'%3E%3Cpath fill='%23FFC629' d='M12 29C6 22 2 17 2 11.5a10 10 0 0 1 20 0C22 17 18 22 12 29z'/%3E%3Ccircle cx='12' cy='11.5' r='4' fill='%230E1A2B'/%3E%3C/svg%3E")}
+.wi:before{content:"";position:absolute;left:50%;bottom:.6em;width:.36em;height:.45em;transform:translateX(-50%);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 30'%3E%3Cpath fill='%231B1F3B' d='M12 29C6 22 2 17 2 11.5a10 10 0 0 1 20 0C22 17 18 22 12 29z'/%3E%3Ccircle cx='12' cy='11.5' r='4' fill='%23FF7A59'/%3E%3C/svg%3E") center/contain no-repeat}
+.wm.inv .wi:before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 30'%3E%3Cpath fill='%23FF7A59' d='M12 29C6 22 2 17 2 11.5a10 10 0 0 1 20 0C22 17 18 22 12 29z'/%3E%3Ccircle cx='12' cy='11.5' r='4' fill='%231B1F3B'/%3E%3C/svg%3E")}
 .brand .wm{font-size:27px;color:var(--ink)}
 .brand i{width:34px;height:34px;border-radius:11px;background:var(--sun);display:grid;place-items:center;box-shadow:0 6px 14px -6px #ff5a36aa}
 .brand i svg{width:20px;height:20px}
@@ -297,95 +295,93 @@ body.customer .tabs,body.customer .datep{display:none}
  form{grid-template-columns:minmax(0,1fr)}
  .phone{border-width:0;border-radius:24px}
 }
-/* ===== Wayfinding redesign (overrides) ===== */
-:root{--bg:light-dark(#F3F4F6,#0A111C);--card:light-dark(#fff,#111A27);--card2:light-dark(#F7F8FA,#172233);
---ink:light-dark(#0E1A2B,#E9EDF3);--mut:light-dark(#5A6577,#93A0B3);--line:light-dark(#E1E5EA,#22304A);
---sign:light-dark(#0E1A2B,#16263D);--sig:#FFC629;--acc:light-dark(#1D5FD1,#7FB0FF);--sun:var(--sign);
---sh:0 1px 0 light-dark(#0e1a2b0a,#0000)}
-body{font-family:"Archivo",system-ui,sans-serif;font-stretch:100%;letter-spacing:0}
-h1,h2,.wm,.c-time b,.cd b,.lp-h,.board b,.namesign b{font-family:"Archivo",system-ui,sans-serif;font-stretch:118%}
-h1{font-weight:750;letter-spacing:-.015em}
+/* ===== Night sky + coral (overrides) ===== */
+:root{--bg:light-dark(#F3F4FB,#0F1226);--card:light-dark(#fff,#171B36);--card2:light-dark(#F7F8FD,#1E2344);
+--ink:light-dark(#1B1F3B,#ECEEFB);--mut:light-dark(#6B7095,#A3A8D0);--line:light-dark(#E3E5F3,#2A3060);
+--night:#1B1F3B;--indigo:#3D4AA8;--coral:#FF7A59;--coral2:#FF9C82;--sign:var(--night);--sig:var(--coral);
+--acc:light-dark(#3D4AA8,#9AA6FF);--sun:var(--night);--blue:light-dark(#3D4AA8,#9AA6FF);
+--sh:0 1px 2px light-dark(#1b1f3b0d,#0000),0 10px 30px -18px light-dark(#1b1f3b40,#0008)}
+body{font-family:"Archivo",system-ui,sans-serif}
+h1,h2,.wm,.c-time b,.cd b,.lp-h{font-family:"Archivo",system-ui,sans-serif}
+h1{font-weight:800;letter-spacing:-.02em}
 .wm{font-weight:800;letter-spacing:-.035em}
-.brand i{background:var(--sign);border-radius:9px;box-shadow:none}
-.btn{background:light-dark(#0E1A2B,#FFC629);color:light-dark(#fff,#0E1A2B);border-radius:10px;box-shadow:none;font-weight:700}
-.btn:hover{filter:brightness(1.12)}
-.btn.sec{background:var(--card);border:1px solid var(--line);color:var(--ink)}
-.btn.ghost{border-radius:10px}
-.big{border-radius:12px}
-.hero{background:var(--sign);border-radius:16px;box-shadow:none}.hero:after{display:none}
-.hero .hi{color:var(--sig);opacity:1}
-.stats span{background:#ffffff12;border-radius:8px}.stats b{color:var(--sig)}
-.stats .bad,.stats .warn{background:var(--sig);color:#0E1A2B}
-.tl{background:#ffffff0d;border-radius:10px}.now{border-color:var(--sig)}.now em{background:var(--sig);color:#0E1A2B}
-.card,.box,.job,.empty,.login,.ph-card{border-radius:14px;box-shadow:var(--sh)}
-.card:hover{transform:none;border-color:color-mix(in srgb,var(--ink) 30%,var(--line))}
-.route,.hint{border-radius:8px}
-input,select,textarea,.tools input[type=search]{border-radius:10px}
-.chip{border-radius:8px}.chip[aria-pressed=true]{background:var(--sign);color:#fff;border-color:var(--sign)}
-.tabs,.datep{border-radius:12px}.tab{border-radius:8px}
-.x,.out{border-radius:10px}
+.brand i{background:var(--night);border-radius:10px;box-shadow:none}
+.btn{background:var(--coral);color:#fff;border-radius:12px;box-shadow:0 8px 20px -12px #ff7a59;font-weight:700}
+.btn:hover{background:#ff6a45}
+.btn.sec{background:var(--card);border:1px solid var(--line);color:var(--ink);box-shadow:none}
+.btn.ghost{border-radius:12px;box-shadow:none}
+.big{border-radius:14px}
+.hero,.job.hero,.ph-top,.lp-hero,.lp-co,.arri-box header{position:relative;overflow:hidden;background:var(--night);color:#fff;isolation:isolate}
+.hero:after,.job.hero:after,.ph-top:after,.lp-hero:after,.lp-co:after{content:"";position:absolute;z-index:-1;width:340px;height:340px;border-radius:50%;background:var(--indigo);opacity:.75;right:-120px;top:-150px;filter:blur(2px)}
+.hero:before,.lp-hero:before{content:"";position:absolute;z-index:-1;width:200px;height:200px;border-radius:50%;background:var(--coral);opacity:.28;left:-90px;bottom:-110px}
+.hero{border-radius:20px;box-shadow:none}
+.hero .hi{color:var(--coral2);opacity:1}
+.stats span{background:#ffffff17;border-radius:9px}.stats b{color:#fff}
+.stats .bad,.stats .warn{background:var(--coral);color:#fff}
+.tl{background:#ffffff10;border-radius:12px}.now{border-color:var(--coral)}.now em{background:var(--coral);color:#fff}
+.card,.box,.job,.empty,.login,.ph-card{border-radius:16px;box-shadow:var(--sh)}
+.card{border-color:transparent}.card:hover{transform:translateY(-2px)}
+.route,.hint{border-radius:10px}
+input,select,textarea,.tools input[type=search]{border-radius:12px}
+.chip{border-radius:999px}.chip[aria-pressed=true]{background:var(--night);color:#fff;border-color:var(--night)}
+.tabs,.datep{border-radius:14px}.tab{border-radius:10px}.tab[aria-selected=true]{color:var(--indigo)}
+.x,.out{border-radius:12px}
 .box summary,.linkb{color:var(--acc)}
-.job.hero{background:var(--sign)}.job .tag{color:var(--sig)}
-.steps li.n i{border-color:#0E1A2B;background:var(--sig);box-shadow:0 0 0 4px color-mix(in srgb,var(--sig) 35%,transparent)}
-.phone{border-color:#0E1A2B;border-radius:36px}
-.ph-top{background:var(--sign)}
-.dsel button[aria-pressed=true]{border-color:var(--ink);box-shadow:0 0 0 2px color-mix(in srgb,var(--ink) 20%,transparent)}
-.load.busy{background:color-mix(in srgb,var(--sig) 30%,transparent);color:light-dark(#6b4e00,#FFC629)}
-.sign{background:#fff}.sign b{font-family:"Archivo",sans-serif;font-stretch:118%}.sign em{color:#0E1A2B}
-.cocard{border:1.5px solid var(--ink)}
-.dirtag{background:color-mix(in srgb,var(--sig) 22%,var(--card));color:light-dark(#5a4200,#FFD86B);border-radius:8px}
-.langs{gap:0}.langs button{border:0;background:none;border-radius:0;padding:6px 8px;color:var(--mut);font-weight:600}.langs button.on{background:none;color:var(--ink);box-shadow:inset 0 -2px 0 var(--sig)}
-/* Help button + assistant */
-.arri-btn{width:56px;height:56px;padding:0;background:none;box-shadow:0 0 0 3px light-dark(#fff,#0A111C),0 6px 18px rgba(14,26,43,.3)}.arri-btn svg{animation:none}.arri-dot{display:none}
-.arri-box{border-radius:14px;border:1px solid var(--line)}
-.arri-box header{background:var(--sign)}
+.job.hero .tag{color:var(--coral2)}
+.steps li.n i{border-color:var(--coral);background:var(--coral);box-shadow:0 0 0 5px color-mix(in srgb,var(--coral) 25%,transparent)}
+.phone{border-color:var(--night);border-radius:40px}
+.dsel button[aria-pressed=true]{border-color:var(--indigo);box-shadow:0 0 0 2px color-mix(in srgb,var(--indigo) 25%,transparent)}
+.load.busy{background:color-mix(in srgb,var(--coral) 16%,transparent);color:light-dark(#c2462a,#FF9C82)}
+.sign em{color:var(--coral)}
+.cocard{border:1.5px solid var(--indigo)}
+.dirtag{background:color-mix(in srgb,var(--coral) 14%,var(--card));color:light-dark(#b23c20,#FFB39F);border-radius:10px}
+.langs{gap:2px}.langs button{border:0;background:none;border-radius:8px;padding:6px 9px;color:var(--mut);font-weight:600}.langs button.on{background:var(--card);color:var(--ink);box-shadow:var(--sh)}
+.s-enroute,.s-pickedup{color:var(--indigo)}
+/* assistant */
+.arri-btn{width:58px;height:58px;padding:0;background:none;box-shadow:0 10px 24px -8px #1b1f3b99}.arri-btn svg{animation:none}.arri-dot{display:none}
+.arri-box{border-radius:18px;border:1px solid var(--line)}
 .arri-av{background:none;padding:0}
-.arri-m{border-radius:10px}.arri-m.u{background:var(--sign)}.arri-m.a{background:var(--card2)}
-.arri-chip{border-radius:8px}.arri-chip:hover{border-color:var(--ink);color:var(--ink)}
-.helpv-in{border-radius:14px}
-/* Home page */
-.lp{max-width:1100px;margin:0 auto}
-.lp-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;align-items:center;padding:28px 0 36px}
-.lp-hero h1{font-size:clamp(34px,5.2vw,60px);line-height:1.02;letter-spacing:-.025em;margin:0 0 18px;text-wrap:balance}
-.lp-lead{font-size:18px;line-height:1.55;color:var(--mut);margin:0 0 26px;max-width:34em}
-.lp-cta{display:flex;gap:10px;flex-wrap:wrap}.lp-cta .btn{width:auto;min-width:0;padding:0 24px}
-.lp-vis{position:relative;padding-bottom:64px}
-.board{background:#0E1A2B;color:#E9EDF3;border-radius:12px;padding:14px 0 6px;font-variant-numeric:tabular-nums}
-.board header{display:flex;align-items:center;justify-content:space-between;padding:0 18px 10px;border-bottom:1px solid #ffffff1f}
-.board header b{color:var(--sig);font-size:20px;font-weight:700}
-.board header span{font-size:13px;color:#93A0B3}
-.board ol{list-style:none;margin:0;padding:0}
-.board li{display:grid;grid-template-columns:56px 74px minmax(0,1fr) auto;gap:12px;align-items:center;padding:11px 18px;border-bottom:1px solid #ffffff12;font-size:15px}
-.board li:last-child{border-bottom:0}
-.board li b{font-size:17px;font-weight:700}.board li .fn{color:#93A0B3;font-weight:600}.board li .ct{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.board .ok{color:#7ED7A6}.board .late{color:#FF9B8E}.board .wait{color:#0E1A2B;background:var(--sig);border-radius:4px;padding:3px 8px;font-weight:700}
-.board .stt{font-size:13.5px;font-weight:600;text-align:right;white-space:nowrap}
-.namesign{position:absolute;right:-6px;bottom:0;width:min(300px,78%);background:#fff;color:#0E1A2B;border-radius:6px;padding:14px 18px 12px;box-shadow:0 18px 40px -16px rgba(14,26,43,.55);transform:rotate(-2.5deg);border-top:6px solid var(--sig)}
-.namesign b{display:block;font-size:26px;font-weight:800;letter-spacing:.01em;line-height:1.05}
-.namesign span{display:block;margin-top:6px;font-size:13px;color:#5A6577}
-@media(prefers-reduced-motion:no-preference){.board li{animation:flip .5s cubic-bezier(.2,.7,.2,1) both}.board li:nth-child(2){animation-delay:.12s}.board li:nth-child(3){animation-delay:.24s}.board li:nth-child(4){animation-delay:.36s}.namesign{animation:signin .6s .55s cubic-bezier(.2,.7,.2,1) both}}
-@keyframes flip{from{opacity:0;transform:rotateX(-80deg)}to{opacity:1;transform:none}}
-@keyframes signin{from{opacity:0;transform:translateY(18px) rotate(-2.5deg)}to{opacity:1;transform:rotate(-2.5deg)}}
-.lp-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin:8px 0 44px;border-top:2px solid var(--ink)}
-.lp-steps>div{padding:16px 24px 0 0}
-.lp-steps b{display:block;font-family:"Archivo",sans-serif;font-stretch:118%;font-size:15px;font-weight:700;color:var(--mut)}
-.lp-steps h3{margin:6px 0 4px;font-size:20px;font-stretch:112%}
+.arri-m{border-radius:14px}.arri-m.u{background:var(--indigo)}.arri-m.a{background:var(--card2)}
+.arri-chip{border-radius:999px}.arri-chip:hover{border-color:var(--coral);color:var(--coral)}
+.helpv-in{border-radius:18px}
+/* home */
+.lp{max-width:1140px;margin:0 auto}
+.lp-hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:40px;align-items:center;padding:48px 44px;border-radius:28px;margin:4px 0 40px}
+.lp-hero:after{width:520px;height:520px;right:-180px;top:-220px}
+.lp-hero:before{width:300px;height:300px;left:-120px;bottom:-170px}
+.lp-hero h1{font-size:clamp(34px,5vw,58px);line-height:1.02;margin:0 0 16px;text-wrap:balance;color:#fff}
+.lp-lead{font-size:18px;line-height:1.55;color:#C8CCF0;margin:0 0 22px;max-width:32em}
+.lp-pts{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.lp-pts li{background:#ffffff14;border:1px solid #ffffff22;border-radius:999px;padding:7px 13px;font-size:14px;color:#E6E8FA}
+.find{background:var(--card);color:var(--ink);border-radius:22px;padding:18px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;box-shadow:0 30px 60px -30px #000a}
+.find h2{margin:0 0 2px;font-size:20px}
+.find .seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--card2);border-radius:12px;padding:4px}
+.find .seg label{flex-direction:row;justify-content:center;align-items:center;min-height:40px;border-radius:9px;cursor:pointer;color:var(--mut);font-weight:700;font-size:14px}
+.find .seg input{position:absolute;opacity:0;pointer-events:none}
+.find .seg label:has(input:checked){background:var(--card);color:var(--ink);box-shadow:var(--sh)}
+.find .row{display:grid;grid-template-columns:1.2fr 1fr .7fr;gap:8px}
+.find label{color:var(--mut);font-size:12.5px}
+.find .btn{min-height:52px;font-size:16px}
+.lp-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0 0 48px}
+.lp-steps>div{background:var(--card);border-radius:20px;padding:20px;box-shadow:var(--sh)}
+.lp-steps b{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:color-mix(in srgb,var(--coral) 16%,transparent);color:var(--coral);font-weight:800}
+.lp-steps h3{margin:12px 0 4px;font-size:19px}
 .lp-steps p,.lp-feat p{margin:0;color:var(--mut);font-size:15px;line-height:1.5}
-.lp-h{font-size:clamp(24px,3vw,32px);letter-spacing:-.015em;margin:0 0 18px}
-.lp-feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 32px;margin:0 0 48px}
-.lp-feat>div{display:grid;grid-template-columns:40px minmax(0,1fr);gap:4px 14px}
-.lp-feat svg{width:40px;height:40px;grid-row:span 2;color:var(--ink)}
-.lp-feat h3{margin:2px 0 0;font-size:17px}
-.lp-co{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center;margin:0 0 20px;padding:30px;border-radius:14px;background:var(--sign);color:#fff}
-.lp-co h2{margin:0 0 8px;font-size:26px}.lp-co p{margin:0;color:#B9C3D1;max-width:40em}
-.lp-co .btn{width:auto;background:var(--sig);color:#0E1A2B;padding:0 26px}
-@media(max-width:860px){.lp-hero{grid-template-columns:1fr;gap:28px;padding-top:12px}.lp-steps,.lp-feat{grid-template-columns:1fr}.lp-steps>div{padding-bottom:14px;border-bottom:1px solid var(--line)}.lp-co{grid-template-columns:1fr}.board li{grid-template-columns:48px 64px minmax(0,1fr);}.board .stt{grid-column:2/-1;text-align:left;margin-top:-6px}.lp-vis{padding-bottom:0}.namesign{position:relative;right:auto;margin:-16px 6px 0 auto;width:min(290px,86%)}}
+.lp-h{font-size:clamp(26px,3.2vw,36px);letter-spacing:-.02em;margin:0 0 20px}
+.lp-feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0 0 48px}
+.lp-feat>div{background:var(--card);border-radius:20px;padding:20px;box-shadow:var(--sh)}
+.lp-feat svg{width:44px;height:44px;padding:10px;border-radius:12px;background:color-mix(in srgb,var(--indigo) 12%,transparent);color:var(--indigo)}
+.lp-feat h3{margin:12px 0 4px;font-size:17px}
+.lp-co{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center;margin:0 0 20px;padding:36px;border-radius:24px}
+.lp-co h2{margin:0 0 8px;font-size:28px;color:#fff}.lp-co p{margin:0;color:#C8CCF0;max-width:40em}
+.lp-co .btn{width:auto;padding:0 28px}
+@media(max-width:860px){.lp-hero{grid-template-columns:1fr;padding:28px 18px 18px;border-radius:22px;gap:24px}.lp-steps,.lp-feat{grid-template-columns:1fr}.lp-co{grid-template-columns:1fr;padding:24px}.find .row{grid-template-columns:1fr 1fr}.find .row label:first-child{grid-column:1/-1}}
 </style>
 </head>
 <body>
 <header class="top">
  <div class="bar1">
-  <div class="brand"><i><svg viewBox="0 0 100 100" width="24" height="24" aria-hidden="true"><g transform="translate(58 4) scale(1.55) rotate(135 12 12)"><path fill="#FFC629" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></g><path fill="#fff" d="M18 64l6-18c1.5-4.5 4.5-7 9-7h34c4.5 0 7.5 2.5 9 7l6 18v18c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5v-4H33v4c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5z"/><path fill="#0E1A2B" d="M29 62l4.5-13c.8-2.2 2.2-3.5 4.5-3.5h24c2.3 0 3.7 1.3 4.5 3.5L71 62z"/><circle cx="29" cy="71" r="4.5" fill="#0E1A2B"/><circle cx="71" cy="71" r="4.5" fill="#0E1A2B"/><rect x="41" y="68.5" width="18" height="5" rx="2.5" fill="#0E1A2B"/></svg></i><span class="wm">arr<span class="wi">ı</span>vo</span><span class="coName" id="coName"></span></div>
+  <div class="brand"><i><svg viewBox="0 0 100 100" width="24" height="24" aria-hidden="true"><g transform="translate(58 4) scale(1.55) rotate(135 12 12)"><path fill="#FF7A59" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></g><path fill="#fff" d="M18 64l6-18c1.5-4.5 4.5-7 9-7h34c4.5 0 7.5 2.5 9 7l6 18v18c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5v-4H33v4c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5z"/><path fill="#1B1F3B" d="M29 62l4.5-13c.8-2.2 2.2-3.5 4.5-3.5h24c2.3 0 3.7 1.3 4.5 3.5L71 62z"/><circle cx="29" cy="71" r="4.5" fill="#1B1F3B"/><circle cx="71" cy="71" r="4.5" fill="#1B1F3B"/><rect x="41" y="68.5" width="18" height="5" rx="2.5" fill="#1B1F3B"/></svg></i><span class="wm">arr<span class="wi">ı</span>vo</span><span class="coName" id="coName"></span></div>
   <nav class="tabs" role="tablist">
    <button class="tab" role="tab" data-r="coord"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg><span>Panel</span></button>
    <button class="tab" role="tab" data-r="driver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 14.5V21M9.6 11.2 3.5 9.5M14.4 11.2l6.1-1.7"/></svg><span>Sürücü</span></button>
@@ -823,6 +819,7 @@ $("#main").addEventListener("submit",async e=>{
   if(cu&&cu[0])upd.slug=cu[0].slug;
   Object.assign(S.company,upd);if(me.company)me.company.name=upd.name;$("#coName").textContent=upd.name;
   document.activeElement?.blur?.();f.remove();toast("Şirkət məlumatları yeniləndi");render();return}
+ if(f.id==="fFind"){try{localStorage.setItem("arrivo_draft",JSON.stringify({type:o.type,address:o.address,date:o.date,sched:o.sched,pax:o.pax}))}catch(e){}S.mode="login";render();window.scrollTo(0,0);toast(t3("Daxil olun və ya hesab yaradın — sifarişiniz hazır qalacaq","Sign in or create an account — your trip details are saved","Войдите или создайте аккаунт — данные поездки сохранены"));return}
  if(f.id==="fNewPass"){if(o.p1!==o.p2){$("#lmsg").textContent=t3("Parollar eyni deyil.","Passwords do not match.","Пароли не совпадают.");return}
   const bt=f.querySelector("button");bt.disabled=true;const {error}=await sb.auth.updateUser({password:o.p1});bt.disabled=false;
   if(error){$("#lmsg").textContent=t3("Xəta: ","Error: ","Ошибка: ")+error.message;return}
@@ -831,6 +828,7 @@ $("#main").addEventListener("submit",async e=>{
   const {data:rid,error}=await sb.rpc("create_request",{p:{type:o.type,date:o.date,sched:o.sched,flight:o.flight,city:o.city,address:o.address,pax:+o.pax||1,bags:+o.bags||0,name:o.name,phone:o.phone,note:o.note,lang:o.lang||"az",company:S.co?S.co.slug:""}});
   bt.disabled=false;if(error){toast(error.message);return}
   if(!o.wa&&rid)await sb.rpc("set_request_notify",{p_id:rid,p_on:false});
+  try{localStorage.removeItem("arrivo_draft")}catch(e){}
   toast(t3("Sifariş göndərildi! Təkliflər gələndə burada görəcəksiniz.","Order sent! You will see offers here as they arrive.","Заказ отправлен! Предложения появятся здесь."));f.reset();f.closest("details").open=false;await loadMine();render();return}
  if(f.classList.contains("offer")){const bt=f.querySelector("button");bt.disabled=true;
   const {error}=await sb.rpc("make_offer",{p_request:f.dataset.req,p_price:+o.price,p_note:o.note||""});
@@ -845,7 +843,7 @@ $("#main").addEventListener("submit",async e=>{
 setInterval(()=>{if(S.mode!=="loading"&&!sel&&!document.activeElement?.matches?.("input,select,textarea"))render()},60000);
 
 /* ===== Başlanğıc ===== */
-const BRAND=`<div class="brand"><i><svg viewBox="0 0 100 100" width="24" height="24" aria-hidden="true"><g transform="translate(58 4) scale(1.55) rotate(135 12 12)"><path fill="#FFC629" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></g><path fill="#fff" d="M18 64l6-18c1.5-4.5 4.5-7 9-7h34c4.5 0 7.5 2.5 9 7l6 18v18c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5v-4H33v4c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5z"/><path fill="#0E1A2B" d="M29 62l4.5-13c.8-2.2 2.2-3.5 4.5-3.5h24c2.3 0 3.7 1.3 4.5 3.5L71 62z"/><circle cx="29" cy="71" r="4.5" fill="#0E1A2B"/><circle cx="71" cy="71" r="4.5" fill="#0E1A2B"/><rect x="41" y="68.5" width="18" height="5" rx="2.5" fill="#0E1A2B"/></svg></i><span class="wm">arr<span class="wi">ı</span>vo</span></div>`;
+const BRAND=`<div class="brand"><i><svg viewBox="0 0 100 100" width="24" height="24" aria-hidden="true"><g transform="translate(58 4) scale(1.55) rotate(135 12 12)"><path fill="#FF7A59" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></g><path fill="#fff" d="M18 64l6-18c1.5-4.5 4.5-7 9-7h34c4.5 0 7.5 2.5 9 7l6 18v18c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5v-4H33v4c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5z"/><path fill="#1B1F3B" d="M29 62l4.5-13c.8-2.2 2.2-3.5 4.5-3.5h24c2.3 0 3.7 1.3 4.5 3.5L71 62z"/><circle cx="29" cy="71" r="4.5" fill="#1B1F3B"/><circle cx="71" cy="71" r="4.5" fill="#1B1F3B"/><rect x="41" y="68.5" width="18" height="5" rx="2.5" fill="#1B1F3B"/></svg></i><span class="wm">arr<span class="wi">ı</span>vo</span></div>`;
 function loginView(){return `${langBar(tlang())}<div class="login">${BRAND}${coCard()}
  <h1>${t3("Xoş gəlmisiniz","Welcome","Добро пожаловать")}</h1><p>${t3("Hava limanı transferi sifariş etmək və ya şirkətinizi qoşmaq üçün hesab yaradın. Şirkət işçisisinizsə, şirkətinizin əlavə etdiyi e-poçtla daxil olun.","Create an account to book an airport transfer in Azerbaijan or to join as a company. Company staff: sign in with the email your company added.","Создайте аккаунт, чтобы заказать трансфер из аэропорта в Азербайджане или подключить свою компанию. Сотрудники компаний входят с e-mail, который добавила компания.")}</p>
  <form id="fLogin"><input type="email" name="email" required placeholder="${t3("ad@mail.com","name@mail.com","name@mail.com")}" autocomplete="email" aria-label="${t3("E-poçt","Email","E-mail")}">
@@ -911,7 +909,7 @@ const notifBar=()=>canNotify()&&Notification.permission==="default"?`<div class=
 function orders(){
  const L=S.mine;if(!L)return `<p class="note">${t3("Yüklənir…","Loading…","Загрузка…")}</p>`;
  const open=L.filter(r=>r.status==="open"&&!r.expired),acc=L.filter(r=>r.status==="accepted"),old=L.filter(r=>r.status==="cancelled"||r.expired);
- const nOf=open.reduce((a,r)=>a+r.offers.length,0),last=L[0]||{};
+ const nOf=open.reduce((a,r)=>a+r.offers.length,0),last=L[0]||{};let D={};try{D=JSON.parse(localStorage.getItem("arrivo_draft")||"{}")||{}}catch(e){}
  const card=r=>{let b="";
   if(r.status==="open"&&!r.expired){
    b=r.offers.length?r.offers.map(o=>`<div class="of">${av(o.company)}<div><b>${esc(o.company)}</b>${+o.rating_n?`<span><span class="star">★ ${esc(o.rating)}</span> · ${+o.rating_n} ${t3("rəy","reviews","отз.")}</span>`:`<span>${t3("Hələ rəy yoxdur","No reviews yet","Пока нет отзывов")}</span>`}${o.note?`<span>${esc(o.note)}</span>`:""}</div><strong>${money(o.price)}</strong><button class="btn" data-acc="${esc(o.id)}">${t3("Seç","Choose","Выбрать")}</button></div>`).join("")
@@ -925,14 +923,14 @@ function orders(){
  const sec=(t,a)=>a.length?`<section class="grp"><h2>${t}<span>${a.length}</span></h2>${a.map(card).join("")}</section>`:"";
  return `${langBar(tlang())}${coCard()}<section class="hero"><p class="hi">${greet()}!</p><h1>${open.length?t3(`${open.length} açıq sifariş · ${nOf} təklif`,`Open orders: ${open.length} · Offers: ${nOf}`,`Открытых заказов: ${open.length} · Предложений: ${nOf}`):t3("Hava limanı transferi sifariş edin","Book an airport transfer","Закажите трансфер из аэропорта")}</h1>
   <p class="lead">${t3("Sifarişinizi yazın, transfer şirkətləri qiymət təklif etsin, ən uyğununu seçin. Sürücü və maşın məlumatı sonra linkdə görünəcək.","Tell us about your trip, transfer companies send their prices, and you choose the best one. Driver and car details will appear in your link.","Опишите поездку — трансферные компании пришлют цены, а вы выберете лучшую. Данные водителя и машины появятся по ссылке.")}</p></section>
- <section class="box" style="margin-top:12px"><details ${L.length?"":"open"}><summary>+ ${t3("Yeni sifariş","New order","Новый заказ")}</summary><form id="fReq" class="reqf">
-  <label>${t3("Növ","Type","Тип")}<select name="type"><option value="arr">${t3("Qarşılama (hava limanı → ünvan)","Arrival (airport → address)","Встреча (аэропорт → адрес)")}</option><option value="dep">${t3("Yola salma (ünvan → hava limanı)","Departure (address → airport)","Проводы (адрес → аэропорт)")}</option></select></label>
-  <label>${t3("Tarix","Date","Дата")}<input type="date" name="date" min="${todayStr()}" value="${todayStr()}" required></label>
-  <label>${t3("Eniş / uçuş vaxtı","Landing / departure time","Время посадки / вылета")}<input type="time" name="sched" required></label>
+ <section class="box" style="margin-top:12px"><details ${L.length&&!D.address?"":"open"}><summary>+ ${t3("Yeni sifariş","New order","Новый заказ")}</summary><form id="fReq" class="reqf">
+  <label>${t3("Növ","Type","Тип")}<select name="type"><option value="arr">${t3("Qarşılama (hava limanı → ünvan)","Arrival (airport → address)","Встреча (аэропорт → адрес)")}</option><option value="dep" ${D.type==="dep"?"selected":""}>${t3("Yola salma (ünvan → hava limanı)","Departure (address → airport)","Проводы (адрес → аэропорт)")}</option></select></label>
+  <label>${t3("Tarix","Date","Дата")}<input type="date" name="date" min="${todayStr()}" value="${esc(D.date&&D.date>=todayStr()?D.date:todayStr())}" required></label>
+  <label>${t3("Eniş / uçuş vaxtı","Landing / departure time","Время посадки / вылета")}<input type="time" name="sched" value="${esc(D.sched||"")}" required></label>
   <label>${t3("Reys nömrəsi","Flight number","Номер рейса")}<input name="flight" maxlength="10" placeholder="J2 61"></label>
   <label>${t3("Haradan / haraya uçuş","Flying from / to","Откуда / куда летите")}<input name="city" maxlength="40" placeholder="${t3("İstanbul","Istanbul","Стамбул")}"></label>
-  <label>${t3("Nəfər / baqaj","Passengers / bags","Пассажиры / багаж")}<span style="display:flex;gap:6px"><input name="pax" type="number" min="1" max="60" value="1" style="flex:1" aria-label="${t3("Nəfər","Passengers","Пассажиры")}"><input name="bags" type="number" min="0" max="60" value="1" style="flex:1" aria-label="${t3("Baqaj","Bags","Багаж")}"></span></label>
-  <label class="full">${t3("Otel / ünvan","Hotel / address","Отель / адрес")}<input name="address" required maxlength="120" placeholder="Hilton Baku, Azadlıq pr. 1"></label>
+  <label>${t3("Nəfər / baqaj","Passengers / bags","Пассажиры / багаж")}<span style="display:flex;gap:6px"><input name="pax" type="number" min="1" max="60" value="${esc(D.pax||1)}" style="flex:1" aria-label="${t3("Nəfər","Passengers","Пассажиры")}"><input name="bags" type="number" min="0" max="60" value="1" style="flex:1" aria-label="${t3("Baqaj","Bags","Багаж")}"></span></label>
+  <label class="full">${t3("Otel / ünvan","Hotel / address","Отель / адрес")}<input name="address" required maxlength="120" value="${esc(D.address||"")}" placeholder="Hilton Baku, Azadlıq pr. 1"></label>
   <label>${t3("Ad, soyad","Full name","Имя, фамилия")}<input name="name" required maxlength="80" value="${esc(last.name||"")}" autocomplete="name"></label>
   <label>Telefon / WhatsApp<input name="phone" type="tel" required maxlength="25" value="${esc(last.phone||"")}" placeholder="+994…" autocomplete="tel"></label>
   <label class="full">${t3("Qeyd","Note","Комментарий")}<textarea name="note" maxlength="300" placeholder="${t3("Uşaq oturacağı, böyük baqaj, gecə uçuşu…","Child seat, large luggage, night flight…","Детское кресло, большой багаж, ночной рейс…")}"></textarea></label>
@@ -1102,7 +1100,7 @@ const GYD=[40.4675,50.0467];
 const hav=(a,b)=>{const r=x=>x*Math.PI/180,dl=r(b[0]-a[0]),dg=r(b[1]-a[1]),h=Math.sin(dl/2)**2+Math.cos(r(a[0]))*Math.cos(r(b[0]))*Math.sin(dg/2)**2;return 12742*Math.asin(Math.sqrt(h))};
 const etaMin=km=>Math.max(1,Math.round(km*1.3/45*60));
 const tiles=()=>L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'});
-const carIcon=lab=>L.divIcon({className:"carpin",html:`<span><svg viewBox="16 36 68 52" aria-hidden="true"><path fill="#fff" d="M18 64l6-18c1.5-4.5 4.5-7 9-7h34c4.5 0 7.5 2.5 9 7l6 18v18c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5v-4H33v4c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5z"/><path fill="#0E1A2B" d="M29 62l4.5-13c.8-2.2 2.2-3.5 4.5-3.5h24c2.3 0 3.7 1.3 4.5 3.5L71 62z"/></svg></span>${lab?`<em>${esc(lab)}</em>`:""}`,iconSize:[38,38],iconAnchor:[19,19]});
+const carIcon=lab=>L.divIcon({className:"carpin",html:`<span><svg viewBox="16 36 68 52" aria-hidden="true"><path fill="#fff" d="M18 64l6-18c1.5-4.5 4.5-7 9-7h34c4.5 0 7.5 2.5 9 7l6 18v18c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5v-4H33v4c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5z"/><path fill="#1B1F3B" d="M29 62l4.5-13c.8-2.2 2.2-3.5 4.5-3.5h24c2.3 0 3.7 1.3 4.5 3.5L71 62z"/></svg></span>${lab?`<em>${esc(lab)}</em>`:""}`,iconSize:[38,38],iconAnchor:[19,19]});
 const apIcon=()=>L.divIcon({className:"appin",html:"<span>✈</span>",iconSize:[32,32],iconAnchor:[16,16]});
 let lmap=null,lfit="";const lmk=new Map();
 function updateLive(){
@@ -1227,18 +1225,17 @@ function homeView(){
  const S3=[[t3("Sifariş verin","Book","Закажите"),t3("Reys, vaxt və otel. Bir dəqiqəlik iş.","Flight, time and hotel. Takes a minute.","Рейс, время и отель. Одна минута.")],
   [t3("Təklifi seçin","Choose an offer","Выберите предложение"),t3("Şirkətlər qiymət göndərir, siz müqayisə edib seçirsiniz.","Companies send prices; you compare and choose.","Компании присылают цены, вы сравниваете и выбираете.")],
   [t3("Sürücü sizi gözləyir","Your driver is waiting","Водитель ждёт вас"),t3("Linkdə onu izləyin. Çıxışda adınızla qarşılayır.","Follow them in the link. They meet you at the exit with your name.","Следите по ссылке. На выходе встретят с табличкой.")]];
- const B=[["14:55","J2 8016",t3("İstanbul","Istanbul","Стамбул"),`<span class="wait">${t3("Sürücü gözləyir","Driver waiting","Водитель ждёт")}</span>`],
-  ["15:20","TK 334",t3("İstanbul","Istanbul","Стамбул"),`<span class="late">${t3("Gecikir · 15:45","Delayed · 15:45","Задержка · 15:45")}</span>`],
-  ["15:40","QR 393",t3("Doha","Doha","Доха"),`<span class="ok">${t3("Vaxtında","On time","Вовремя")}</span>`],
-  ["16:05","FZ 709",t3("Dubay","Dubai","Дубай"),`<span class="ok">${t3("Vaxtında","On time","Вовремя")}</span>`]];
  return `${langBar(tlang())}<div class="lp">
  <section class="lp-hero"><div>
-  <h1>${t3("Bakıya uçursunuz? Sürücünüz artıq yoldadır.","Landing in Baku? Your driver is already on the way.","Летите в Баку? Водитель уже в пути.")}</h1>
-  <p class="lp-lead">${t3("Yerli transfer şirkətlərindən qiymət alın və birini seçin. Reysinizi izləyirik, sürücü gecikmədə də vaxtında olur və sizi adınızla qarşılayır.","Get prices from local transfer companies and pick one. We track your flight, so your driver is on time even if you're late, and meets you with your name on a sign.","Получите цены от местных трансферных компаний и выберите одну. Мы следим за рейсом: водитель приедет вовремя даже при задержке и встретит с табличкой.")}</p>
-  <div class="lp-cta"><button class="btn big" id="goBook">${t3("Transfer sifariş et","Book a transfer","Заказать трансфер")}</button><button class="btn sec big" id="goLogin">${t3("Daxil ol","Sign in","Войти")}</button></div></div>
-  <div class="lp-vis" aria-hidden="true"><div class="board"><header><b>${t3("Gəlişlər","Arrivals","Прилёты")}</b><span>GYD · ${t3("Heydər Əliyev","Heydar Aliyev","Гейдар Алиев")}</span></header>
-   <ol>${B.map(x=>`<li><b>${x[0]}</b><span class="fn">${x[1]}</span><span class="ct">${x[2]}</span><span class="stt">${x[3]}</span></li>`).join("")}</ol></div>
-   <div class="namesign"><b>JOHN SMITH</b><span>${t3("Sürücü Rauf · Mercedes V · 10-AB-123","Driver Rauf · Mercedes V · 10-AB-123","Водитель Рауф · Mercedes V · 10-AB-123")}</span></div></div></section>
+  <h1>${t3("Bakıya enirsiniz? Sürücünüz hazırdır.","Landing in Baku? Your driver is ready.","Прилетаете в Баку? Водитель уже готов.")}</h1>
+  <p class="lp-lead">${t3("Yerli transfer şirkətlərindən qiymət alın və birini seçin. Reysinizi izləyirik: gecikmədə də sürücü vaxtında olur və sizi adınızla qarşılayır.","Get prices from local transfer companies and pick one. We track your flight, so your driver is on time even if you're late and meets you with your name on a sign.","Получите цены от местных компаний и выберите одну. Мы следим за рейсом: водитель приедет вовремя даже при задержке и встретит с табличкой.")}</p>
+  <ul class="lp-pts"><li>${t3("Reys izləmə","Flight tracking","Отслеживание рейса")}</li><li>${t3("Sürücü xəritədə","Driver on the map","Водитель на карте")}</li><li>${t3("Adınızla qarşılama","Name-sign meeting","Встреча с табличкой")}</li></ul></div>
+  <form class="find" id="fFind"><h2>${t3("Transfer tapın","Find a transfer","Найти трансфер")}</h2>
+   <div class="seg"><label><input type="radio" name="type" value="arr" checked>${t3("Hava limanından","From airport","Из аэропорта")}</label><label><input type="radio" name="type" value="dep">${t3("Hava limanına","To airport","В аэропорт")}</label></div>
+   <label>${t3("Otel və ya ünvan","Hotel or address","Отель или адрес")}<input name="address" required maxlength="120" placeholder="Hilton Baku"></label>
+   <div class="row"><label>${t3("Tarix","Date","Дата")}<input type="date" name="date" min="${todayStr()}" value="${todayStr()}" required></label><label>${t3("Vaxt","Time","Время")}<input type="time" name="sched" required></label><label>${t3("Nəfər","People","Чел.")}<input type="number" name="pax" min="1" max="60" value="2"></label></div>
+   <button class="btn">${t3("Qiymətləri gör","See prices","Смотреть цены")}</button>
+   <button type="button" class="linkb" id="goLogin" style="justify-self:center">${t3("Hesabınız var? Daxil olun","Have an account? Sign in","Есть аккаунт? Войти")}</button></form></section>
  <section class="lp-steps">${S3.map((x,i)=>`<div><b>${i+1}</b><h3>${x[0]}</h3><p>${x[1]}</p></div>`).join("")}</section>
  <h2 class="lp-h">${t3("Niyə Arrivo","Why Arrivo","Почему Arrivo")}</h2>
  <section class="lp-feat">${F.map(x=>`<div>${ic(x[0])}<h3>${x[1]}</h3><p>${x[2]}</p></div>`).join("")}</section>
@@ -1247,7 +1244,7 @@ function homeView(){
   <button class="btn big" id="goCo">${t3("Şirkətimi qoş","Join as a company","Подключить компанию")}</button></section>
  <p class="legal-links"><a href="#qaydalar">${t3("İstifadə qaydaları","Terms of use","Условия использования")}</a> · <a href="#mexfilik">${t3("Məxfilik siyasəti","Privacy policy","Политика конфиденциальности")}</a> · arrivo.az@gmail.com</p></div>`}
 /* ===== Arri: köməkçi maskot, mini chat və Kömək bölməsi ===== */
-const ARRI=`<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#0E1A2B"/><path d="M19 20h26a5 5 0 0 1 5 5v13a5 5 0 0 1-5 5H31l-8 7v-7h-4a5 5 0 0 1-5-5V25a5 5 0 0 1 5-5z" fill="#FFC629"/><circle cx="25" cy="31.5" r="2.4" fill="#0E1A2B"/><circle cx="32" cy="31.5" r="2.4" fill="#0E1A2B"/><circle cx="39" cy="31.5" r="2.4" fill="#0E1A2B"/></svg>`;
+const ARRI=`<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#1B1F3B"/><path d="M19 20h26a5 5 0 0 1 5 5v13a5 5 0 0 1-5 5H31l-8 7v-7h-4a5 5 0 0 1-5-5V25a5 5 0 0 1 5-5z" fill="#FF7A59"/><circle cx="25" cy="31.5" r="2.4" fill="#fff"/><circle cx="32" cy="31.5" r="2.4" fill="#fff"/><circle cx="39" cy="31.5" r="2.4" fill="#fff"/></svg>`;
 
 // Bilik bazası: k = açar sözlər (aksentsiz, kiçik hərf), r = kimə (co koordinator, dr sürücü, cu müştəri)
 const KB=[
