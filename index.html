@@ -207,6 +207,24 @@ body.is-driver .tabs,body.gate .tabs,body.gate .datep,body.admin-only .datep{dis
 body.on-admin .datep{display:none}
 @media(max-width:760px){.it.co{flex-wrap:wrap}.it.co>div{flex:1 1 calc(100% - 64px)}.it.co>.load{margin-left:60px}.it.co>button{margin-left:auto}}
 .ph-co{margin:6px 0 0;font-size:13px;opacity:.85}
+body.customer .tabs,body.customer .datep{display:none}
+.hero .lead{position:relative;z-index:1;margin:-6px 0 4px;max-width:560px;opacity:.92}
+.rq{padding:14px 16px;margin-bottom:12px}
+.rq-h{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:16px}
+.rq-h .tag{font-size:12px;font-weight:800;color:var(--acc)}
+.rq-r{color:var(--mut);font-size:14px;margin:4px 0 8px}
+.rq-n{font-size:13px;color:var(--mut);margin:0 0 8px}
+.of{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.of>div{flex:1;min-width:0}.of>div>span{display:block;font-size:13px;color:var(--mut)}.of .av{flex:none}
+.of strong{font-size:19px;white-space:nowrap}
+.rq-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.rq-ok{background:color-mix(in srgb,#14a06f 12%,transparent);border-radius:14px;padding:10px 12px;margin-top:4px}
+.rq-mut{font-size:13px;color:var(--mut);background:var(--card2);border-radius:12px;padding:8px 12px;margin-top:4px}
+.box form.offer{display:grid;grid-template-columns:130px minmax(0,1fr) auto;gap:8px;padding:0;margin-top:8px}
+@media(max-width:760px){.box form.offer{grid-template-columns:1fr 1fr}.box form.offer .btn{grid-column:1/-1}}
+.tab{position:relative}.tab .cnt{position:absolute;top:2px;right:2px;min-width:18px;height:18px;border-radius:9px;background:var(--acc);color:#fff;font-size:11px;font-weight:800;line-height:18px;padding:0 5px}
+.tab .cnt:empty{display:none}
+.reqf{padding:0 16px 16px}
 .callb{display:block;text-align:center;text-decoration:none;line-height:46px;margin-bottom:8px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 @media(max-width:900px){.tab span{display:none}.coName{display:none}}
@@ -233,6 +251,7 @@ body.on-admin .datep{display:none}
    <button class="tab" role="tab" data-r="driver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 14.5V21M9.6 11.2 3.5 9.5M14.4 11.2l6.1-1.7"/></svg><span>Sürücü</span></button>
    <button class="tab" role="tab" data-r="fleet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 17h14M3 13l2-6h14l2 6v4H3z"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/></svg><span>Park</span></button>
    <button class="tab" role="tab" data-r="cust"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg><span>Müştəri</span></button>
+   <button class="tab" role="tab" data-r="market" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16l-1.5 12h-13z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span>Sifarişlər</span><i class="cnt" id="mktN"></i></button>
    <button class="tab" role="tab" data-r="admin" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><span>Admin</span></button>
   </nav>
   <div class="datep"><button id="prev" aria-label="Əvvəlki gün">‹</button><label><span id="dateL">Bu gün</span><input type="date" id="date" aria-label="Tarix"></label><button id="next" aria-label="Növbəti gün">›</button></div>
@@ -269,7 +288,7 @@ const FST={Expected:"planlaşdırılıb",Unknown:"",CheckIn:"qeydiyyat",Boarding
 const sb=CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY&&window.supabase?window.supabase.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_ANON_KEY):null;
 let me=null;
 
-let S={role:"coord",date:todayStr(),q:"",f:"all",driverId:"",custId:"",transfers:[],drivers:[],vehicles:[],mode:"loading",stale:false,staff:[],email:"",admin:null};
+let S={role:"coord",date:todayStr(),q:"",f:"all",driverId:"",custId:"",transfers:[],drivers:[],vehicles:[],mode:"loading",stale:false,staff:[],email:"",admin:null,mine:null,market:null};
 let sel=null;
 
 /* ===== Saxlama: Supabase; ayar yoxdursa bu brauzerdə müvəqqəti ===== */
@@ -354,7 +373,7 @@ function render(){
  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.r===S.role));
  $("#date").value=S.date;$("#dateL").textContent=dayLabel(S.date)+(S.date===todayStr()?" · "+nice(S.date):"");
  const m=$("#main");
- document.body.classList.toggle("on-admin",S.role==="admin");
+ document.body.classList.toggle("on-admin",["admin","market","orders"].includes(S.role));
  document.body.classList.toggle("gate",["login","register","pending","blocked"].includes(S.mode));
  if(S.mode==="loading"){m.innerHTML=`<p class="note">${S.stale?"Baza hələ cavab vermir, internet bağlantısını yoxlayın.":"Yüklənir…"}</p>`;return}
  if(S.mode==="login"){m.innerHTML=loginView();return}
@@ -362,7 +381,10 @@ function render(){
  if(S.mode==="pending"||S.mode==="blocked"){m.innerHTML=waitView();return}
  const hadQ=document.activeElement&&document.activeElement.id==="q",qPos=hadQ?document.activeElement.selectionStart:0;
  const banner=S.mode==="local"?`<p class="note"><b>Sınaq rejimi:</b> Supabase ayarları doldurulmayıb, dəyişikliklər yalnız bu səhifədə qalır və yeniləyəndə silinir.</p>`:S.stale?`<p class="note">Məlumat köhnə ola bilər, bağlantı bərpa olunur…</p>`:"";
- m.innerHTML=banner+({coord,driver,fleet,cust,admin}[S.role]||coord)();
+ const keep=[...m.querySelectorAll("form#fReq,form.offer")].map(f=>({k:f.id?"#fReq":`form.offer[data-req="${f.dataset.req}"]`,v:[...f.elements].filter(x=>x.name).map(x=>[x.name,x.value]),open:f.closest("details")?.open}));
+ m.innerHTML=banner+({coord,driver,fleet,cust,admin,orders,market}[S.role]||coord)();
+ keep.forEach(s=>{const f=m.querySelector(s.k);if(!f)return;s.v.forEach(([n,v])=>{if(f.elements[n])f.elements[n].value=v});const d=f.closest("details");if(d&&s.open!=null)d.open=s.open});
+ const mk=S.market?S.market.filter(x=>x.state==="open"&&(!x.my_offer||x.my_offer.status==="withdrawn")).length:0;$("#mktN").textContent=mk||"";
  if(hadQ){const q=$("#q");if(q){q.focus();q.setSelectionRange(qPos,qPos)}}
  const tl=m.querySelector(".tl");if(tl&&S.date===todayStr()&&tl.scrollWidth>tl.clientWidth)tl.scrollLeft=nowMin()/1440*tl.scrollWidth-tl.clientWidth/2;
 }
@@ -549,7 +571,7 @@ async function advance(id,to){
 let tt;function toast(m){const el=$("#toast");el.textContent=m;el.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>el.classList.remove("on"),2600)}
 
 /* ===== Hadisələr ===== */
-document.querySelector(".tabs").addEventListener("click",async e=>{const b=e.target.closest(".tab");if(b){S.role=b.dataset.r;closeDrawer();render();if(S.role==="admin"&&live()){await loadAdmin();render()}}});
+document.querySelector(".tabs").addEventListener("click",async e=>{const b=e.target.closest(".tab");if(b){S.role=b.dataset.r;closeDrawer();render();if(S.role==="admin"&&live()){await loadAdmin();render()}if(S.role==="market"&&live()){await loadMarket();render()}}});
 $("#date").addEventListener("change",e=>{if(e.target.value){S.date=e.target.value;render()}});
 $("#prev").onclick=()=>{S.date=shiftDate(S.date,-1);render()};
 $("#next").onclick=()=>{S.date=shiftDate(S.date,1);render()};
@@ -576,6 +598,14 @@ $("#main").addEventListener("click",async e=>{
  if(b=g("[data-open]")){const t=S.transfers.find(x=>x.id===b.dataset.open);if(t&&t.code)window.open(trackLink(t),"_blank","noopener");return}
  if(g("#logout2")){await sb.auth.signOut();return}
  if(g("#recheck")){S.mode="loading";render();boot();return}
+ if(g("#toReg")){S.mode="register";render();return}
+ if(g("#backCust")){S.mode="db";render();return}
+ if(b=g("[data-track]")){window.open(location.origin+location.pathname+"#t="+b.dataset.track,"_blank","noopener");return}
+ if(b=g("[data-acc]")){if(!b.dataset.sure){b.dataset.sure=1;b.textContent="Təsdiqlə";return}b.disabled=true;
+  const {error}=await sb.rpc("accept_offer",{p_offer:b.dataset.acc});if(error)toast("Alınmadı: "+error.message);else toast("Təklif qəbul edildi! Şirkət sizinlə əlaqə saxlayacaq.");await loadMine();render();return}
+ if(b=g("[data-rcancel]")){if(!b.dataset.sure){b.dataset.sure=1;b.textContent="Əminsiniz? Yenə basın";return}b.disabled=true;
+  const {error}=await sb.rpc("cancel_request",{p_id:b.dataset.rcancel});if(error)toast("Alınmadı: "+error.message);else toast("Sifariş ləğv edildi");await loadMine();render();return}
+ if(b=g("[data-wd]")){b.disabled=true;const {error}=await sb.rpc("withdraw_offer",{p_request:b.dataset.wd});if(error)toast("Alınmadı: "+error.message);else toast("Təklif geri götürüldü");await loadMarket();render();return}
  if(b=g("[data-co]")){b.disabled=true;const {error}=await sb.rpc("admin_set_company_status",{p_id:b.dataset.co,p_status:b.dataset.st});if(error)toast("Alınmadı: "+error.message);else toast(b.dataset.st==="active"?"Şirkət aktivləşdirildi":"Şirkət bloklandı");await loadAdmin();render();return}
  if(b=g("[data-delv]")){if(b.dataset.sure){await store.del("vehicles",b.dataset.delv).catch(()=>toast("Silinmədi"))}else{b.dataset.sure=1;b.textContent="Əminsiniz?"}return}
  if(b=g("[data-id]")){const t=S.transfers.find(x=>x.id===b.dataset.id);if(t)openDrawer(t);return}
@@ -591,6 +621,14 @@ $("#main").addEventListener("submit",async e=>{
   if(error){$("#lmsg").textContent=/Invalid login/i.test(error.message)?"E-poçt və ya parol səhvdir. İlk dəfədirsə, \"Hesab yarat\" düyməsinə basın.":/registered/i.test(error.message)?"Bu e-poçtla hesab artıq var, \"Daxil ol\" düyməsinə basın.":"Xəta: "+error.message;return}
   if(!data.session){$("#lmsg").textContent="Hesab yaradıldı, amma e-poçt təsdiqi tələb olunur. Təlimatdakı \"Confirm email\" ayarını söndürün.";return}
   boot();return}
+ if(f.id==="fReq"){const bt=f.querySelector("button");bt.disabled=true;
+  const {error}=await sb.rpc("create_request",{p:{type:o.type,date:o.date,sched:o.sched,flight:o.flight,city:o.city,address:o.address,pax:+o.pax||1,bags:+o.bags||0,name:o.name,phone:o.phone,note:o.note}});
+  bt.disabled=false;if(error){toast(error.message);return}
+  toast("Sifariş göndərildi! Təkliflər gələndə burada görəcəksiniz.");f.reset();f.closest("details").open=false;await loadMine();render();return}
+ if(f.classList.contains("offer")){const bt=f.querySelector("button");bt.disabled=true;
+  const {error}=await sb.rpc("make_offer",{p_request:f.dataset.req,p_price:+o.price,p_note:o.note||""});
+  bt.disabled=false;if(error){toast(error.message);return}
+  toast("Təklif göndərildi");document.activeElement?.blur?.();await loadMarket();render();return}
  if(f.id==="fReg"){const bt=f.querySelector("button");bt.disabled=true;
   const {error}=await sb.rpc("register_company",{p_name:(o.company||"").trim(),p_owner:(o.owner||"").trim(),p_phone:(o.phone||"").trim(),p_city:(o.city||"").trim()});
   bt.disabled=false;if(error){$("#lmsg").textContent="Xəta: "+error.message;return}
@@ -602,18 +640,18 @@ setInterval(()=>{if(S.mode!=="loading"&&!sel&&!document.activeElement?.matches?.
 /* ===== Başlanğıc ===== */
 const BRAND=`<div class="brand"><i><svg viewBox="0 0 100 100" width="24" height="24" aria-hidden="true"><g transform="translate(58 4) scale(1.55) rotate(135 12 12)"><path fill="#fff" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></g><path fill="#fff" d="M18 64l6-18c1.5-4.5 4.5-7 9-7h34c4.5 0 7.5 2.5 9 7l6 18v18c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5v-4H33v4c0 2-1.5 3.5-3.5 3.5h-8c-2 0-3.5-1.5-3.5-3.5z"/><path fill="#ff6a37" d="M29 62l4.5-13c.8-2.2 2.2-3.5 4.5-3.5h24c2.3 0 3.7 1.3 4.5 3.5L71 62z"/><circle cx="29" cy="71" r="4.5" fill="#ff6a37"/><circle cx="71" cy="71" r="4.5" fill="#ff6a37"/><rect x="41" y="68.5" width="18" height="5" rx="2.5" fill="#ff6a37"/></svg></i><span class="wm">arr<span class="wi">ı</span>vo</span></div>`;
 function loginView(){return `<div class="login">${BRAND}
- <h1>Xoş gəlmisiniz</h1><p>Daxil olun. Şirkətinizi qoşmaq üçün yeni hesab yaradın, işçisinizsə şirkətinizin sizi əlavə etdiyi e-poçtla girin.</p>
+ <h1>Xoş gəlmisiniz</h1><p>Hava limanı transferi sifariş etmək və ya şirkətinizi qoşmaq üçün hesab yaradın. Şirkət işçisisinizsə, şirkətinizin əlavə etdiyi e-poçtla daxil olun.</p>
  <form id="fLogin"><input type="email" name="email" required placeholder="ad@mail.com" autocomplete="email" aria-label="E-poçt">
  <input type="password" name="password" required minlength="6" placeholder="Parol (ən az 6 simvol)" autocomplete="current-password" aria-label="Parol">
  <button class="btn" name="act" value="in">Daxil ol</button><button class="btn sec" name="act" value="up">İlk dəfədir? Hesab yarat</button></form><p id="lmsg" class="note" style="margin-top:12px"></p></div>`}
-function registerView(){return `<div class="login">${BRAND}<h1>Şirkətinizi qoşun</h1><p>${esc(S.email)} hələ heç bir şirkətə bağlı deyil. Transfer və ya turizm şirkətisinizsə, qeydiyyatdan keçin.</p>
+function registerView(){return `<div class="login">${BRAND}<h1>Şirkətinizi qoşun</h1><p>${esc(S.email)} ilə transfer və ya turizm şirkətinizi Arrivo-ya qoşun. Təsdiqdən sonra maşın, sürücü və sifarişləri idarə edəcəksiniz.</p>
  <form id="fReg"><input name="company" required minlength="2" maxlength="80" placeholder="Şirkətin adı" aria-label="Şirkətin adı">
  <input name="owner" maxlength="60" placeholder="Adınız, soyadınız" aria-label="Adınız, soyadınız" autocomplete="name">
  <input name="phone" type="tel" maxlength="25" placeholder="Şirkətin telefonu (+994…)" aria-label="Telefon" autocomplete="tel">
  <input name="city" maxlength="40" placeholder="Şəhər (Bakı)" aria-label="Şəhər">
  <button class="btn">Şirkəti qeydiyyatdan keçir</button></form><p id="lmsg" class="note" style="margin-top:12px"></p>
  <p class="note">Sürücü və ya koordinatorsunuz? Şirkətinizdən e-poçtunuzu <b>Park → Komanda</b> bölməsinə əlavə etməsini istəyin, sonra <button class="linkb" id="recheck">yenidən yoxlayın</button>.</p>
- <button class="btn ghost" id="logout2">Başqa e-poçtla gir</button></div>`}
+ <button class="btn sec" id="backCust">← Transfer sifarişinə qayıt</button></div>`}
 function waitView(){const co=me&&me.company||{},bl=S.mode==="blocked";
  return `<div class="login">${BRAND}<h1>${bl?"Hesab dayandırılıb":"Təsdiq gözlənilir"}</h1>
  <p>${bl?`<b>${esc(co.name||"")}</b> şirkətinin Arrivo hesabı dayandırılıb. Ətraflı məlumat üçün Arrivo ilə əlaqə saxlayın.`:`Təşəkkürlər! <b>${esc(co.name||"")}</b> qeydiyyatdan keçdi. Arrivo komandası şirkəti yoxlayıb aktivləşdirəcək, sonra burada maşın, sürücü və transferlərinizi idarə edəcəksiniz.`}</p>
@@ -633,6 +671,61 @@ function admin(){
  <div class="fleet">${pend.length?`<section class="box" style="grid-column:1/-1"><h3>Yeni müraciətlər <span class="load busy">${pend.length}</span></h3>${pend.map(row).join("")}</section>`:""}
  <section class="box" style="grid-column:1/-1"><h3>Şirkətlər <span class="load">${rest.length}</span></h3>${rest.map(row).join("")||`<div class="it"><span>Hələ aktiv şirkət yoxdur.</span></div>`}</section></div>
  <p class="note" style="margin-top:12px">Şirkətlərin müştəri məlumatlarını admin görmür, yalnız say və statistikanı görür.</p>`;
+}
+const money=p=>{const n=+p;return (n%1?n.toFixed(2):String(n))+" ₼"};
+const route=r=>r.type==="arr"?`Hava limanı → ${esc(r.address||"")}`:`${esc(r.address||"")} → Hava limanı`;
+const reqHead=(r,who)=>`<div class="rq-h"><span class="tag">${r.type==="arr"?"Qarşılama":"Yola salma"}</span><b>${esc(dayLabel(r.date))}${r.date===todayStr()||r.date===shiftDate(todayStr(),1)?" · "+esc(nice(r.date)):""}, ${esc(r.sched)}</b></div>${r.flight||r.city?`<div class="rq-r" style="margin:2px 0 0">Reys ${esc(r.flight||"—")}${r.city?" · "+esc(r.city):""}</div>`:""}
+ <div class="rq-r">${route(r)} · ${+r.pax} nəfər · ${+r.bags} baqaj${who?" · "+esc(who):""}</div>${r.note?`<p class="rq-n">“${esc(r.note)}”</p>`:""}`;
+const busyForm=()=>!!document.activeElement?.matches?.("input,select,textarea");
+async function loadMine(){const {data,error}=await sb.rpc("my_requests");if(error){toast("Sifarişlər yüklənmədi");return}S.mine=data||[]}
+async function loadMarket(){const {data,error}=await sb.rpc("market");if(error)return;S.market=data||[]}
+function orders(){
+ const L=S.mine;if(!L)return `<p class="note">Yüklənir…</p>`;
+ const open=L.filter(r=>r.status==="open"&&!r.expired),acc=L.filter(r=>r.status==="accepted"),old=L.filter(r=>r.status==="cancelled"||r.expired);
+ const nOf=open.reduce((a,r)=>a+r.offers.length,0),last=L[0]||{};
+ const card=r=>{let b="";
+  if(r.status==="open"&&!r.expired){
+   b=r.offers.length?r.offers.map(o=>`<div class="of">${av(o.company)}<div><b>${esc(o.company)}</b>${o.note?`<span>${esc(o.note)}</span>`:""}</div><strong>${money(o.price)}</strong><button class="btn" data-acc="${esc(o.id)}">Seç</button></div>`).join("")
+    :`<p class="rq-mut">Təkliflər gözlənilir. Şirkətlər qiymət göndərən kimi burada görünəcək.</p>`;
+   b+=`<div class="rq-acts"><button class="btn ghost" data-rcancel="${esc(r.id)}">Sifarişi ləğv et</button></div>`}
+  else if(r.status==="accepted"){const o=r.offers.find(x=>x.status==="accepted")||{},tel=String(o.company_phone||"").replace(/[^\d+]/g,"");
+   b=`<div class="rq-ok"><b>${esc(o.company||"")}</b> · ${o.price?money(o.price):""}<br><span class="mut" style="font-size:13px">${r.transfer_status==="cancelled"?"Transfer ləğv edilib":esc(ST[r.transfer_status]||"Təsdiqləndi")}</span></div>
+    <div class="rq-acts">${r.track_code&&r.transfer_status!=="cancelled"?`<button class="btn" data-track="${esc(r.track_code)}">Transferi izlə</button>`:""}${tel?`<a class="btn sec" href="tel:${esc(tel)}" style="text-decoration:none;display:inline-flex;align-items:center">Şirkətə zəng</a>`:""}${r.transfer_status==="new"?`<button class="btn ghost" data-rcancel="${esc(r.id)}">Ləğv et</button>`:""}</div>`}
+  else b=`<p class="rq-mut">${r.status==="cancelled"?"Ləğv edilib":"Vaxtı keçib, təklif seçilməyib"}</p>`;
+  return `<div class="box rq">${reqHead(r)}${b}</div>`};
+ const sec=(t,a)=>a.length?`<section class="grp"><h2>${t}<span>${a.length}</span></h2>${a.map(card).join("")}</section>`:"";
+ return `<section class="hero"><p class="hi">${greet()}!</p><h1>${open.length?`${open.length} açıq sifariş · ${nOf} təklif`:"Hava limanı transferi sifariş edin"}</h1>
+  <p class="lead">Sifarişinizi yazın, transfer şirkətləri qiymət təklif etsin, ən uyğununu seçin. Sürücü və maşın məlumatı sonra linkdə görünəcək.</p></section>
+ <section class="box" style="margin-top:12px"><details ${L.length?"":"open"}><summary>+ Yeni sifariş</summary><form id="fReq" class="reqf">
+  <label>Növ<select name="type"><option value="arr">Qarşılama (hava limanı → ünvan)</option><option value="dep">Yola salma (ünvan → hava limanı)</option></select></label>
+  <label>Tarix<input type="date" name="date" min="${todayStr()}" value="${todayStr()}" required></label>
+  <label>Eniş / uçuş vaxtı<input type="time" name="sched" required></label>
+  <label>Reys nömrəsi<input name="flight" maxlength="10" placeholder="J2 61"></label>
+  <label>Haradan / haraya uçuş<input name="city" maxlength="40" placeholder="İstanbul"></label>
+  <label>Nəfər / baqaj<span style="display:flex;gap:6px"><input name="pax" type="number" min="1" max="60" value="1" style="flex:1" aria-label="Nəfər"><input name="bags" type="number" min="0" max="60" value="1" style="flex:1" aria-label="Baqaj"></span></label>
+  <label class="full">Otel / ünvan<input name="address" required maxlength="120" placeholder="Hilton Baku, Azadlıq pr. 1"></label>
+  <label>Ad, soyad<input name="name" required maxlength="80" value="${esc(last.name||"")}" autocomplete="name"></label>
+  <label>Telefon / WhatsApp<input name="phone" type="tel" required maxlength="25" value="${esc(last.phone||"")}" placeholder="+994…" autocomplete="tel"></label>
+  <label class="full">Qeyd<textarea name="note" maxlength="300" placeholder="Uşaq oturacağı, böyük baqaj, gecə uçuşu…"></textarea></label>
+  <div class="acts"><button class="btn">Sifarişi göndər</button></div></form></details></section>
+ ${sec("Açıq sifarişlər",open)}${sec("Təsdiqlənmiş",acc)}${sec("Keçmiş",old)}
+ <p class="note" style="margin-top:18px;text-align:center">Transfer şirkətisiniz? <button class="linkb" id="toReg">Şirkətinizi Arrivo-ya qoşun</button></p>`;
+}
+function market(){
+ const M=S.market;if(!M)return `<p class="note">Yüklənir…</p>`;
+ const open=M.filter(x=>x.state==="open"),won=M.filter(x=>x.state==="won"),closed=M.filter(x=>x.state==="closed");
+ const form=(x,o)=>`<form class="offer" data-req="${esc(x.id)}"><input name="price" type="number" min="1" max="99999" step="0.5" required placeholder="Qiymət, ₼" value="${o?esc(o.price):""}" aria-label="Qiymət"><input name="note" maxlength="200" placeholder="Maşın, qeyd (məs. Mercedes Vito)" value="${o?esc(o.note):""}" aria-label="Qeyd"><button class="btn">${o&&o.status==="pending"?"Yenilə":"Təklif göndər"}</button></form>`;
+ const card=x=>{const o=x.my_offer;let b="";
+  if(x.state==="open"){b=`<p class="rq-n">${+x.offers_count?`${+x.offers_count} şirkət təklif verib`:"Hələ heç kim təklif verməyib, birinci siz olun"}</p>`;
+   if(o&&o.status==="pending")b+=`<div class="rq-ok">Sizin təklifiniz: <b>${money(o.price)}</b>${o.note?" · "+esc(o.note):""}</div>${form(x,o)}<div class="rq-acts"><button class="btn ghost" data-wd="${esc(x.id)}">Təklifi geri götür</button></div>`;
+   else b+=form(x,o&&o.status==="withdrawn"?o:null)}
+  else if(x.state==="won")b=`<div class="rq-ok"><b>Müştəri sizi seçdi!</b> ${o?money(o.price)+" · ":""}Transfer Paneldə, sürücü və maşın təyin edin.</div>`;
+  else b=`<p class="rq-mut">${o&&o.status==="withdrawn"?"Təklifi geri götürdünüz":"Müştəri başqa təklifi seçdi və ya sifariş bağlandı"}</p>`;
+  return `<div class="box rq">${reqHead(x,x.first_name)}${b}</div>`};
+ const sec=(t,a)=>a.length?`<section class="grp"><h2>${t}<span>${a.length}</span></h2>${a.map(card).join("")}</section>`:"";
+ return `<section class="hero"><p class="hi">Arrivo sifarişləri</p><h1>${open.length?`${open.length} açıq sifariş`:"Hazırda açıq sifariş yoxdur"}</h1>
+  <p class="lead">Müştərilər Arrivo-da transfer sifariş edir. Qiymət təklif edin, müştəri sizi seçsə, transfer avtomatik Panelə düşəcək.</p></section>
+ ${sec("Açıq",open)}${sec("Qazandınız",won)}${sec("Bağlanıb",closed)}${M.length?"":`<div class="empty" style="margin-top:14px">Yeni sifariş gələndə burada görünəcək.</div>`}`;
 }
 const pend=new Set();let qt;
 function queue(t){if(!["transfers","drivers","vehicles","staff"].includes(t))return;if(t==="staff"&&me?.role!=="coordinator")return;pend.add(t);clearTimeout(qt);qt=setTimeout(async()=>{const ts=[...pend];pend.clear();await Promise.all(ts.map(load));render()},400)}
@@ -657,7 +750,8 @@ async function boot(){
  me=data;$("#logout").hidden=false;
  const co=me.company,hasCo=!!(me.role&&co&&co.status==="active");
  if(me.is_admin)$('.tab[data-r="admin"]').hidden=false;
- if(!me.role&&!me.is_admin){S.mode="register";render();return}
+ if(!me.role&&!me.is_admin){document.body.classList.add("customer");S.role="orders";await loadMine();S.mode="db";render();
+  setInterval(async()=>{if(S.mode==="db"&&!busyForm()){await loadMine();render()}},20000);return}
  if(!hasCo&&!me.is_admin){S.mode=co&&co.status==="blocked"?"blocked":"pending";render();return}
  if(hasCo)$("#coName").textContent=co.name;
  if(!hasCo){document.querySelectorAll('.tab:not([data-r="admin"])').forEach(x=>x.hidden=true);document.body.classList.add("admin-only");S.role="admin"}
@@ -665,6 +759,8 @@ async function boot(){
  else if(me.role==="driver"){S.role="driver";S.driverId=me.driver_id||""}
  if(hasCo)await Promise.all(["transfers","drivers","vehicles"].concat(me.role==="coordinator"?["staff"]:[]).map(load));
  if(me.is_admin)await loadAdmin();
+ if(hasCo&&me.role==="coordinator"){$('.tab[data-r="market"]').hidden=false;await loadMarket();
+  setInterval(async()=>{if(S.mode==="db"&&!sel&&!busyForm()){await loadMarket();render()}},30000)}
  S.mode="db";render();
  sb.channel("arrivo").on("postgres_changes",{event:"*",schema:"public"},p=>queue(p.table)).subscribe();
  setInterval(()=>queue("transfers"),5*60000);
