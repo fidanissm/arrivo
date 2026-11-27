@@ -246,6 +246,10 @@ body.customer .tabs,body.customer .datep{display:none}
 .stars button.on{color:#ffb020}
 .rate textarea{width:100%;box-sizing:border-box;min-height:64px;margin-bottom:10px}
 .star{color:#ffb020;font-weight:800}
+.legal{max-width:760px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:28px clamp(18px,4vw,40px);line-height:1.65}
+.legal h1{margin:0 0 4px;font-size:28px}.legal h2{font-size:18px;margin:26px 0 8px}.legal p,.legal li{font-size:15px;color:var(--ink2,inherit)}
+.legal ul{padding-left:20px;margin:6px 0}.legal .upd{color:var(--mut);font-size:13px;margin:0 0 18px}
+.legal-links{text-align:center;font-size:12px;color:var(--mut);margin:14px 0 0}.legal-links a{color:inherit}
 .nbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 14px;margin-bottom:12px;font-size:14px;box-shadow:var(--sh)}.nbar span{flex:1;min-width:200px}
 .callb{display:block;text-align:center;text-decoration:none;line-height:46px;margin-bottom:8px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -710,7 +714,7 @@ function loginView(){return `<div class="login">${BRAND}
  <input type="password" name="password" required minlength="6" placeholder="Parol (ən az 6 simvol)" autocomplete="current-password" aria-label="Parol">
  <button class="btn" name="act" value="in">Daxil ol</button><button class="btn sec" name="act" value="up">İlk dəfədir? Hesab yarat</button></form>
  <p id="lmsg" class="note" style="margin-top:12px">${authErr?"Link işləmədi və ya vaxtı bitib. Yenidən \"Parolu unutmusunuz?\" basın.":""}</p>
- <p class="note" style="text-align:center"><button class="linkb" id="forgot" type="button">Parolu unutmusunuz?</button></p></div>`}
+ <p class="note" style="text-align:center"><button class="linkb" id="forgot" type="button">Parolu unutmusunuz?</button></p>${legalLinks()}</div>`}
 function resetView(){return `<div class="login">${BRAND}<h1>Yeni parol</h1><p>${esc(S.email)} hesabı üçün yeni parol yazın.</p>
  <form id="fNewPass"><input type="password" name="p1" required minlength="6" placeholder="Yeni parol (ən az 6 simvol)" autocomplete="new-password" aria-label="Yeni parol">
  <input type="password" name="p2" required minlength="6" placeholder="Parolu təkrar yazın" autocomplete="new-password" aria-label="Parolu təkrar yazın">
@@ -722,7 +726,7 @@ function registerView(){return `<div class="login">${BRAND}<h1>Şirkətinizi qo�
  <input name="city" maxlength="40" placeholder="Şəhər (Bakı)" aria-label="Şəhər">
  <button class="btn">Şirkəti qeydiyyatdan keçir</button></form><p id="lmsg" class="note" style="margin-top:12px"></p>
  <p class="note">Sürücü və ya koordinatorsunuz? Şirkətinizdən e-poçtunuzu <b>Park → Komanda</b> bölməsinə əlavə etməsini istəyin, sonra <button class="linkb" id="recheck">yenidən yoxlayın</button>.</p>
- <button class="btn sec" id="backCust">← Transfer sifarişinə qayıt</button></div>`}
+ <button class="btn sec" id="backCust">← Transfer sifarişinə qayıt</button>${legalLinks().replace("Hesab yaratmaqla","Qeydiyyatdan keçməklə")}</div>`}
 function waitView(){const co=me&&me.company||{},bl=S.mode==="blocked";
  return `<div class="login">${BRAND}<h1>${bl?"Hesab dayandırılıb":"Təsdiq gözlənilir"}</h1>
  <p>${bl?`<b>${esc(co.name||"")}</b> şirkətinin Arrivo hesabı dayandırılıb. Ətraflı məlumat üçün Arrivo ilə əlaqə saxlayın.`:`Təşəkkürlər! <b>${esc(co.name||"")}</b> qeydiyyatdan keçdi. Arrivo komandası şirkəti yoxlayıb aktivləşdirəcək, sonra burada maşın, sürücü və transferlərinizi idarə edəcəksiniz.`}</p>
@@ -797,7 +801,8 @@ function orders(){
   <label class="chk full"><input type="checkbox" name="wa" checked>Təkliflər və sürücü haqqında WhatsApp-da xəbər al</label>
   <div class="acts"><button class="btn">Sifarişi göndər</button></div></form></details></section>
  ${sec("Açıq sifarişlər",open)}${sec("Təsdiqlənmiş",acc)}${sec("Keçmiş",old)}
- <p class="note" style="margin-top:18px;text-align:center">Transfer şirkətisiniz? <button class="linkb" id="toReg">Şirkətinizi Arrivo-ya qoşun</button></p>`;
+ <p class="note" style="margin-top:18px;text-align:center">Transfer şirkətisiniz? <button class="linkb" id="toReg">Şirkətinizi Arrivo-ya qoşun</button></p>
+ <p class="legal-links"><a href="#qaydalar">İstifadə qaydaları</a> · <a href="#mexfilik">Məxfilik siyasəti</a></p>`;
 }
 function market(){
  const M=S.market;if(!M)return `<p class="note">Yüklənir…</p>`;
@@ -814,6 +819,54 @@ function market(){
  return `<section class="hero"><p class="hi">Arrivo sifarişləri</p><h1>${open.length?`${open.length} açıq sifariş`:"Hazırda açıq sifariş yoxdur"}</h1>
   <p class="lead">Müştərilər Arrivo-da transfer sifariş edir. Qiymət təklif edin, müştəri sizi seçsə, transfer avtomatik Panelə düşəcək.</p></section>
  ${sec("Açıq",open)}${sec("Qazandınız",won)}${sec("Bağlanıb",closed)}${M.length?"":`<div class="empty" style="margin-top:14px">Yeni sifariş gələndə burada görünəcək.</div>`}`;
+}
+const LEGAL_UPD="27 noyabr 2026";
+const legalLinks=()=>`<p class="legal-links">Hesab yaratmaqla <a href="#qaydalar">İstifadə qaydaları</a> və <a href="#mexfilik">Məxfilik siyasəti</a> ilə razılaşırsınız.</p>`;
+function legalView(k){
+ const back=`<p style="margin:0 0 16px"><a class="linkb" href="#" onclick="history.length>1?history.back():location.hash='';return false">← Geri</a></p>`;
+ if(k==="mexfilik")return `<article class="legal">${back}<h1>Məxfilik siyasəti</h1><p class="upd">Son yenilənmə: ${LEGAL_UPD}</p>
+ <p>Arrivo hava limanı transferlərini müştərilər, transfer şirkətləri və sürücülər arasında təşkil edən onlayn platformadır. Bu sənəd hansı məlumatları topladığımızı, nə üçün istifadə etdiyimizi və kimlərlə paylaşdığımızı izah edir.</p>
+ <h2>1. Topladığımız məlumatlar</h2><ul>
+ <li><b>Hesab məlumatları:</b> e-poçt ünvanı və parol. Parol şifrələnmiş şəkildə saxlanılır və biz onu görmürük.</li>
+ <li><b>Transfer məlumatları:</b> ad, soyad, telefon, reys nömrəsi, tarix və vaxt, ünvan və ya otel, sərnişin və baqaj sayı, qeydlər.</li>
+ <li><b>Şirkət məlumatları:</b> şirkətin adı, telefonu, şəhəri, maşınlar (model, rəng, dövlət nömrəsi), sürücülərin adı və telefonu, işçilərin e-poçtu.</li>
+ <li><b>Sürücünün yeri:</b> yalnız sürücü transferə "Yola çıxdım" basandan transfer bitənə qədər, sürücünün telefonu icazə verdikdə.</li>
+ <li><b>Rəylər:</b> qoyduğunuz ulduz və şərh.</li>
+ <li><b>Texniki məlumatlar:</b> girişi saxlamaq üçün brauzerdə saxlanılan sessiya məlumatı. Reklam və izləmə üçün kukilərdən istifadə etmirik.</li></ul>
+ <h2>2. Məlumatlardan nə üçün istifadə edirik</h2><ul>
+ <li>Transferi təşkil etmək: sürücü və maşın təyin etmək, reysin vaxtını izləmək, müştəriyə izləmə linki göndərmək.</li>
+ <li>Bildirişlər göndərmək: yeni sifariş, təklif, sürücünün yola çıxması, parolun bərpası və qiymətləndirmə barədə e-poçt və (aktiv olduqda) WhatsApp mesajları.</li>
+ <li>Platformanın təhlükəsizliyini və düzgün işləməsini təmin etmək.</li></ul>
+ <h2>3. Kimlərlə paylaşırıq</h2><ul>
+ <li><b>Transfer şirkəti və sürücü:</b> transferi yerinə yetirmək üçün lazım olan məlumatlar. Müştəri sifarişində telefon nömrəniz yalnız təklifini seçdiyiniz şirkətə göstərilir.</li>
+ <li><b>Müştəri:</b> izləmə linkində sürücünün adı, telefonu, maşını və transfer gedərkən yeri.</li>
+ <li><b>Texniki xidmət təminatçıları:</b> Supabase (verilənlər bazası və giriş), Google Gmail (e-poçt göndərilməsi), GitHub Pages (saytın yerləşdirilməsi), OpenStreetMap (xəritə), Cloudflare və reys məlumatı xidməti (reysin vaxtı üçün yalnız reys nömrəsi və tarix). Bu xidmətlərin serverləri Azərbaycandan kənarda yerləşə bilər.</li></ul>
+ <p>Məlumatlarınızı satmırıq və reklam məqsədilə üçüncü şəxslərə vermirik.</p>
+ <h2>4. Saxlama müddəti</h2><p>Transfer məlumatları şirkətin işi və mübahisələrin həlli üçün lazım olduğu müddətdə saxlanılır. Sürücünün yer məlumatı yalnız son nöqtə kimi saxlanılır və transferdən sonra müştəriyə göstərilmir. Hesabınızı silməyi istəsəniz, bizə yazın.</p>
+ <h2>5. Hüquqlarınız</h2><p>Məlumatlarınızla tanış olmaq, düzəliş etmək və ya silinməsini tələb etmək hüququnuz var. Bunun üçün <a href="mailto:arrivo.az@gmail.com">arrivo.az@gmail.com</a> ünvanına yazın. Müraciətlərə ən qısa müddətdə cavab veririk.</p>
+ <h2>6. Təhlükəsizlik</h2><p>Hər şirkət yalnız öz məlumatlarını görür, bu ayrılma verilənlər bazası səviyyəsində tətbiq olunur. Əlaqə HTTPS ilə şifrələnir. Buna baxmayaraq, internetdə heç bir sistem tam təhlükəsiz deyil, ona görə parolunuzu heç kimlə bölüşməyin.</p>
+ <h2>7. Uşaqlar</h2><p>Arrivo-da hesab yaratmaq üçün 18 yaşdan yuxarı olmalısınız. Uşaqlar üçün transferi valideyn və ya böyük şəxs sifariş etməlidir.</p>
+ <h2>8. Dəyişikliklər</h2><p>Bu siyasəti yeniləyə bilərik. Əhəmiyyətli dəyişikliklər barədə saytda və ya e-poçtla məlumat verəcəyik.</p>
+ <h2>9. Əlaqə</h2><p>Arrivo · <a href="mailto:arrivo.az@gmail.com">arrivo.az@gmail.com</a></p></article>`;
+ return `<article class="legal">${back}<h1>İstifadə qaydaları</h1><p class="upd">Son yenilənmə: ${LEGAL_UPD}</p>
+ <p>Arrivo-dan istifadə etməklə bu qaydalarla razılaşırsınız. Razı deyilsinizsə, platformadan istifadə etməyin.</p>
+ <h2>1. Arrivo nədir</h2><p>Arrivo müştəriləri hava limanı transferi göstərən şirkətlərlə birləşdirən və şirkətlərə transferləri idarə etməyə kömək edən onlayn platformadır. <b>Arrivo özü daşıma xidməti göstərmir.</b> Transferi seçdiyiniz şirkət və onun sürücüsü həyata keçirir və xidmətin keyfiyyətinə görə həmin şirkət cavabdehdir.</p>
+ <h2>2. Hesab</h2><ul><li>Düzgün e-poçt və məlumat göstərməlisiniz.</li><li>Parolunuzun təhlükəsizliyinə və hesabınızdan edilən əməliyyatlara siz cavabdehsiniz.</li><li>18 yaşdan yuxarı olmalısınız.</li></ul>
+ <h2>3. Müştərilər üçün</h2><ul>
+ <li>Sifarişdə reys, vaxt, ünvan və telefonu düzgün yazın. Səhv məlumatdan yaranan gecikmə və əlavə xərclərə görə şirkət və Arrivo cavabdeh deyil.</li>
+ <li>Təklifi seçdikdə həmin şirkətlə razılaşma əldə etmiş olursunuz. Qiymət təklifdə göstərilən kimidir. Ödəniş qaydası şirkətlə sizin aranızda razılaşdırılır.</li>
+ <li>Transferi sürücü yola çıxana qədər saytdan ləğv edə bilərsiniz. Bundan sonra şirkətlə birbaşa əlaqə saxlayın.</li></ul>
+ <h2>4. Transfer şirkətləri üçün</h2><ul>
+ <li>Fəaliyyət üçün tələb olunan icazələrə, sürücülərin vəsiqələrinə və maşınların sığortasına malik olmalısınız.</li>
+ <li>Göndərdiyiniz təklifə əməl etməli, müştəri seçdikdən sonra transferi vaxtında yerinə yetirməlisiniz.</li>
+ <li>Müştəri məlumatlarını yalnız transferi yerinə yetirmək üçün istifadə edə bilərsiniz.</li>
+ <li>Arrivo şirkətin müraciətini qəbul etməmək və qaydaları pozan şirkətin hesabını dayandırmaq hüququna malikdir.</li></ul>
+ <h2>5. Rəylər</h2><p>Rəylər real transferə əsaslanmalıdır. Təhqiramiz, yalan və ya reklam xarakterli rəyləri silə bilərik.</p>
+ <h2>6. Qadağandır</h2><ul><li>Başqasının adından hesab yaratmaq və ya saxta sifariş vermək.</li><li>Platformanın işinə müdaxilə etmək, başqalarının məlumatlarını əldə etməyə çalışmaq.</li><li>Platformadan qanunsuz məqsədlə istifadə etmək.</li></ul>
+ <h2>7. Məsuliyyətin məhdudlaşdırılması</h2><p>Arrivo platformanın fasiləsiz və səhvsiz işləməsi üçün çalışır, lakin bunu tam zəmanət etmir. Reys məlumatı xarici mənbələrdən alınır və gecikə və ya səhv ola bilər. Transferin özü ilə bağlı iddialar həmin transferi göstərən şirkətə ünvanlanmalıdır.</p>
+ <h2>8. Dəyişikliklər</h2><p>Bu qaydaları yeniləyə bilərik. Dəyişiklikdən sonra platformadan istifadəni davam etdirmək yeni qaydalarla razılıq deməkdir.</p>
+ <h2>9. Tətbiq olunan qanun</h2><p>Bu qaydalar Azərbaycan Respublikasının qanunvericiliyinə uyğun tənzimlənir.</p>
+ <h2>10. Əlaqə</h2><p>Arrivo · <a href="mailto:arrivo.az@gmail.com">arrivo.az@gmail.com</a></p></article>`;
 }
 let trackCode="",rateN=0;
 const GYD=[40.4675,50.0467];
@@ -861,7 +914,7 @@ const pend=new Set();let qt;
 function queue(t){if(!["transfers","drivers","vehicles","staff"].includes(t))return;if(t==="staff"&&me?.role!=="coordinator")return;pend.add(t);clearTimeout(qt);qt=setTimeout(async()=>{const ts=[...pend];pend.clear();await Promise.all(ts.map(load));render()},400)}
 async function trackPage(code){
  document.body.classList.add("track");
- $("#main").innerHTML=`<div class="tmapw" id="tmapw" hidden><div id="tmap"></div><p class="tmap-n" id="tmapN"></p></div><div id="tbody"></div>`;
+ $("#main").innerHTML=`<div class="tmapw" id="tmapw" hidden><div id="tmap"></div><p class="tmap-n" id="tmapN"></p></div><div id="tbody"></div><p class="legal-links"><a href="#mexfilik">Məxfilik siyasəti</a></p>`;
  let map=null,car=null,iv=null;trackCode=code;
  const go=async()=>{
   if(!sb){$("#tbody").innerHTML=`<div class="empty">Sistem hələ qurulmayıb.</div>`;return}
@@ -881,6 +934,8 @@ async function trackPage(code){
  await go();iv=setInterval(go,10000);
 }
 async function boot(){
+ const lg=location.hash.match(/^#(qaydalar|mexfilik)$/);
+ if(lg){document.body.classList.add("gate");$("#main").innerHTML=legalView(lg[1]);window.scrollTo(0,0);return}
  const m=location.hash.match(/^#t=([A-Za-z0-9]+)/);
  if(m)return trackPage(m[1]);
  if(!sb){S.mode="local";render();return}
@@ -917,6 +972,7 @@ async function boot(){
   queue(p.table)}).subscribe();
  setInterval(()=>queue("transfers"),5*60000);
 }
+window.addEventListener("hashchange",()=>{if(!/access_token|error_description|type=recovery/.test(location.hash))location.reload()});
 if(sb)sb.auth.onAuthStateChange((ev,ses)=>{if(ev==="SIGNED_OUT")location.reload();if(ev==="PASSWORD_RECOVERY"&&!recovering){recovering=true;S.email=ses?.user?.email||S.email;S.mode="reset";render()}});
 boot();
 }
