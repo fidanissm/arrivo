@@ -225,6 +225,7 @@ body.customer .tabs,body.customer .datep{display:none}
 .tab{position:relative}.tab .cnt{position:absolute;top:2px;right:2px;min-width:18px;height:18px;border-radius:9px;background:var(--acc);color:#fff;font-size:11px;font-weight:800;line-height:18px;padding:0 5px}
 .tab .cnt:empty{display:none}
 .reqf{padding:0 16px 16px}
+.nbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 14px;margin-bottom:12px;font-size:14px;box-shadow:var(--sh)}.nbar span{flex:1;min-width:200px}
 .callb{display:block;text-align:center;text-decoration:none;line-height:46px;margin-bottom:8px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 @media(max-width:900px){.tab span{display:none}.coName{display:none}}
@@ -382,7 +383,7 @@ function render(){
  const hadQ=document.activeElement&&document.activeElement.id==="q",qPos=hadQ?document.activeElement.selectionStart:0;
  const banner=S.mode==="local"?`<p class="note"><b>Sınaq rejimi:</b> Supabase ayarları doldurulmayıb, dəyişikliklər yalnız bu səhifədə qalır və yeniləyəndə silinir.</p>`:S.stale?`<p class="note">Məlumat köhnə ola bilər, bağlantı bərpa olunur…</p>`:"";
  const keep=[...m.querySelectorAll("form#fReq,form.offer")].map(f=>({k:f.id?"#fReq":`form.offer[data-req="${f.dataset.req}"]`,v:[...f.elements].filter(x=>x.name).map(x=>[x.name,x.value]),open:f.closest("details")?.open}));
- m.innerHTML=banner+({coord,driver,fleet,cust,admin,orders,market}[S.role]||coord)();
+ m.innerHTML=banner+(["coord","market","orders","driver"].includes(S.role)?notifBar():"")+({coord,driver,fleet,cust,admin,orders,market}[S.role]||coord)();
  keep.forEach(s=>{const f=m.querySelector(s.k);if(!f)return;s.v.forEach(([n,v])=>{if(f.elements[n])f.elements[n].value=v});const d=f.closest("details");if(d&&s.open!=null)d.open=s.open});
  const mk=S.market?S.market.filter(x=>x.state==="open"&&(!x.my_offer||x.my_offer.status==="withdrawn")).length:0;$("#mktN").textContent=mk||"";
  if(hadQ){const q=$("#q");if(q){q.focus();q.setSelectionRange(qPos,qPos)}}
@@ -598,6 +599,7 @@ $("#main").addEventListener("click",async e=>{
  if(b=g("[data-open]")){const t=S.transfers.find(x=>x.id===b.dataset.open);if(t&&t.code)window.open(trackLink(t),"_blank","noopener");return}
  if(g("#logout2")){await sb.auth.signOut();return}
  if(g("#recheck")){S.mode="loading";render();boot();return}
+ if(g("#notifOn")){beep();await Notification.requestPermission().catch(()=>{});render();if(Notification.permission==="granted")notify("Bildirişlər açıqdır","Yeni hadisələr burada görünəcək","on");return}
  if(g("#toReg")){S.mode="register";render();return}
  if(g("#backCust")){S.mode="db";render();return}
  if(b=g("[data-track]")){window.open(location.origin+location.pathname+"#t="+b.dataset.track,"_blank","noopener");return}
@@ -622,8 +624,9 @@ $("#main").addEventListener("submit",async e=>{
   if(!data.session){$("#lmsg").textContent="Hesab yaradıldı, amma e-poçt təsdiqi tələb olunur. Təlimatdakı \"Confirm email\" ayarını söndürün.";return}
   boot();return}
  if(f.id==="fReq"){const bt=f.querySelector("button");bt.disabled=true;
-  const {error}=await sb.rpc("create_request",{p:{type:o.type,date:o.date,sched:o.sched,flight:o.flight,city:o.city,address:o.address,pax:+o.pax||1,bags:+o.bags||0,name:o.name,phone:o.phone,note:o.note}});
+  const {data:rid,error}=await sb.rpc("create_request",{p:{type:o.type,date:o.date,sched:o.sched,flight:o.flight,city:o.city,address:o.address,pax:+o.pax||1,bags:+o.bags||0,name:o.name,phone:o.phone,note:o.note}});
   bt.disabled=false;if(error){toast(error.message);return}
+  if(!o.wa&&rid)await sb.rpc("set_request_notify",{p_id:rid,p_on:false});
   toast("Sifariş göndərildi! Təkliflər gələndə burada görəcəksiniz.");f.reset();f.closest("details").open=false;await loadMine();render();return}
  if(f.classList.contains("offer")){const bt=f.querySelector("button");bt.disabled=true;
   const {error}=await sb.rpc("make_offer",{p_request:f.dataset.req,p_price:+o.price,p_note:o.note||""});
@@ -677,8 +680,24 @@ const route=r=>r.type==="arr"?`Hava limanı → ${esc(r.address||"")}`:`${esc(r.
 const reqHead=(r,who)=>`<div class="rq-h"><span class="tag">${r.type==="arr"?"Qarşılama":"Yola salma"}</span><b>${esc(dayLabel(r.date))}${r.date===todayStr()||r.date===shiftDate(todayStr(),1)?" · "+esc(nice(r.date)):""}, ${esc(r.sched)}</b></div>${r.flight||r.city?`<div class="rq-r" style="margin:2px 0 0">Reys ${esc(r.flight||"—")}${r.city?" · "+esc(r.city):""}</div>`:""}
  <div class="rq-r">${route(r)} · ${+r.pax} nəfər · ${+r.bags} baqaj${who?" · "+esc(who):""}</div>${r.note?`<p class="rq-n">“${esc(r.note)}”</p>`:""}`;
 const busyForm=()=>!!document.activeElement?.matches?.("input,select,textarea");
-async function loadMine(){const {data,error}=await sb.rpc("my_requests");if(error){toast("Sifarişlər yüklənmədi");return}S.mine=data||[]}
-async function loadMarket(){const {data,error}=await sb.rpc("market");if(error)return;S.market=data||[]}
+async function loadMine(){const {data,error}=await sb.rpc("my_requests");if(error){toast("Sifarişlər yüklənmədi");return}const prev=S.mine;S.mine=data||[];
+ if(!prev)return;const offs=new Set(prev.flatMap(r=>r.offers.map(o=>o.id+":"+o.price))),ts=new Map(prev.map(r=>[r.id,r.transfer_status]));
+ for(const r of S.mine){for(const o of r.offers)if(o.status==="pending"&&!offs.has(o.id+":"+o.price))notify("Yeni təklif",`${o.company} · ${money(o.price)}`,"of-"+o.id);
+  if(r.transfer_status&&ts.has(r.id)&&ts.get(r.id)!==r.transfer_status&&ST[r.transfer_status])notify("Transferiniz",ST[r.transfer_status],"tr-"+r.id)}}
+async function loadMarket(){const {data,error}=await sb.rpc("market");if(error)return;const prev=S.market;S.market=data||[];
+ if(!prev)return;const seen=new Set(prev.map(x=>x.id));
+ S.market.filter(x=>x.state==="open"&&!seen.has(x.id)).forEach(x=>notify("Yeni transfer sifarişi",`${nice(x.date)} ${x.sched} · ${x.type==="arr"?"Hava limanı → "+x.address:x.address+" → Hava limanı"}`,"rq-"+x.id))}
+const canNotify=()=>"Notification" in window;
+let swReg=null;
+if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").then(r=>{swReg=r}).catch(()=>{});
+function beep(){try{const a=beep.c||(beep.c=new(window.AudioContext||window.webkitAudioContext)());const o=a.createOscillator(),g=a.createGain();o.frequency.value=880;g.gain.setValueAtTime(.0001,a.currentTime);g.gain.exponentialRampToValueAtTime(.2,a.currentTime+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+.45);o.connect(g).connect(a.destination);o.start();o.stop(a.currentTime+.5)}catch(e){}}
+let unseen=0;const baseTitle=document.title;
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){unseen=0;document.title=baseTitle}});
+function notify(title,body,tag){toast(title+(body?": "+body:""));beep();
+ if(document.hidden){unseen++;document.title="("+unseen+") "+baseTitle}
+ if(canNotify()&&Notification.permission==="granted"){const opt={body,tag,icon:"icon.svg",badge:"icon.svg"};
+  if(swReg&&swReg.showNotification)swReg.showNotification(title,opt).catch(()=>{});else try{new Notification(title,opt)}catch(e){}}}
+const notifBar=()=>canNotify()&&Notification.permission==="default"?`<div class="nbar"><span>🔔 Yeni sifariş, təklif və transferlərdən dərhal xəbər tutmaq üçün bildirişləri açın.</span><button class="btn sec" id="notifOn">Bildirişləri aç</button></div>`:"";
 function orders(){
  const L=S.mine;if(!L)return `<p class="note">Yüklənir…</p>`;
  const open=L.filter(r=>r.status==="open"&&!r.expired),acc=L.filter(r=>r.status==="accepted"),old=L.filter(r=>r.status==="cancelled"||r.expired);
@@ -707,6 +726,7 @@ function orders(){
   <label>Ad, soyad<input name="name" required maxlength="80" value="${esc(last.name||"")}" autocomplete="name"></label>
   <label>Telefon / WhatsApp<input name="phone" type="tel" required maxlength="25" value="${esc(last.phone||"")}" placeholder="+994…" autocomplete="tel"></label>
   <label class="full">Qeyd<textarea name="note" maxlength="300" placeholder="Uşaq oturacağı, böyük baqaj, gecə uçuşu…"></textarea></label>
+  <label class="chk full"><input type="checkbox" name="wa" checked>Təkliflər və sürücü haqqında WhatsApp-da xəbər al</label>
   <div class="acts"><button class="btn">Sifarişi göndər</button></div></form></details></section>
  ${sec("Açıq sifarişlər",open)}${sec("Təsdiqlənmiş",acc)}${sec("Keçmiş",old)}
  <p class="note" style="margin-top:18px;text-align:center">Transfer şirkətisiniz? <button class="linkb" id="toReg">Şirkətinizi Arrivo-ya qoşun</button></p>`;
@@ -762,7 +782,11 @@ async function boot(){
  if(hasCo&&me.role==="coordinator"){$('.tab[data-r="market"]').hidden=false;await loadMarket();
   setInterval(async()=>{if(S.mode==="db"&&!sel&&!busyForm()){await loadMarket();render()}},30000)}
  S.mode="db";render();
- sb.channel("arrivo").on("postgres_changes",{event:"*",schema:"public"},p=>queue(p.table)).subscribe();
+ sb.channel("arrivo").on("postgres_changes",{event:"*",schema:"public"},p=>{const n=p.new||{};
+  if(p.table==="transfers"&&me){
+   if(me.role==="coordinator"&&p.eventType==="INSERT"&&n.request_id){notify("Müştəri təklifinizi seçdi!",`${n.name} · ${nice(n.date)} ${n.sched}`,"won-"+n.id);loadMarket()}
+   if(me.role==="driver"&&n.driver_id&&n.driver_id===me.driver_id&&!S.transfers.some(t=>t.id===n.id&&t.driverId===n.driver_id))notify("Sizə yeni transfer təyin olundu",`${n.name} · ${nice(n.date)} ${n.sched}`,"job-"+n.id)}
+  queue(p.table)}).subscribe();
  setInterval(()=>queue("transfers"),5*60000);
 }
 if(sb)sb.auth.onAuthStateChange(ev=>{if(ev==="SIGNED_OUT")location.reload()});
