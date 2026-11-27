@@ -401,7 +401,7 @@ function render(){
  if(S.mode==="pending"||S.mode==="blocked"){m.innerHTML=waitView();return}
  const hadQ=document.activeElement&&document.activeElement.id==="q",qPos=hadQ?document.activeElement.selectionStart:0;
  const banner=S.mode==="local"?`<p class="note"><b>Sınaq rejimi:</b> Supabase ayarları doldurulmayıb, dəyişikliklər yalnız bu səhifədə qalır və yeniləyəndə silinir.</p>`:S.stale?`<p class="note">Məlumat köhnə ola bilər, bağlantı bərpa olunur…</p>`:"";
- const keep=[...m.querySelectorAll("form#fReq,form.offer")].map(f=>({k:f.id?"#fReq":`form.offer[data-req="${f.dataset.req}"]`,v:[...f.elements].filter(x=>x.name).map(x=>[x.name,x.value]),open:f.closest("details")?.open}));
+ const keep=[...m.querySelectorAll("form#fReq,form#fCo,form.offer")].map(f=>({k:f.id?"#"+f.id:`form.offer[data-req="${f.dataset.req}"]`,v:[...f.elements].filter(x=>x.name).map(x=>[x.name,x.value]),open:f.closest("details")?.open}));
  m.innerHTML=banner+(["coord","market","orders","driver"].includes(S.role)?notifBar():"")+({coord,driver,fleet,cust,admin,orders,market}[S.role]||coord)();
  keep.forEach(s=>{const f=m.querySelector(s.k);if(!f)return;s.v.forEach(([n,v])=>{if(f.elements[n])f.elements[n].value=v});const d=f.closest("details");if(d&&s.open!=null)d.open=s.open});
  const mk=S.market?S.market.filter(x=>x.state==="open"&&(!x.my_offer||x.my_offer.status==="withdrawn")).length:0;$("#mktN").textContent=mk||"";
@@ -491,8 +491,17 @@ function fleet(){
   <details><summary>+ Maşın əlavə et</summary><form id="fVeh"><label>Marka, model<input name="model" required maxlength="40" placeholder="Mercedes V-Class"></label><label>Nömrə<input name="plate" required maxlength="15" placeholder="10-AB-123"></label>
   <label>Yer sayı<input name="seats" type="number" min="1" max="60" value="4" required></label><label>Rəng<input name="color" maxlength="20"></label>
   <div class="acts"><button class="btn">Əlavə et</button></div></form></details></section>
- ${live()&&me?.role==="coordinator"?team():""}</div>`;
+ ${live()&&me?.role==="coordinator"?team()+companyBox():""}</div>`;
 }
+function companyBox(){const c=S.company||{};
+ return `<section class="box" style="grid-column:1/-1"><h3>Şirkət məlumatları</h3>
+ ${c.phone?"":`<p class="rq-mut" style="margin:0 0 10px">⚠ Şirkətin telefonunu yazın. Müştərilər sizə zəng edə bilsin və WhatsApp bildirişləri gəlsin.</p>`}
+ <form id="fCo"><label>Şirkətin adı<input name="name" required minlength="2" maxlength="80" value="${esc(c.name||"")}"></label>
+ <label>Telefon (WhatsApp)<input name="phone" type="tel" maxlength="25" placeholder="+994 50 000 00 00" value="${esc(c.phone||"")}"></label>
+ <label>Şəhər<input name="city" maxlength="40" value="${esc(c.city||"")}"></label>
+ <label class="chk full"><input type="checkbox" name="wa" ${c.notify_wa!==false?"checked":""}>Yeni sifarişlər barədə WhatsApp bildirişi al</label>
+ <div class="acts"><button class="btn">Yadda saxla</button></div></form>
+ <p class="note">Məktublar (yeni sifariş, qəbul edilmiş təklif) komandadakı bütün koordinatorların e-poçtuna gedir.</p></section>`}
 function team(){
  const RL={coordinator:"Koordinator",driver:"Sürücü"};
  return `<section class="box" style="grid-column:1/-1"><h3>Komanda <span class="load">${S.staff.length}</span></h3>
@@ -648,6 +657,12 @@ $("#main").addEventListener("submit",async e=>{
   if(error){$("#lmsg").textContent=/Invalid login/i.test(error.message)?"E-poçt və ya parol səhvdir. İlk dəfədirsə, \"Hesab yarat\" düyməsinə basın.":/registered/i.test(error.message)?"Bu e-poçtla hesab artıq var, \"Daxil ol\" düyməsinə basın.":"Xəta: "+error.message;return}
   if(!data.session){$("#lmsg").textContent="Hesab yaradıldı, amma e-poçt təsdiqi tələb olunur. Təlimatdakı \"Confirm email\" ayarını söndürün.";return}
   boot();return}
+ if(f.id==="fCo"){const bt=f.querySelector("button");bt.disabled=true;
+  const upd={name:(o.name||"").trim(),phone:(o.phone||"").trim(),city:(o.city||"").trim()||"Bakı",notify_wa:!!o.wa};
+  const {error}=await sb.from("companies").update(upd).eq("id",S.company.id);bt.disabled=false;
+  if(error){toast("Yadda saxlanmadı: "+error.message);return}
+  Object.assign(S.company,upd);if(me.company)me.company.name=upd.name;$("#coName").textContent=upd.name;
+  document.activeElement?.blur?.();f.remove();toast("Şirkət məlumatları yeniləndi");render();return}
  if(f.id==="fNewPass"){if(o.p1!==o.p2){$("#lmsg").textContent="Parollar eyni deyil.";return}
   const bt=f.querySelector("button");bt.disabled=true;const {error}=await sb.auth.updateUser({password:o.p1});bt.disabled=false;
   if(error){$("#lmsg").textContent="Xəta: "+error.message;return}
@@ -861,6 +876,7 @@ async function boot(){
   setInterval(async()=>{if(S.mode==="db"&&!busyForm()){await loadMine();render()}},20000);return}
  if(!hasCo&&!me.is_admin){S.mode=co&&co.status==="blocked"?"blocked":"pending";render();return}
  if(hasCo)$("#coName").textContent=co.name;
+ if(hasCo&&me.role==="coordinator"){const {data:cd}=await sb.from("companies").select("id,name,phone,city,notify_wa").eq("id",co.id).single();S.company=cd||{...co}}
  if(!hasCo){document.querySelectorAll('.tab:not([data-r="admin"])').forEach(x=>x.hidden=true);document.body.classList.add("admin-only");S.role="admin"}
  else if(me.role==="driver"&&!me.is_admin){S.role="driver";S.driverId=me.driver_id||"";document.body.classList.add("is-driver")}
  else if(me.role==="driver"){S.role="driver";S.driverId=me.driver_id||""}
