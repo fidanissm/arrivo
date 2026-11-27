@@ -1,0 +1,4 @@
+window.ARRIVO_CONFIG={
+ SUPABASE_URL:"https://yrpkfstjbngsxklenpkd.supabase.co",
+ SUPABASE_ANON_KEY:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlycGtmc3RqYm5nc3hrbGVucGtkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU3MTMzMTYsImV4cCI6MjExMTI4OTMxNn0.puDgf0HJPgialQASKRrk3FDPbpSQiGVDaAujnKViR50" // anon public açarı (gizli deyil)
+};
